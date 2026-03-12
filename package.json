@@ -42,7 +42,9 @@
     "doctor": "node scripts/doctor.js",
     "list:games": "node scripts/list-games.js",
     "refresh:game": "node scripts/refresh-game.js",
-    "dashboard": "pnpm --filter @bitcraft/analytics-dashboard start"
+    "dashboard": "pnpm --filter @bitcraft/analytics-dashboard start",
+    "create-game-branch": "node scripts/create-game-branch.js",
+    "create-game-wizard": "node scripts/create-game-wizard.js"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",

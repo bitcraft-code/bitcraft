@@ -67,6 +67,21 @@ Batch generation:
 pnpm create-games game1 game2 game3
 ```
 
+When starting work on a **new game feature branch**, AI agents should prefer:
+
+```
+pnpm create-game-branch <game-name> <genre>
+```
+
+This command automates:
+
+- creating a git feature branch `feat/<game-name>`
+- running `pnpm create-game <game-name> --genre <genre>`
+- staging generated files
+- creating the initial semantic commit `feat: add <game-name> <genre> game scaffold`
+
+The lower-level `pnpm create-game` command can still be used when branch/commit handling is managed by a different workflow or agent.
+
 ---
 
 # Generated Game Structure

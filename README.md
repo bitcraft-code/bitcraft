@@ -39,6 +39,8 @@ From the repo root:
 ```bash
 pnpm create-game <name>                 # generate a single game (supports --genre, --minimal, etc.)
 pnpm create-games <name-a> <name-b>     # batch-generate multiple games
+pnpm create-game-branch <game-name> <genre>  # create a git feature branch and scaffold a new game
+pnpm create-game-wizard                      # interactive wizard for creating a game branch and scaffold
 pnpm generate-screenshots <game>        # create placeholder store screenshots
 pnpm generate-aso-keywords <game> <genre>  # generate ASO keyword set for a game/genre
 pnpm check-release-readiness <game>     # run release checklist and write metadata/release-readiness.md

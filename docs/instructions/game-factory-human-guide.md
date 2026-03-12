@@ -58,6 +58,26 @@ The generator will:
 
 ---
 
+# Game Creation vs Branch Automation
+
+There are three related commands for creating games:
+
+- `pnpm create-game` — **only scaffolds** a new game under `apps/<game-name>`. It does not touch git branches or commits.
+- `pnpm create-game-branch <game-name> <genre>` — **non-interactive automation** that:
+  - checks that the git working tree is clean
+  - creates a feature branch `feat/<game-name>`
+  - runs `pnpm create-game <game-name> --genre <genre>`
+  - stages the generated files and creates an initial commit  
+  Use this when you already know the name/genre and want a one-shot automation.
+- `pnpm create-game-wizard` — **interactive wizard** that:
+  - asks for the game name and genre (`arcade`, `puzzle`, `runner`)
+  - optionally creates the `feat/<game-name>` branch
+  - optionally runs the `create-game` scaffold
+  - optionally creates the initial commit  
+  Use this when you want more manual control over each step.
+
+---
+
 # Running a Game
 
 After creation:
