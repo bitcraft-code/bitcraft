@@ -100,6 +100,8 @@ function validateGameName(name) {
 
 function replaceInFile(filePath, content, pascalName, gameName) {
   return content
+    .replace(/\bTemplateGameProvider\b/g, () => `${pascalName}GameProvider`)
+    .replace(/\buseTemplateGame\b/g, () => `use${pascalName}Game`)
     .replace(/\bTemplate\b/g, () => pascalName)
     .replace(/\btemplate\b/g, () => gameName);
 }

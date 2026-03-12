@@ -2,16 +2,18 @@ export type LocaleCode = "en" | "es" | "de" | "fr" | "it" | "pt-BR";
 export const SUPPORTED_LOCALES: LocaleCode[] = ["en", "es", "de", "fr", "it", "pt-BR"];
 export const DEFAULT_LOCALE: LocaleCode = "en";
 
-interface NestedDict {
-  [key: string]: string | NestedDict;
-}
+type NestedValue = string | { [key: string]: NestedValue };
+type NestedDict = { [key: string]: NestedValue };
 
 function getNested(obj: NestedDict, path: string): string | undefined {
   const parts = path.split(".");
-  let current: NestedDict | string = obj;
+  let current: NestedValue = obj;
   for (const p of parts) {
     if (typeof current !== "object" || current === null) return undefined;
-    current = (current as NestedDict)[p];
+    const dict = current as { [key: string]: NestedValue };
+    const next: NestedValue | undefined = dict[p];
+    if (typeof next === "undefined") return undefined;
+    current = next;
   }
   return typeof current === "string" ? current : undefined;
 }
@@ -35,3 +37,4 @@ export function t(key: string, locale?: LocaleCode): string {
   const dict = translations[loc] ?? en;
   return getNested(dict, key) ?? key;
 }
+

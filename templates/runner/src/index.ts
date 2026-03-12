@@ -2,7 +2,9 @@ export type LocaleCode = "en" | "es" | "de" | "fr" | "it" | "pt-BR";
 export const SUPPORTED_LOCALES: LocaleCode[] = ["en", "es", "de", "fr", "it", "pt-BR"];
 export const DEFAULT_LOCALE: LocaleCode = "en";
 
-type NestedDict = Record<string, string | NestedDict>;
+interface NestedDict {
+  [key: string]: string | NestedDict;
+}
 
 function getNested(obj: NestedDict, path: string): string | undefined {
   const parts = path.split(".");
