@@ -44,7 +44,11 @@
     "refresh:game": "node scripts/refresh-game.js",
     "dashboard": "pnpm --filter @bitcraft/analytics-dashboard start",
     "create-game-branch": "node scripts/create-game-branch.js",
-    "create-game-wizard": "node scripts/create-game-wizard.js"
+    "create-game-wizard": "node scripts/create-game-wizard.js",
+    "dev:bitsnake": "pnpm --filter @bitcraft/bitsnake start",
+    "ios:bitsnake": "pnpm --filter @bitcraft/bitsnake ios",
+    "android:bitsnake": "pnpm --filter @bitcraft/bitsnake android",
+    "web:bitsnake": "pnpm --filter @bitcraft/bitsnake web"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
