@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
-    "types": ["expo/types", "expo-router/types"]
+    "noEmit": true
   },
   "include": ["app", "src", "expo-env.d.ts"]
 }
