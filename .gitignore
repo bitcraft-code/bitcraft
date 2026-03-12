@@ -1,0 +1,9 @@
+node_modules
+.pnpm-store
+.expo
+.expo-shared
+.expo-dist-web
+dist
+coverage
+*.tsbuildinfo
+.DS_Store

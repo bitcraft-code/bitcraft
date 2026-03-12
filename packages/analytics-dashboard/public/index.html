@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bitcraft Analytics Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { color: #1a1a2e; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #16213e; color: #eee; }
+    tr:nth-child(even) { background: #f5f5f5; }
+    .meta { color: #666; font-size: 0.9rem; margin-top: 1rem; }
+    a { color: #0f3460; }
+  </style>
+</head>
+<body>
+  <h1>Bitcraft Analytics Dashboard</h1>
+  <p>Compare performance across games. Data from <code>data/*.json</code> (generate with <code>generate-test-data.js</code>).</p>
+  <div id="root">Loading…</div>
+  <script>
+    fetch("/api/games")
+      .then((r) => r.json())
+      .then(({ games }) => {
+        const root = document.getElementById("root");
+        if (!games.length) {
+          root.innerHTML = "<p>No game data yet. Run <code>node scripts/generate-test-data.js &lt;game-name&gt; 7</code> then restart the dashboard.</p>";
+          return;
+        }
+        let html = "<h2>Ranking (top = best)</h2><table><thead><tr><th>Rank</th><th>Score</th><th>Game</th><th>Sessions</th><th>Total playtime (min)</th><th>High score</th><th>Ad interactions</th><th>D1 %</th><th>D7 %</th></tr></thead><tbody>";
+        games.forEach((g, i) => {
+          const rank = i + 1;
+          const d1 = g.d1RetentionPercent != null ? g.d1RetentionPercent + "%" : "—";
+          const d7 = g.d7RetentionPercent != null ? g.d7RetentionPercent + "%" : "—";
+          html += `<tr><td>${rank}</td><td>${g.rankScore ?? "—"}</td><td>${g.gameId}</td><td>${g.sessions}</td><td>${Math.round(g.totalPlaytimeMs / 60000)}</td><td>${g.highScore}</td><td>${g.adInteractions}</td><td>${d1}</td><td>${d7}</td></tr>`;
+        });
+        html += "</tbody></table>";
+        const top = games.slice(0, 5);
+        const worst = games.slice(-5).reverse();
+        html += "<h3>Top games</h3><ul>";
+        top.forEach(g => { html += "<li>" + g.gameId + " (score " + (g.rankScore ?? "—") + ")</li>"; });
+        html += "</ul><h3>Worst games</h3><ul>";
+        worst.forEach(g => { html += "<li>" + g.gameId + " (score " + (g.rankScore ?? "—") + ")</li>"; });
+        html += "</ul>";
+        root.innerHTML = html;
+      })
+      .catch((e) => {
+        document.getElementById("root").innerHTML = "<p>Error loading data: " + e.message + "</p>";
+      });
+  </script>
+  <p class="meta"><a href="/api/games">/api/games</a> · <a href="/api/data">/api/data</a></p>
+</body>
+</html>

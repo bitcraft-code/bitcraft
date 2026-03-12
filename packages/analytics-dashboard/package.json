@@ -1,0 +1,11 @@
+{
+  "name": "@bitcraft/analytics-dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compare performance across games — list games, daily sessions, high scores, playtime, ads",
+  "scripts": {
+    "start": "node server.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json 2>/dev/null || true"
+  },
+  "dependencies": {}
+}

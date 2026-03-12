@@ -1,0 +1,15 @@
+{
+  "game": {
+    "start": "Start",
+    "over": "Game Over",
+    "pause": "Pause",
+    "resume": "Resume"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "sound": "Sound",
+    "haptics": "Haptics"
+  }
+}
