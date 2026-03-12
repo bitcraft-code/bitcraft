@@ -339,7 +339,14 @@ function runValidation(appDir, gameName) {
       encoding: "utf8",
     });
   } catch (e) {
-    throw new Error(`Typecheck failed: ${e.message || e}`);
+    const stdout = e.stdout || "";
+    const stderr = e.stderr || "";
+    const details = [stdout.trim(), stderr.trim()].filter(Boolean).join("\n\n");
+    throw new Error(
+      `Typecheck failed: ${e.message || e}${
+        details ? `\n\nTypecheck output:\n${details}` : ""
+      }`
+    );
   }
   try {
     execSync("npx expo config --type public", {
