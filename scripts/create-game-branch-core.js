@@ -1,11 +1,11 @@
-\"use strict\";
+"use strict";
 
-const { execSync, spawnSync } = require(\"child_process\");
-const path = require(\"path\");
+const { execSync, spawnSync } = require("child_process");
+const path = require("path");
 
-const ROOT = path.resolve(__dirname, \"..\");
+const ROOT = path.resolve(__dirname, "..");
 
-const SUPPORTED_GENRES = [\"arcade\", \"puzzle\", \"runner\"];
+const SUPPORTED_GENRES = ["arcade", "puzzle", "runner"];
 
 function parseDirectArgs(argv) {
   const args = [];
@@ -13,7 +13,7 @@ function parseDirectArgs(argv) {
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === \"--dry-run\") {
+    if (arg === "--dry-run") {
       dryRun = true;
     } else {
       args.push(arg);
@@ -29,12 +29,12 @@ function parseDirectArgs(argv) {
 function validateGameName(gameName) {
   if (!gameName) {
     throw new Error(
-      \"Game name is required. Usage: pnpm create-game-branch <game-name> <genre> [--dry-run]\"
+      "Game name is required. Usage: pnpm create-game-branch <game-name> <genre> [--dry-run]"
     );
   }
   const trimmed = gameName.trim();
   if (!trimmed) {
-    throw new Error(\"Game name cannot be empty.\");
+    throw new Error("Game name cannot be empty.");
   }
   return trimmed;
 }
@@ -42,13 +42,13 @@ function validateGameName(gameName) {
 function validateGenre(genre) {
   if (!genre) {
     throw new Error(
-      \"Genre is required. Usage: pnpm create-game-branch <game-name> <genre> [--dry-run]\"
+      "Genre is required. Usage: pnpm create-game-branch <game-name> <genre> [--dry-run]"
     );
   }
   const normalized = genre.trim().toLowerCase();
   if (!SUPPORTED_GENRES.includes(normalized)) {
     throw new Error(
-      `Invalid genre \"${genre}\". Supported genres: ${SUPPORTED_GENRES.join(\", \")}`
+      `Invalid genre "${genre}". Supported genres: ${SUPPORTED_GENRES.join(", ")}`
     );
   }
   return normalized;
@@ -56,17 +56,17 @@ function validateGenre(genre) {
 
 function assertCleanGit(dryRun) {
   try {
-    const status = execSync(\"git status --porcelain\", {
+    const status = execSync("git status --porcelain", {
       cwd: ROOT,
-      encoding: \"utf8\",
+      encoding: "utf8",
     }).trim();
     if (status) {
       throw new Error(
-        \"Git working tree is not clean. Please commit or stash your changes before creating a game branch.\"
+        "Git working tree is not clean. Please commit or stash your changes before creating a game branch."
       );
     }
     if (dryRun) {
-      console.log(\"[dry-run] Git working tree is clean.\");
+      console.log("[dry-run] Git working tree is clean.");
     }
   } catch (err) {
     if (err.stdout || err.stderr) {
@@ -84,9 +84,9 @@ function createGitBranch(branchName, dryRun) {
     return;
   }
   console.log(`Creating git branch: ${branchName}`);
-  const result = spawnSync(\"git\", [\"checkout\", \"-b\", branchName], {
+  const result = spawnSync("git", ["checkout", "-b", branchName], {
     cwd: ROOT,
-    stdio: \"inherit\",
+    stdio: "inherit",
     shell: true,
   });
   if (result.status !== 0) {
@@ -95,15 +95,15 @@ function createGitBranch(branchName, dryRun) {
 }
 
 function runCreateGame(gameName, genre, dryRun) {
-  const args = [\"create-game\", gameName, \"--genre\", genre];
+  const args = ["create-game", gameName, "--genre", genre];
   if (dryRun) {
-    console.log(`[dry-run] Would run: pnpm ${args.join(\" \")}`);
+    console.log(`[dry-run] Would run: pnpm ${args.join(" ")}`);
     return;
   }
-  console.log(`Running scaffold: pnpm ${args.join(\" \")}`);
-  const result = spawnSync(\"pnpm\", args, {
+  console.log(`Running scaffold: pnpm ${args.join(" ")}`);
+  const result = spawnSync("pnpm", args, {
     cwd: ROOT,
-    stdio: \"inherit\",
+    stdio: "inherit",
     shell: true,
   });
   if (result.status !== 0) {
@@ -115,12 +115,12 @@ function runCreateGame(gameName, genre, dryRun) {
 
 function stageAll(dryRun) {
   if (dryRun) {
-    console.log(\"[dry-run] Would stage generated files: git add .\");
+    console.log("[dry-run] Would stage generated files: git add .");
     return;
   }
-  const result = spawnSync(\"git\", [\"add\", \".\"], {
+  const result = spawnSync("git", ["add", "."], {
     cwd: ROOT,
-    stdio: \"inherit\",
+    stdio: "inherit",
     shell: true,
   });
   if (result.status !== 0) {
@@ -135,9 +135,9 @@ function createInitialCommit(gameName, genre, dryRun) {
     return;
   }
   console.log(`Creating commit: ${message}`);
-  const result = spawnSync(\"git\", [\"commit\", \"-m\", message], {
+  const result = spawnSync("git", ["commit", "-m", message], {
     cwd: ROOT,
-    stdio: \"inherit\",
+    stdio: "inherit",
     shell: true,
   });
   if (result.status !== 0) {
@@ -146,10 +146,10 @@ function createInitialCommit(gameName, genre, dryRun) {
 }
 
 function printNextSteps(gameName) {
-  console.log(\"\");
-  console.log(\"Next steps:\");
+  console.log("");
+  console.log("Next steps:");
   console.log(`  pnpm validate:app -- ${gameName}`);
-  console.log(\"\");
+  console.log("");
 }
 
 async function runCreateGameBranchFlow(options) {
@@ -172,8 +172,8 @@ async function runCreateGameBranchFlow(options) {
   if (!dryRun) {
     printNextSteps(gameName);
   } else {
-    console.log(\"[dry-run] Flow completed. No changes were made.\");
-    console.log(\"[dry-run] After running for real, recommended next step:\");
+    console.log("[dry-run] Flow completed. No changes were made.");
+    console.log("[dry-run] After running for real, recommended next step:");
     console.log(`  pnpm validate:app -- ${gameName}`);
   }
 }
