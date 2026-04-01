@@ -1,5 +1,6 @@
 "use client";
 
+import type { ChangeEvent, CSSProperties, FormEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -10,6 +11,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import type { MotionStyle } from "framer-motion";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -198,20 +200,82 @@ const HERO_TRAIL_CHARS = ["0", "1", "{", "}", "<", ">", "/", "_", "=", "+", ";",
 
 const initialForm = { name: "", email: "", message: "" };
 
+type Theme = "dark" | "light";
+type FormState = typeof initialForm;
+type FormField = keyof FormState;
+type FormErrors = Partial<Record<FormField, string>>;
+
+type HeroPointerState = {
+  targetX: number;
+  targetY: number;
+  currentX: number;
+  currentY: number;
+  targetStrength: number;
+  currentStrength: number;
+  targetOffsetX: number;
+  targetOffsetY: number;
+  currentOffsetX: number;
+  currentOffsetY: number;
+  rafId: number;
+};
+
+type TrailParticle = {
+  x: number;
+  y: number;
+  originX: number;
+  originY: number;
+  angle: number;
+  radius: number;
+  speed: number;
+  alpha: number;
+  initialAlpha: number;
+  lifetime: number;
+  age: number;
+  size: number;
+  rotation: number;
+  spin: number;
+  driftX: number;
+  driftY: number;
+  char: string;
+  color: string;
+};
+
+type HeroTrailState = {
+  particles: TrailParticle[];
+  lastX: number | null;
+  lastY: number | null;
+  lastTime: number;
+  pointerX: number | null;
+  pointerY: number | null;
+  pointerInside: boolean;
+  rafId: number;
+  lastFrameTime: number;
+  resizeObserver: ResizeObserver | null;
+};
+
+type TrailSpawnOptions = {
+  spread?: number;
+  intensity?: number;
+  speedFactor?: number;
+  directionX?: number;
+  directionY?: number;
+  trailStretch?: number;
+};
+
 export default function Page() {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [selectedFaq, setSelectedFaq] = useState(null);
+  const [selectedFaq, setSelectedFaq] = useState<number | null>(null);
   const [typedAnswer, setTypedAnswer] = useState("");
-  const [form, setForm] = useState(initialForm);
-  const [errors, setErrors] = useState({});
+  const [form, setForm] = useState<FormState>(initialForm);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const heroRef = useRef(null);
-  const heroCardRef = useRef(null);
-  const heroTrailCanvasRef = useRef(null);
-  const heroPointerRef = useRef({
+  const heroRef = useRef<HTMLElement | null>(null);
+  const heroCardRef = useRef<HTMLDivElement | null>(null);
+  const heroTrailCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const heroPointerRef = useRef<HeroPointerState>({
     targetX: 50,
     targetY: 44,
     currentX: 50,
@@ -224,7 +288,7 @@ export default function Page() {
     currentOffsetY: 0,
     rafId: 0,
   });
-  const heroTrailRef = useRef({
+  const heroTrailRef = useRef<HeroTrailState>({
     particles: [],
     lastX: null,
     lastY: null,
@@ -236,11 +300,11 @@ export default function Page() {
     lastFrameTime: 0,
     resizeObserver: null,
   });
-  const cinematicRef = useRef(null);
-  const chapterRefs = useRef([]);
-  const timelineRef = useRef(null);
-  const featuresRef = useRef([]);
-  const featureWrapperRef = useRef(null);
+  const cinematicRef = useRef<HTMLDivElement | null>(null);
+  const chapterRefs = useRef<(HTMLElement | null)[]>([]);
+  const timelineRef = useRef<HTMLElement | null>(null);
+  const featuresRef = useRef<(HTMLElement | null)[]>([]);
+  const featureWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const year = useMemo(() => new Date().getFullYear(), []);
 
@@ -277,6 +341,30 @@ export default function Page() {
   const heroShadowX = useTransform(heroTiltYSpring, [-8, 8], [-18, 18]);
   const heroShadowY = useTransform(heroTiltXSpring, [-8, 8], [16, -10]);
   const heroDynamicShadow = useMotionTemplate`${heroShadowX}px ${heroShadowY}px 90px rgba(0,0,0,0.46), 0 0 0 1px rgba(255,255,255,0.06) inset`;
+
+  const heroProgressBarStyle: MotionStyle = { scaleX: pageProgressSpring };
+  const heroSectionStyle: CSSProperties = {
+    "--mouse-x": "50%",
+    "--mouse-y": "44%",
+    "--mouse-x-raw": "50%",
+    "--mouse-y-raw": "44%",
+    "--hero-hover-strength": "0",
+    "--offset-x": "0px",
+    "--offset-y": "0px",
+    "--grid-x": "0px",
+    "--grid-y": "0px",
+  } as CSSProperties;
+  const heroCardStyle: MotionStyle = {
+    y: heroPanelY,
+    scale: heroPanelScale,
+    opacity: heroPanelOpacity,
+    rotateX: heroTiltXSpring,
+    rotateY: heroTiltYSpring,
+    transformPerspective: 1400,
+    boxShadow: heroDynamicShadow,
+    "--mx": heroGlowXCss,
+    "--my": heroGlowYCss,
+  } as MotionStyle;
 
   const { scrollYProgress: timelineProgress } = useScroll({
     target: timelineRef,
@@ -405,7 +493,7 @@ export default function Page() {
 
     const randomFrom = (items) => items[Math.floor(Math.random() * items.length)];
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-    const createParticle = (x, y, options = {}) => {
+    const createParticle = (x: number, y: number, options: TrailSpawnOptions = {}): TrailParticle => {
       const {
         spread = 18,
         intensity = 1,
@@ -449,7 +537,13 @@ export default function Page() {
       };
     };
 
-    const spawnTrail = (x, y, intensity = 1, speedFactor = 0.5, options = {}) => {
+    const spawnTrail = (
+      x: number,
+      y: number,
+      intensity = 1,
+      speedFactor = 0.5,
+      options: TrailSpawnOptions = {}
+    ) => {
       const speedRatio = clamp(speedFactor / 1.4, 0, 1);
       const densityScale = 1.05 - speedRatio * 0.62;
       const count = Math.max(1, Math.round(0.5 + intensity * densityScale));
@@ -532,7 +626,7 @@ export default function Page() {
       state.pointerY = null;
     };
 
-    const render = (time) => {
+    const render = (time = 0) => {
       const width = canvas.width / DPR;
       const height = canvas.height / DPR;
       const deltaTime = state.lastFrameTime ? Math.min(time - state.lastFrameTime, 32) : 16.67;
@@ -714,7 +808,7 @@ export default function Page() {
     return () => clearTimeout(timeout);
   }, [showToast]);
 
-  const validateField = (name, value) => {
+  const validateField = (name: FormField, value: string) => {
     switch (name) {
       case "name":
         if (!value.trim()) return "Nome é obrigatório.";
@@ -733,7 +827,7 @@ export default function Page() {
     }
   };
 
-  const validateForm = (data) => {
+  const validateForm = (data: FormState) => {
     const newErrors = {
       name: validateField("name", data.name),
       email: validateField("email", data.email),
@@ -747,15 +841,16 @@ export default function Page() {
     return newErrors;
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const field = name as FormField;
+    setForm((prev) => ({ ...prev, [field]: value }));
 
-    const error = validateField(name, value);
-    setErrors((prev) => ({ ...prev, [name]: error }));
+    const error = validateField(field, value);
+    setErrors((prev) => ({ ...prev, [field]: error }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formErrors = validateForm(form);
@@ -775,7 +870,7 @@ export default function Page() {
       <motion.div
         aria-hidden="true"
         className="fixed left-0 right-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-[var(--primary)] via-[var(--accent)] to-[var(--secondary)]"
-        style={{ scaleX: pageProgressSpring }}
+        style={heroProgressBarStyle}
       />
 
       <div aria-hidden="true" className="ambient-noise fixed inset-0 z-0" />
@@ -786,17 +881,7 @@ export default function Page() {
           ref={heroRef}
           className="relative min-h-[100svh] overflow-hidden cursor-default"
           aria-labelledby="hero-title"
-          style={{
-            "--mouse-x": "50%",
-            "--mouse-y": "44%",
-            "--mouse-x-raw": "50%",
-            "--mouse-y-raw": "44%",
-            "--hero-hover-strength": "0",
-            "--offset-x": "0px",
-            "--offset-y": "0px",
-            "--grid-x": "0px",
-            "--grid-y": "0px",
-          }}
+          style={heroSectionStyle}
         >
           <motion.div style={{ opacity: heroBackgroundFade }} className="hero-minimal-bg absolute inset-0" aria-hidden="true" />
           <div className="hero-color-field absolute inset-0" aria-hidden="true">
@@ -866,17 +951,7 @@ export default function Page() {
 
             <motion.div
               ref={heroCardRef}
-              style={{
-                y: heroPanelY,
-                scale: heroPanelScale,
-                opacity: heroPanelOpacity,
-                rotateX: heroTiltXSpring,
-                rotateY: heroTiltYSpring,
-                transformPerspective: 1400,
-                boxShadow: heroDynamicShadow,
-                "--mx": heroGlowXCss,
-                "--my": heroGlowYCss,
-              }}
+              style={heroCardStyle}
               className="hero-workspace-card relative overflow-hidden rounded-3xl border border-white/15 bg-[rgba(8,15,28,0.78)] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-5"
             >
               <div className="hero-card-glow absolute inset-0 pointer-events-none" aria-hidden="true" />
