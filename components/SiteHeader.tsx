@@ -90,10 +90,15 @@ export default function SiteHeader({
     spotlightBorder: dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)",
   };
 
+  const pageAccent =
+    activePath === "/software" ? "#00ff9f" :
+    activePath === "/agency"   ? "#00aaff" :
+    "#00ff9f"; // home
+
   const navItems = [
     { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
-    { label: NAV_LABELS[locale].agency, href: "/agency", activeColor: "#00aaff" },
-    { label: NAV_LABELS[locale].contact, href: "#contact", activeColor: T.navHoverText },
+    { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
+    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: true },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -185,7 +190,7 @@ export default function SiteHeader({
                     key={item.href + item.label}
                     href={item.href}
                     className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
-                    animate={{ color: activePath === item.href ? T.navHoverText : T.navText }}
+                    animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
                     style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
                     transition={{ duration: 0.4 }}
                     onMouseMove={(e) => {
@@ -198,17 +203,18 @@ export default function SiteHeader({
                     onMouseLeave={(e) => {
                       if (wasTouched()) return;
                       setNavSpotlight((p) => ({ ...p, idx: null }));
-                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                      const restColor = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
+                      (e.currentTarget as HTMLAnchorElement).style.color = restColor;
                       (e.currentTarget as HTMLAnchorElement).style.background = activePath === item.href ? T.navHoverBg : "transparent";
                     }}
                     onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
                     onTouchEnd={(e) => {
                       setNavSpotlight((p) => ({ ...p, idx: null }));
-                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                      (e.currentTarget as HTMLAnchorElement).style.color = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
                     }}
                     onTouchCancel={(e) => {
                       setNavSpotlight((p) => ({ ...p, idx: null }));
-                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                      (e.currentTarget as HTMLAnchorElement).style.color = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
                     }}
                   >
                     {spotlightSpans(navSpotlight.idx === i, navSpotlight.x, navSpotlight.y, 60)}
@@ -323,7 +329,7 @@ export default function SiteHeader({
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150"
                       style={{
-                        color: activePath === item.href ? item.activeColor : T.navText,
+                        color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? item.activeColor : T.navText),
                         background: "transparent",
                       }}
                     >
