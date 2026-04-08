@@ -72,7 +72,8 @@ function renderTyped(
   segments: Segment[],
   charCount: number,
   accentColor: string,
-  accentFontFamily?: string
+  accentFontFamily?: string,
+  accentFontSize?: string
 ): ReactNode[] {
   let remaining = charCount;
   return segments.map((seg, i) => {
@@ -88,6 +89,10 @@ function renderTyped(
       style.color = seg.color === "accent" ? accentColor : seg.color;
       if (seg.color === "accent" && accentFontFamily) {
         style.fontFamily = accentFontFamily;
+        style.fontSize = accentFontSize;
+        style.display = "inline-block";
+        style.padding = "0 0.1em";
+        style.verticalAlign = "baseline";
       }
     }
 
@@ -118,6 +123,7 @@ interface TextTypeProps {
   textColors?: string[];
   accentColor?: string;
   accentFontFamily?: string;
+  accentFontSize?: string;
   variableSpeed?: { min: number; max: number };
   onSentenceComplete?: (sentence: string, index: number) => void;
   startOnVisible?: boolean;
@@ -141,6 +147,7 @@ const TextType = ({
   textColors = [],
   accentColor = "#00ff9f",
   accentFontFamily,
+  accentFontSize = "1.25em",
   variableSpeed,
   onSentenceComplete,
   startOnVisible = false,
@@ -286,7 +293,7 @@ const TextType = ({
       ...(colorOverride ? { style: { color: colorOverride } } : {}),
       ...props,
     },
-    renderTyped(parsedArray[currentTextIndex], displayedText.length, accentColor, accentFontFamily),
+    renderTyped(parsedArray[currentTextIndex], displayedText.length, accentColor, accentFontFamily, accentFontSize),
     showCursor && (
       <span
         ref={cursorRef}
