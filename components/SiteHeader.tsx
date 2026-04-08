@@ -78,10 +78,14 @@ export default function SiteHeader({
     spotlightBorder: dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)",
   };
 
+  const contactHref = activePath && activePath !== "/contact"
+    ? `/contact?from=${activePath.slice(1)}`
+    : "/contact";
+
   const navItems = [
     { label: NAV_LABELS[locale].software, href: "/software" },
     { label: NAV_LABELS[locale].agency, href: "/agency" },
-    { label: NAV_LABELS[locale].contact, href: "#" },
+    { label: NAV_LABELS[locale].contact, href: contactHref },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
