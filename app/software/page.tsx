@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import LetterGlitch from "../../components/LetterGlitch";
+import SiteHeader from "../../components/SiteHeader";
 
 const services = [
   {
@@ -70,24 +70,7 @@ export default function SoftwarePage() {
         }}
       />
 
-      {/* Back */}
-      <motion.div
-        initial={{ opacity: 0, x: -12 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4 }}
-        className="absolute top-6 left-6 z-20"
-      >
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-          style={{ color: "rgba(224,247,250,0.45)" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          bitcraft
-        </Link>
-      </motion.div>
+      <SiteHeader activePath="/software" />
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full h-[100dvh] flex items-center justify-center">
