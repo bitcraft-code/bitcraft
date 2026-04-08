@@ -72,6 +72,7 @@ export default function SiteHeader({
     navText: dark ? "rgba(255,255,255,0.75)" : "rgba(10,25,47,0.65)",
     navHoverText: dark ? "#ffffff" : "#0a192f",
     navHoverBg: dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.10)",
+    divider: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)",
     toggleBg: dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.55)",
     toggleBorder: dark ? "1px solid rgba(255,255,255,0.28)" : "1px solid rgba(0,170,255,0.28)",
     toggleColor: dark ? "#ffffff" : "#0a192f",
@@ -87,245 +88,258 @@ export default function SiteHeader({
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
     <>
-      <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightFill}, transparent 70%)` }} />
-      <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+      <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightFill}, transparent 70%)` }} />
+      <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
     </>
   );
 
+  const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
   return (
     <>
-    <motion.header
-      initial={{ y: -16 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, delay: entranceDelay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-      className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
-    >
-      <motion.div
-        className="relative flex items-center justify-between w-full max-w-5xl px-4 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3 rounded-full"
-        animate={{ background: T.header.bg, border: T.header.border, boxShadow: T.header.shadow }}
-        transition={{ duration: 0.4 }}
-        style={{ background: T.header.bg, border: T.header.border, boxShadow: T.header.shadow, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
-        onMouseMove={(e) => {
-          if (wasTouched()) return;
-          const rect = e.currentTarget.getBoundingClientRect();
-          setHeaderMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top, hover: true });
-        }}
-        onMouseLeave={() => { if (!wasTouched()) setHeaderMouse((p) => ({ ...p, hover: false })); }}
-        onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
-        onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
-        onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
-      >
-        <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
-        <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
-
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 md:gap-3">
-          <motion.div
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0"
-            animate={{ background: T.logoBg, border: T.logoBorder }}
-            transition={{ duration: 0.4 }}
-          >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" stroke={T.logoStroke}>
-              <polyline points="16 18 22 12 16 6" />
-              <polyline points="8 6 2 12 8 18" />
-            </svg>
-          </motion.div>
-          <motion.span className="font-bold text-sm tracking-wide" animate={{ color: T.logoText }} transition={{ duration: 0.4 }}>
-            Bitcraft
-          </motion.span>
-        </Link>
-
-        {/* Nav + controls */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <nav className="hidden sm:flex items-center gap-0.5">
-            {navItems.map((item, i) => (
-              <motion.a
-                key={item.href + item.label}
-                href={item.href}
-                className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
-                animate={{ color: activePath === item.href ? T.navHoverText : T.navText }}
-                style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
-                transition={{ duration: 0.4 }}
-                onMouseMove={(e) => {
-                  if (wasTouched()) return;
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  setNavSpotlight({ idx: i, x: e.clientX - rect.left, y: e.clientY - rect.top });
-                  (e.currentTarget as HTMLAnchorElement).style.color = T.navHoverText;
-                  (e.currentTarget as HTMLAnchorElement).style.background = T.navHoverBg;
-                }}
-                onMouseLeave={(e) => {
-                  if (wasTouched()) return;
-                  setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
-                  (e.currentTarget as HTMLAnchorElement).style.background = activePath === item.href ? T.navHoverBg : "transparent";
-                }}
-                onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
-                onTouchEnd={(e) => {
-                  setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
-                }}
-                onTouchCancel={(e) => {
-                  setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
-                }}
-              >
-                {spotlightSpans(navSpotlight.idx === i, navSpotlight.x, navSpotlight.y, 60)}
-                {item.label}
-              </motion.a>
-            ))}
-          </nav>
-
-          {/* Locale toggle, only rendered when handler is provided */}
-          {onToggleLocale && (
-            <motion.button
-              onClick={onToggleLocale}
-              className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-colors duration-200"
-              animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
-              transition={{ duration: 0.4 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.93 }}
-              aria-label="Toggle language"
-              style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
-              onMouseMove={(e) => {
-                if (wasTouched()) return;
-                const rect = e.currentTarget.getBoundingClientRect();
-                setCtrlSpotlight({ id: "locale", x: e.clientX - rect.left, y: e.clientY - rect.top });
-              }}
-              onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
-              onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
-              onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-              onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-            >
-              {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
-                  {locale === "en" ? "EN" : "PT"}
-                </motion.span>
-              </AnimatePresence>
-            </motion.button>
-          )}
-
-          {/* Theme toggle, only rendered when handler is provided */}
-          {onToggleDark && (
-            <motion.button
-              onClick={onToggleDark}
-              className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-200"
-              animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
-              transition={{ duration: 0.4 }}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.93 }}
-              aria-label="Toggle theme"
-              style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
-              onMouseMove={(e) => {
-                if (wasTouched()) return;
-                const rect = e.currentTarget.getBoundingClientRect();
-                setCtrlSpotlight({ id: "theme", x: e.clientX - rect.left, y: e.clientY - rect.top });
-              }}
-              onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
-              onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
-              onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-              onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-            >
-              {spotlightSpans(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span key={dark ? "moon" : "sun"} initial={{ opacity: 0, rotate: -30, scale: 0.7 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={{ opacity: 0, rotate: 30, scale: 0.7 }} transition={{ duration: 0.2 }}>
-                  {dark ? <MoonIcon /> : <SunIcon />}
-                </motion.span>
-              </AnimatePresence>
-            </motion.button>
-          )}
-
-          {/* Hamburger — mobile only, always rightmost */}
-          <button
-            className="sm:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0 overflow-hidden"
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
-            style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
-          >
-            <span className="relative w-4 h-4 flex items-center justify-center">
-              <motion.span
-                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                animate={mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              />
-              <motion.span
-                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-                transition={{ duration: 0.15 }}
-              />
-              <motion.span
-                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                animate={mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </span>
-          </button>
-        </div>
-      </motion.div>
-    </motion.header>
-
-    {/* Mobile drawer */}
-    <AnimatePresence>
-      {mobileOpen && (
-        <>
-          {/* Backdrop */}
+      {/* Invisible backdrop to close on outside tap */}
+      <AnimatePresence>
+        {mobileOpen && (
           <motion.div
             className="fixed inset-0 z-10 sm:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+            transition={{ duration: 0.2 }}
             onClick={() => setMobileOpen(false)}
           />
-          {/* Drawer panel */}
-          <motion.div
-            className="fixed top-[72px] left-4 right-4 z-20 sm:hidden rounded-2xl overflow-hidden"
-            initial={{ opacity: 0, y: -12, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.97 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              background: T.header.bg,
-              border: T.header.border,
-              boxShadow: T.header.shadow,
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-            }}
-          >
-            <nav className="flex flex-col p-3 gap-1">
-              {navItems.map((item) => (
-                <a
-                  key={item.href + item.label}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
-                  style={{
-                    color: activePath === item.href ? T.navHoverText : T.navText,
-                    background: activePath === item.href ? T.navHoverBg : "transparent",
+        )}
+      </AnimatePresence>
+
+      <motion.header
+        initial={{ y: -16 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, delay: entranceDelay, ease: easeOut }}
+        className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
+      >
+        {/* Unified pill — expands to include mobile nav */}
+        <motion.div
+          className="relative w-full max-w-5xl overflow-hidden"
+          layout
+          animate={{
+            borderRadius: mobileOpen ? 20 : 9999,
+            background: T.header.bg,
+            border: T.header.border,
+            boxShadow: T.header.shadow,
+          }}
+          transition={{ layout: { duration: 0.35, ease: easeOut }, duration: 0.4 }}
+          style={{
+            background: T.header.bg,
+            border: T.header.border,
+            boxShadow: T.header.shadow,
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+          }}
+          onMouseMove={(e) => {
+            if (wasTouched()) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            setHeaderMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top, hover: true });
+          }}
+          onMouseLeave={() => { if (!wasTouched()) setHeaderMouse((p) => ({ ...p, hover: false })); }}
+          onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
+          onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
+          onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
+        >
+          {/* Spotlight overlay on the pill */}
+          <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
+          <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
+
+          {/* Top bar */}
+          <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2 md:gap-3">
+              <motion.div
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0"
+                animate={{ background: T.logoBg, border: T.logoBorder }}
+                transition={{ duration: 0.4 }}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" stroke={T.logoStroke}>
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+              </motion.div>
+              <motion.span className="font-bold text-sm tracking-wide" animate={{ color: T.logoText }} transition={{ duration: 0.4 }}>
+                Bitcraft
+              </motion.span>
+            </Link>
+
+            {/* Desktop nav + controls */}
+            <div className="flex items-center gap-3 sm:gap-4">
+              <nav className="hidden sm:flex items-center gap-0.5">
+                {navItems.map((item, i) => (
+                  <motion.a
+                    key={item.href + item.label}
+                    href={item.href}
+                    className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
+                    animate={{ color: activePath === item.href ? T.navHoverText : T.navText }}
+                    style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
+                    transition={{ duration: 0.4 }}
+                    onMouseMove={(e) => {
+                      if (wasTouched()) return;
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setNavSpotlight({ idx: i, x: e.clientX - rect.left, y: e.clientY - rect.top });
+                      (e.currentTarget as HTMLAnchorElement).style.color = T.navHoverText;
+                      (e.currentTarget as HTMLAnchorElement).style.background = T.navHoverBg;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (wasTouched()) return;
+                      setNavSpotlight((p) => ({ ...p, idx: null }));
+                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                      (e.currentTarget as HTMLAnchorElement).style.background = activePath === item.href ? T.navHoverBg : "transparent";
+                    }}
+                    onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
+                    onTouchEnd={(e) => {
+                      setNavSpotlight((p) => ({ ...p, idx: null }));
+                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                    }}
+                    onTouchCancel={(e) => {
+                      setNavSpotlight((p) => ({ ...p, idx: null }));
+                      (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                    }}
+                  >
+                    {spotlightSpans(navSpotlight.idx === i, navSpotlight.x, navSpotlight.y, 60)}
+                    {item.label}
+                  </motion.a>
+                ))}
+              </nav>
+
+              {onToggleLocale && (
+                <motion.button
+                  onClick={onToggleLocale}
+                  className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-colors duration-200"
+                  animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+                  transition={{ duration: 0.4 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.93 }}
+                  aria-label="Toggle language"
+                  style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
+                  onMouseMove={(e) => {
+                    if (wasTouched()) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setCtrlSpotlight({ id: "locale", x: e.clientX - rect.left, y: e.clientY - rect.top });
                   }}
+                  onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+                  onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
+                  onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+                  onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                 >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-            {onToggleLocale && (
-              <div className="px-3 pb-3">
-                <div style={{ height: "1px", background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", marginBottom: "12px" }} />
-                <button
-                  onClick={() => { onToggleLocale(); setMobileOpen(false); }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium"
-                  style={{ color: T.navText, background: "transparent" }}
+                  {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+                      {locale === "en" ? "EN" : "PT"}
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
+              )}
+
+              {onToggleDark && (
+                <motion.button
+                  onClick={onToggleDark}
+                  className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+                  animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+                  transition={{ duration: 0.4 }}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.93 }}
+                  aria-label="Toggle theme"
+                  style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+                  onMouseMove={(e) => {
+                    if (wasTouched()) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setCtrlSpotlight({ id: "theme", x: e.clientX - rect.left, y: e.clientY - rect.top });
+                  }}
+                  onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+                  onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
+                  onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+                  onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                 >
-                  <span>{locale === "en" ? "English" : "Português"}</span>
-                  <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
-                </button>
-              </div>
+                  {spotlightSpans(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span key={dark ? "moon" : "sun"} initial={{ opacity: 0, rotate: -30, scale: 0.7 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={{ opacity: 0, rotate: 30, scale: 0.7 }} transition={{ duration: 0.2 }}>
+                      {dark ? <MoonIcon /> : <SunIcon />}
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
+              )}
+
+              {/* Hamburger — mobile only, rightmost */}
+              <button
+                className="sm:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+                onClick={() => setMobileOpen((o) => !o)}
+                aria-label="Toggle menu"
+                style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+              >
+                <span className="relative w-4 h-4 flex items-center justify-center">
+                  <motion.span
+                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                    animate={mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
+                    transition={{ duration: 0.25, ease: easeOut }}
+                  />
+                  <motion.span
+                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                    animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+                    transition={{ duration: 0.15 }}
+                  />
+                  <motion.span
+                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                    animate={mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }}
+                    transition={{ duration: 0.25, ease: easeOut }}
+                  />
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile expandable nav — inside the pill */}
+          <AnimatePresence initial={false}>
+            {mobileOpen && (
+              <motion.div
+                key="mobile-nav"
+                className="sm:hidden overflow-hidden"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: easeOut }}
+              >
+                <div style={{ borderTop: `1px solid ${T.divider}`, margin: "0 12px" }} />
+                <nav className="flex flex-col p-3 gap-1 pt-2">
+                  {navItems.map((item) => (
+                    <a
+                      key={item.href + item.label}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
+                      style={{
+                        color: activePath === item.href ? T.navHoverText : T.navText,
+                        background: activePath === item.href ? T.navHoverBg : "transparent",
+                      }}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </nav>
+                {onToggleLocale && (
+                  <div className="px-3 pb-3">
+                    <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
+                    <button
+                      onClick={() => { onToggleLocale(); setMobileOpen(false); }}
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium"
+                      style={{ color: T.navText }}
+                    >
+                      <span>{locale === "en" ? "English" : "Português"}</span>
+                      <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
+                    </button>
+                  </div>
+                )}
+              </motion.div>
             )}
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </AnimatePresence>
+        </motion.div>
+      </motion.header>
     </>
   );
 }
