@@ -18,7 +18,7 @@ const fadeUp = {
 };
 
 const DARK = {
-  grainient: { color1: "#00aaff", color2: "#0a192f", color3: "#00ff9f", contrast: 1.3, gamma: 1.1, saturation: 0.9, zoom: 0.85 },
+  grainient: { color1: "#00aaff", color2: "#0d2d45", color3: "#00ff9f", contrast: 1.3, gamma: 1.1, saturation: 0.9, zoom: 0.85 },
   overlay: "rgba(6,14,28,0.38)",
   header: { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", shadow: "0 4px 24px rgba(0,0,0,0.12)" },
   logoBg: "rgba(255,255,255,0.18)", logoBorder: "1px solid rgba(255,255,255,0.25)", logoStroke: "#ffffff", logoText: "#ffffff",
@@ -76,16 +76,6 @@ export default function HomeContent() {
   const t = dark ? DARK : LIGHT;
   const copy = translations[locale];
 
-  // Ignore synthetic mouse events fired after touch
-  const wasTouched = () => Date.now() - lastTouchAt.current < 600;
-  const onTouchBegin = (setter: (x: number, y: number) => void) =>
-    (e: React.TouchEvent) => {
-      lastTouchAt.current = Date.now();
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const touch = e.touches[0];
-      setter(touch.clientX - rect.left, touch.clientY - rect.top);
-    };
-
   // Mount + browser language detection
   useEffect(() => {
     setMounted(true);
@@ -94,12 +84,25 @@ export default function HomeContent() {
 
   const toggleLocale = () => setLocale((l) => (l === "en" ? "pt" : "en"));
 
-  // Helper: spotlight position — px coords for both desktop (mouse) and mobile (touch)
+  // Guard: ignora synthetic mousemove após touchend (600ms)
+  const wasTouched = () => Date.now() - lastTouchAt.current < 600;
+
+  // Factory: touch handler que atualiza posição do spotlight
+  const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
+    lastTouchAt.current = Date.now();
+    const touch = e.touches[0];
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setter(touch.clientX - rect.left, touch.clientY - rect.top);
+  };
+
+  // Transition helper: aparece rápido, desaparece devagar
+  const spT = (active: boolean) => active ? "opacity 0.12s ease" : "opacity 0.8s ease";
+
+  // Helper: spotlight position string
   const sp = (hover: boolean, x: number, y: number) => ({
     active: hover,
     pos: `${x}px ${y}px`,
   });
-  const spT = (active: boolean) => active ? "opacity 0.12s ease" : "opacity 0.8s ease";
 
   const navItems = [
     { label: copy.nav.software, href: "/software" },
@@ -108,7 +111,7 @@ export default function HomeContent() {
   ];
 
   return (
-    <main className="relative min-h-[100dvh] flex flex-col select-none">
+    <main className="relative min-h-[100dvh] flex flex-col select-none overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         {/* CSS gradient fallback — sempre visível quando WebGL falha (mobile) */}
@@ -120,7 +123,7 @@ export default function HomeContent() {
               ? `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.35) 0%, transparent 55%),
                  radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,255,159,0.25) 0%, transparent 55%),
                  radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,100,200,0.15) 0%, transparent 70%),
-                 #0a192f`
+                 #0d2d45`
               : `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.30) 0%, transparent 55%),
                  radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,204,136,0.20) 0%, transparent 55%),
                  #e8f7ff`,
@@ -189,7 +192,7 @@ export default function HomeContent() {
             setHeaderMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top, hover: true });
           }}
           onMouseLeave={() => { if (!wasTouched()) setHeaderMouse((p) => ({ ...p, hover: false })); }}
-          onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ x, y, hover: true }))}
+          onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
           onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
           onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
         >
@@ -198,8 +201,8 @@ export default function HomeContent() {
             className="absolute inset-0 rounded-full pointer-events-none overflow-hidden"
             style={{
               opacity: headerMouse.hover ? 1 : 0,
-              transition: spT(headerMouse.hover),
-              background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)`,
+              transition: "opacity 0.3s ease",
+              background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,0.10)" : "rgba(0,170,255,0.10)"}, transparent 70%)`,
             }}
           />
           {/* Border spotlight */}
@@ -207,14 +210,13 @@ export default function HomeContent() {
             className="absolute inset-0 rounded-full pointer-events-none"
             style={{
               opacity: headerMouse.hover ? 1 : 0,
-              transition: spT(headerMouse.hover),
-              background: `radial-gradient(circle 150px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`,
+              transition: "opacity 0.3s ease",
+              background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`,
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               WebkitMaskComposite: "xor",
               mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               maskComposite: "exclude",
-              filter: "blur(1px)",
-              padding: "1px",
+              padding: "2px",
             }}
           />
           {/* Logo */}
@@ -261,17 +263,27 @@ export default function HomeContent() {
                     (e.currentTarget as HTMLAnchorElement).style.color = t.navText;
                     (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
                   }}
-                  onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
-                  onTouchEnd={() => setNavSpotlight((p) => ({ ...p, idx: null }))}
-                  onTouchCancel={() => setNavSpotlight((p) => ({ ...p, idx: null }))}
+                  onTouchStart={onTouchBegin((x, y) => {
+                    setNavSpotlight({ idx: i, x, y });
+                  })}
+                  onTouchEnd={(e) => {
+                    setNavSpotlight((p) => ({ ...p, idx: null }));
+                    (e.currentTarget as HTMLAnchorElement).style.color = t.navText;
+                    (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                  }}
+                  onTouchCancel={(e) => {
+                    setNavSpotlight((p) => ({ ...p, idx: null }));
+                    (e.currentTarget as HTMLAnchorElement).style.color = t.navText;
+                    (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                  }}
                 >
                   {/* Fill spotlight */}
                   <span
                     className="absolute inset-0 rounded-full pointer-events-none overflow-hidden"
                     style={{
                       opacity: navSpotlight.idx === i ? 1 : 0,
-                      transition: spT(navSpotlight.idx === i),
-                      background: `radial-gradient(circle 60px at ${navSpotlight.x}px ${navSpotlight.y}px, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)`,
+                      transition: "opacity 0.3s ease",
+                      background: `radial-gradient(circle 60px at ${navSpotlight.x}px ${navSpotlight.y}px, ${dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.12)"}, transparent 70%)`,
                     }}
                   />
                   {/* Border spotlight */}
@@ -279,14 +291,13 @@ export default function HomeContent() {
                     className="absolute inset-0 rounded-full pointer-events-none"
                     style={{
                       opacity: navSpotlight.idx === i ? 1 : 0,
-                      transition: spT(navSpotlight.idx === i),
-                      background: `radial-gradient(circle 80px at ${navSpotlight.x}px ${navSpotlight.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`,
+                      transition: "opacity 0.3s ease",
+                      background: `radial-gradient(circle 60px at ${navSpotlight.x}px ${navSpotlight.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`,
                       WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       WebkitMaskComposite: "xor",
                       mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       maskComposite: "exclude",
-                      filter: "blur(1px)",
-                      padding: "1px",
+                      padding: "1.5px",
                     }}
                   />
                   {item.label}
@@ -315,8 +326,8 @@ export default function HomeContent() {
               onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
             >
               {(() => { const s = sp(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y); return (<>
-              <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)` }} />
-              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.12)"}, transparent 70%)` }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
               </>); })()}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -352,8 +363,8 @@ export default function HomeContent() {
               onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
             >
               {(() => { const s = sp(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y); return (<>
-              <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)` }} />
-              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.12)"}, transparent 70%)` }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
               </>); })()}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -372,7 +383,7 @@ export default function HomeContent() {
       </motion.header>
 
       {/* ── Hero ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-8 pt-4 sm:px-6 sm:pb-16 sm:pt-8 gap-4 sm:gap-6 md:gap-8">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-8 pt-4 sm:px-6 sm:pb-16 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -386,7 +397,10 @@ export default function HomeContent() {
           viewport={{ once: true }}
           style={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
         >
-          <motion.span className="w-2 h-2 rounded-full shrink-0" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+          <span className="relative flex shrink-0 w-2 h-2">
+            <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+            <motion.span className="relative inline-flex w-2 h-2 rounded-full" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+          </span>
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
               key={locale + "-badge"}
@@ -406,7 +420,7 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="text-3xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-black leading-[1.1] tracking-tight flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3 gap-y-2"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight flex flex-wrap items-baseline justify-center gap-x-2 sm:gap-x-3 gap-y-2 max-w-full px-4"
           style={{ fontFamily: "var(--font-manrope)" }}
         >
           <LayoutGroup id="hero-heading">
@@ -416,7 +430,7 @@ export default function HomeContent() {
           <RotatingText
             key={locale}
             texts={copy.rotatingTexts}
-            mainClassName={`px-2 sm:px-3 md:px-4 py-1 sm:py-2 md:py-3 justify-center rounded-lg backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.08] text-white border border-white/[0.18]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
+            mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.08] text-white border border-white/[0.18]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
               if (wasTouched()) return;
               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -427,17 +441,17 @@ export default function HomeContent() {
             onTouchEnd={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
             onTouchCancel={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
             overlay={(() => { const s = sp(pillSpotlight.hover, pillSpotlight.x, pillSpotlight.y); return (<>
-                <span className="absolute inset-0 rounded-lg pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 160px at ${s.pos}, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)` }} />
-                <span className="absolute inset-0 rounded-lg pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 190px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+                <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, ${dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.12)"}, transparent 70%)` }} />
+                <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
               </>); })()}
             staggerFrom="last"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-120%" }}
-            staggerDuration={0.025}
-            splitLevelClassName="overflow-hidden pb-1 sm:pb-1.5 md:pb-2"
-            transition={{ type: "spring", damping: 30, stiffness: 400 }}
-            rotationInterval={2000}
+            staggerDuration={0.015}
+            splitLevelClassName="overflow-hidden"
+            transition={{ type: "tween", duration: 0.25, ease: "easeInOut" }}
+            rotationInterval={3000}
           />
           </LayoutGroup>
         </motion.h1>
@@ -448,7 +462,7 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="text-sm sm:text-xl md:text-2xl lg:text-3xl max-w-2xl leading-relaxed font-medium"
+          className="text-sm sm:text-base md:text-lg lg:text-xl max-w-xl leading-relaxed font-medium text-balance"
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -459,14 +473,10 @@ export default function HomeContent() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.25 }}
             >
-              <ShinyText
-                text={copy.subtitle}
-                speed={4}
-                delay={1}
-                spread={100}
-                color={dark ? "rgba(255,255,255,0.65)" : "rgba(10,25,47,0.60)"}
-                shineColor={dark ? "#ffffff" : "#0a192f"}
-              />
+              <motion.span
+                animate={{ color: dark ? "rgba(255,255,255,0.65)" : "rgba(10,25,47,0.60)" }}
+                transition={{ duration: 0.4 }}
+              >{copy.subtitle}</motion.span>
             </motion.span>
           </AnimatePresence>
         </motion.p>
@@ -477,11 +487,11 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="flex flex-col sm:flex-row items-center gap-3"
+          className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6"
         >
           <motion.a
             href="/software"
-            className="relative w-full sm:w-auto px-7 py-3 sm:px-10 sm:py-4 rounded-full text-base sm:text-lg font-bold text-center overflow-hidden"
+            className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center overflow-hidden"
             animate={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow }}
             transition={{ duration: 0.4 }}
             style={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow }}
@@ -498,15 +508,15 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 55px at ${s.pos}, ${dark ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.30)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(0,0,0,1)" : "rgba(255,255,255,1)"} 0%, transparent 65%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1.5px)", padding: "2px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,170,255,0.25)" : "rgba(255,255,255,0.35)"}, transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,150,255,1)" : "rgba(255,255,255,0.9)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
             </>); })()}
             {copy.btnSoftware}
           </motion.a>
 
           <motion.a
             href="/agency"
-            className="relative w-full sm:w-auto px-7 py-3 sm:px-10 sm:py-4 rounded-full text-base sm:text-lg font-bold text-center"
+            className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center"
             animate={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color }}
             transition={{ duration: 0.4 }}
             style={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
@@ -523,8 +533,8 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "agency", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 55px at ${s.pos}, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(255,255,255,0.10)" : "rgba(0,170,255,0.10)"}, transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
             </>); })()}
             {copy.btnAgency}
           </motion.a>
@@ -535,7 +545,7 @@ export default function HomeContent() {
       <footer className="relative z-10 w-full px-4 pb-4 pt-2 sm:px-6 sm:pb-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
           <motion.span
-            className="text-xs sm:text-base font-bold"
+            className="text-xs font-medium"
             animate={{ color: t.subtitle }}
             transition={{ duration: 0.4 }}
           >
@@ -551,7 +561,7 @@ export default function HomeContent() {
               <motion.a
                 key={item.label}
                 href={item.href}
-                className="text-xs sm:text-lg font-semibold transition-opacity duration-200 hover:opacity-100"
+                className="text-xs font-medium transition-opacity duration-200 hover:opacity-100"
                 animate={{ color: t.subtitle, opacity: 0.7 }}
                 transition={{ duration: 0.4 }}
                 whileHover={{ opacity: 1 }}
