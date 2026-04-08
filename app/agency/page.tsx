@@ -122,7 +122,7 @@ export default function AgencyPage() {
             initialDelay={400}
             loop
             showCursor
-            cursorCharacter="_"
+            cursorCharacter="|"
             cursorClassName="text-[#00aaff]"
             accentColor="#00aaff"
             accentFontFamily="var(--font-caveat)"
