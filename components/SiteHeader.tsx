@@ -113,7 +113,9 @@ export default function SiteHeader({
 
   const mobileNavItems = [
     { label: NAV_LABELS[locale].home,     href: "/",         activeColor: "#00ff9f" },
-    ...navItems,
+    { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
+    { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
+    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
