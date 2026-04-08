@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import LetterGlitch from "../../components/LetterGlitch";
+import FaultyTerminal from "../../components/FaultyTerminal";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
@@ -140,12 +140,15 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="relative w-full h-[100dvh] flex items-center justify-center">
         <div className="absolute inset-0">
-          <LetterGlitch
-            glitchColors={["#130e04", ACCENT, ACCENT_DARK]}
-            glitchSpeed={60}
-            outerVignette
-            centerVignette
-            smooth
+          <FaultyTerminal
+            tint={ACCENT}
+            mouseReact
+            curvature={0.1}
+            scanlineIntensity={1.2}
+            glitchAmount={1.2}
+            noiseAmp={0.8}
+            brightness={0.7}
+            pageLoadAnimation
           />
         </div>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
