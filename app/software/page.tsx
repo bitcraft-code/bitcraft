@@ -11,13 +11,13 @@ import { detectLocale, type Locale } from "../../lib/translations";
 const TYPING_TEXTS: Record<Locale, string[]> = {
   en: [
     "Your next product will [[dominate|accent,bold]] the market.",
-    "AI that works while [[you|accent]] sleep.",
-    "From zero to scalable in [[record time|accent,bold]].",
+    "AI that [[works|accent,bold]] while you [[sleep|accent,bold]].",
+    "From [[zero|accent,bold]] to scalable in [[record time|accent,bold]].",
   ],
   pt: [
     "Seu próximo produto vai [[dominar|accent,bold]] o mercado.",
-    "IA que trabalha enquanto [[você|accent]] dorme.",
-    "Do zero ao escalável em [[tempo recorde|accent,bold]].",
+    "IA que [[trabalha|accent,bold]] enquanto você [[dorme|accent,bold]].",
+    "Do [[zero|accent,bold]] ao escalável em [[tempo recorde|accent,bold]].",
   ],
 };
 
