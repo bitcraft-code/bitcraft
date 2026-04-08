@@ -121,13 +121,13 @@ export default function SiteHeader({
         <motion.div
           className="relative w-full max-w-5xl overflow-hidden"
           animate={{
-            borderRadius: mobileOpen ? 20 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
           }}
-          transition={{ borderRadius: { duration: 0.3, ease: easeOut }, duration: 0.4 }}
+          transition={{ duration: 0.4 }}
           style={{
+            borderRadius: 90,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
