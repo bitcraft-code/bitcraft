@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactForm, { type ContactVariant } from "@/components/ContactForm";
-import { detectLocale, type Locale } from "@/lib/translations";
+import { detectLocale, saveLocale, type Locale } from "@/lib/translations";
 
 const HEADINGS: Record<Locale, Record<ContactVariant, string>> = {
   en: {
@@ -86,7 +86,7 @@ export default function ContactPageClient() {
         }}
       />
 
-      <SiteHeader activePath="/contact" locale={locale} onToggleLocale={() => setLocale(l => l === "en" ? "pt" : "en")} />
+      <SiteHeader activePath="/contact" locale={locale} onToggleLocale={() => setLocale(l => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
 
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-5 sm:px-6 pb-16 pt-8 gap-10">
         <motion.div

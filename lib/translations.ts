@@ -31,8 +31,17 @@ export const translations = {
   },
 } satisfies Record<Locale, unknown>;
 
+const LOCALE_KEY = 'bitcraft_locale';
+
+export function saveLocale(locale: Locale): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(LOCALE_KEY, locale);
+}
+
 export function detectLocale(): Locale {
   if (typeof window === 'undefined') return 'en';
+  const saved = localStorage.getItem(LOCALE_KEY) as Locale | null;
+  if (saved === 'en' || saved === 'pt') return saved;
   const lang = navigator.language ?? navigator.languages?.[0] ?? 'en';
   return lang.toLowerCase().startsWith('pt') ? 'pt' : 'en';
 }

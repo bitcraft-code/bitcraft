@@ -7,7 +7,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
-import { detectLocale, type Locale } from "../../lib/translations";
+import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
   en: [
@@ -103,7 +103,7 @@ export default function SoftwarePage() {
         }}
       />
 
-      <SiteHeader activePath="/software" locale={locale} onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))} />
+      <SiteHeader activePath="/software" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full h-[100dvh] flex items-center justify-center">

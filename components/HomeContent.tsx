@@ -7,7 +7,7 @@ import RotatingText from "../components/RotatingText";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import ContactSection from "../components/ContactSection";
-import { translations, detectLocale, type Locale } from "../lib/translations";
+import { translations, detectLocale, saveLocale, type Locale } from "../lib/translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -136,7 +136,7 @@ export default function HomeContent() {
         dark={dark}
         locale={locale}
         onToggleDark={() => setDark((d) => !d)}
-        onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))}
+        onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })}
       />
 
       {/* ── Hero ── */}
