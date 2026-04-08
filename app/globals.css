@@ -23,9 +23,6 @@ html {
   --surface: rgba(255, 255, 255, 0.72);
 }
 
-* {
-  scroll-behavior: smooth;
-}
 
 html,
 body {

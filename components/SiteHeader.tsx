@@ -10,6 +10,14 @@ const NAV_LABELS: Record<Locale, { software: string; agency: string; contact: st
   pt: { software: "Software", agency: "Agency", contact: "Contato" },
 };
 
+function scrollToCenter(selector: string) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const top = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
 function SunIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -191,7 +199,7 @@ export default function SiteHeader({
                     href={item.href.startsWith('#') ? undefined : item.href}
                     onClick={item.href.startsWith('#') ? (e) => {
                       e.preventDefault();
-                      document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      scrollToCenter(item.href);
                     } : undefined}
                     className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
                     animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
@@ -335,7 +343,7 @@ export default function SiteHeader({
                           e.preventDefault();
                           setMobileOpen(false);
                           setTimeout(() => {
-                            document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            scrollToCenter(item.href);
                           }, 320);
                         } else {
                           setMobileOpen(false);
