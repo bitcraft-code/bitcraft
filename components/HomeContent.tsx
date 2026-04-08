@@ -498,7 +498,7 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,170,255,0.45)" : "rgba(255,255,255,0.50)"}, transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.30)"}, transparent 70%)` }} />
             <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 100px at ${s.pos}, ${dark ? "rgba(0,180,255,1)" : "rgba(255,255,255,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
             </>); })()}
             {copy.btnSoftware}
