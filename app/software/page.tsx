@@ -83,7 +83,12 @@ const fadeUp = {
 
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
+  const [glitchSpeed, setGlitchSpeed] = useState(8);
   useEffect(() => { setLocale(detectLocale()); }, []);
+  useEffect(() => {
+    const t = setTimeout(() => setGlitchSpeed(60), 2200);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <main className="relative flex flex-col overflow-hidden">
@@ -109,14 +114,14 @@ export default function SoftwarePage() {
         <div className="absolute inset-0">
           <LetterGlitch
             glitchColors={["#07130f", "#00ff9f", "#00b870"]}
-            glitchSpeed={60}
+            glitchSpeed={glitchSpeed}
             outerVignette
             centerVignette
             smooth
           />
         </div>
         {/* Extra vignette for text legibility */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <TextType
             as="h1"
@@ -130,7 +135,7 @@ export default function SoftwarePage() {
             cursorCharacter="_"
             cursorClassName="text-[#00ff9f]"
             accentFontFamily="var(--font-caveat)"
-            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none"
+            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight"
           />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -186,7 +191,7 @@ export default function SoftwarePage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none"
+            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-tight"
           >
             <span className="text-white">Bitcraft </span>
             <span style={{
@@ -268,7 +273,7 @@ export default function SoftwarePage() {
         </motion.div>
       </div>
 
-      <SiteFooter />
+      <SiteFooter locale={locale} />
     </main>
   );
 }
