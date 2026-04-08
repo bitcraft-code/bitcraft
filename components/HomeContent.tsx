@@ -23,7 +23,7 @@ const DARK = {
   header: { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", shadow: "0 4px 24px rgba(0,0,0,0.12)" },
   logoBg: "rgba(255,255,255,0.18)", logoBorder: "1px solid rgba(255,255,255,0.25)", logoStroke: "#ffffff", logoText: "#ffffff",
   navText: "rgba(255,255,255,0.75)", navHoverText: "#ffffff", navHoverBg: "rgba(255,255,255,0.12)",
-  badge: { bg: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.28)", color: "#ffffff", dot: "#ffffff" },
+  badge: { bg: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.28)", color: "#ffffff", dot: "#00ff9f" },
   heading: "#ffffff", subtitle: "rgba(255,255,255,0.75)",
   btnPrimary: { bg: "#ffffff", color: "#0a192f", shadow: "0 2px 20px rgba(255,255,255,0.25)" },
   btnSecondary: { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", color: "#ffffff" },
