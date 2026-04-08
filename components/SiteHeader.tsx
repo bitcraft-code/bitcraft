@@ -175,30 +175,6 @@ export default function SiteHeader({
             ))}
           </nav>
 
-          {/* Hamburger — mobile only */}
-          <button
-            className="sm:hidden relative flex flex-col items-center justify-center w-8 h-8 rounded-full gap-[5px] shrink-0"
-            onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
-            style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
-          >
-            <motion.span
-              className="block h-[1.5px] w-4 rounded-full bg-current origin-center"
-              animate={mobileOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.22 }}
-            />
-            <motion.span
-              className="block h-[1.5px] w-4 rounded-full bg-current"
-              animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-              transition={{ duration: 0.18 }}
-            />
-            <motion.span
-              className="block h-[1.5px] w-4 rounded-full bg-current origin-center"
-              animate={mobileOpen ? { rotate: -45, y: -3 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.22 }}
-            />
-          </button>
-
           {/* Locale toggle, only rendered when handler is provided */}
           {onToggleLocale && (
             <motion.button
@@ -258,6 +234,32 @@ export default function SiteHeader({
               </AnimatePresence>
             </motion.button>
           )}
+
+          {/* Hamburger — mobile only, always rightmost */}
+          <button
+            className="sm:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0 overflow-hidden"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+            style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          >
+            <span className="relative w-4 h-4 flex items-center justify-center">
+              <motion.span
+                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                animate={mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              />
+              <motion.span
+                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+                transition={{ duration: 0.15 }}
+              />
+              <motion.span
+                className="absolute block h-[1.5px] w-4 rounded-full bg-current"
+                animate={mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </span>
+          </button>
         </div>
       </motion.div>
     </motion.header>
@@ -284,11 +286,11 @@ export default function SiteHeader({
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             style={{
-              background: dark ? "rgba(10,15,30,0.88)" : "rgba(255,255,255,0.88)",
+              background: T.header.bg,
               border: T.header.border,
+              boxShadow: T.header.shadow,
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.3)",
             }}
           >
             <nav className="flex flex-col p-3 gap-1">
