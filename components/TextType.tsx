@@ -93,6 +93,7 @@ function renderTyped(
         style.display = "inline-block";
         style.padding = "0 0.1em";
         style.verticalAlign = "baseline";
+        style.lineHeight = "1";
       }
     }
 
@@ -147,7 +148,7 @@ const TextType = ({
   textColors = [],
   accentColor = "#00ff9f",
   accentFontFamily,
-  accentFontSize = "1.25em",
+  accentFontSize = "1.45em",
   variableSpeed,
   onSentenceComplete,
   startOnVisible = false,
