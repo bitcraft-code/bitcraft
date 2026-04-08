@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
+import TextType from "../../components/TextType";
 
 const services = [
   {
@@ -87,22 +88,19 @@ export default function SoftwarePage() {
         {/* Extra vignette for text legibility */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-none"
-          >
-            Pronto para{" "}
-            <span style={{
-              backgroundImage: "linear-gradient(92deg, #00ff9f, #00d47a)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}>
-              construir?
-            </span>
-          </motion.h1>
+          <TextType
+            as="h1"
+            text={["Pronto para construir?", "Vamos criar algo incrível.", "Engenharia de alto nível."]}
+            typingSpeed={55}
+            deletingSpeed={30}
+            pauseDuration={2500}
+            initialDelay={400}
+            loop
+            showCursor
+            cursorCharacter="|"
+            cursorClassName="text-[#00ff9f]"
+            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none"
+          />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
