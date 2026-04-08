@@ -9,8 +9,8 @@ import TextType from "../../components/TextType";
 import { detectLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
-  en: ["Welcome to [[BitCraft|accent,bold,underline]]!", "Good to see you!", "Let's build some amazing experiences!"],
-  pt: ["Bem-vindo à [[BitCraft|accent,bold,underline]]!", "Que bom ter você aqui!", "Vamos criar experiências incríveis!"],
+  en: ["Welcome to [[BitCraft|accent,bold,underline]]!", "Good to see [[you|accent]]!", "Let's build some amazing [[experiences|accent]]!"],
+  pt: ["Bem-vindo à [[BitCraft|accent,bold,underline]]!", "Que bom ter [[você|accent]] aqui!", "Vamos criar [[experiências|accent]] incríveis!"],
 };
 
 const services = [
@@ -109,6 +109,7 @@ export default function SoftwarePage() {
             showCursor
             cursorCharacter="_"
             cursorClassName="text-[#00ff9f]"
+            accentFontFamily="var(--font-caveat)"
             className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none"
           />
           <motion.p

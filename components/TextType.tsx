@@ -71,7 +71,8 @@ function plainText(segments: Segment[]): string {
 function renderTyped(
   segments: Segment[],
   charCount: number,
-  accentColor: string
+  accentColor: string,
+  accentFontFamily?: string
 ): ReactNode[] {
   let remaining = charCount;
   return segments.map((seg, i) => {
@@ -83,7 +84,12 @@ function renderTyped(
     const style: React.CSSProperties = {};
     if (seg.bold) style.fontWeight = 900;
     if (seg.underline) style.textDecoration = "underline";
-    if (seg.color) style.color = seg.color === "accent" ? accentColor : seg.color;
+    if (seg.color) {
+      style.color = seg.color === "accent" ? accentColor : seg.color;
+      if (seg.color === "accent" && accentFontFamily) {
+        style.fontFamily = accentFontFamily;
+      }
+    }
 
     return (
       <span key={i} style={style}>
@@ -111,6 +117,7 @@ interface TextTypeProps {
   loop?: boolean;
   textColors?: string[];
   accentColor?: string;
+  accentFontFamily?: string;
   variableSpeed?: { min: number; max: number };
   onSentenceComplete?: (sentence: string, index: number) => void;
   startOnVisible?: boolean;
@@ -133,6 +140,7 @@ const TextType = ({
   cursorBlinkDuration = 0.5,
   textColors = [],
   accentColor = "#00ff9f",
+  accentFontFamily,
   variableSpeed,
   onSentenceComplete,
   startOnVisible = false,
@@ -278,7 +286,7 @@ const TextType = ({
       ...(colorOverride ? { style: { color: colorOverride } } : {}),
       ...props,
     },
-    renderTyped(parsedArray[currentTextIndex], displayedText.length, accentColor),
+    renderTyped(parsedArray[currentTextIndex], displayedText.length, accentColor, accentFontFamily),
     showCursor && (
       <span
         ref={cursorRef}
