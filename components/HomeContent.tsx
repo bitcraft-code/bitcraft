@@ -6,6 +6,7 @@ import Grainient from "../components/Grainient";
 import RotatingText from "../components/RotatingText";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import ContactSection from "../components/ContactSection";
 import { translations, detectLocale, type Locale } from "../lib/translations";
 
 const fadeUp = {
@@ -138,7 +139,7 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[100dvh] px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -295,6 +296,9 @@ export default function HomeContent() {
           </motion.a>
         </motion.div>
       </div>
+
+      {/* ── Contact ── */}
+      <ContactSection variant="default" locale={locale} />
 
       {/* ── Footer ── */}
       <SiteFooter dark={dark} locale={locale} />

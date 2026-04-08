@@ -6,6 +6,7 @@ import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
+import ContactSection from "../../components/ContactSection";
 import { detectLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
@@ -86,7 +87,7 @@ export default function SoftwarePage() {
   useEffect(() => { setLocale(detectLocale()); }, []);
 
   return (
-    <main className="relative flex flex-col overflow-hidden">
+    <main className="relative flex flex-col overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{
         background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,255,159,0.10) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(255,215,0,0.07) 0%, transparent 60%), linear-gradient(180deg, #07130f 0%, #091a14 100%)",
@@ -267,6 +268,8 @@ export default function SoftwarePage() {
           ))}
         </motion.div>
       </div>
+
+      <ContactSection variant="software" locale={locale} />
 
       <SiteFooter locale={locale} />
     </main>
