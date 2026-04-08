@@ -120,14 +120,13 @@ export default function SiteHeader({
         {/* Unified pill — expands to include mobile nav */}
         <motion.div
           className="relative w-full max-w-5xl overflow-hidden"
-          layout
           animate={{
             borderRadius: mobileOpen ? 20 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
           }}
-          transition={{ layout: { duration: 0.35, ease: easeOut }, duration: 0.4 }}
+          transition={{ borderRadius: { duration: 0.3, ease: easeOut }, duration: 0.4 }}
           style={{
             background: T.header.bg,
             border: T.header.border,
@@ -312,7 +311,7 @@ export default function SiteHeader({
                       key={item.href + item.label}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
+                      className="flex items-center justify-end px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
                       style={{
                         color: activePath === item.href ? T.navHoverText : T.navText,
                         background: activePath === item.href ? T.navHoverBg : "transparent",
@@ -327,11 +326,11 @@ export default function SiteHeader({
                     <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
                     <button
                       onClick={() => { onToggleLocale(); setMobileOpen(false); }}
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium"
+                      className="w-full flex items-center justify-end gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                       style={{ color: T.navText }}
                     >
-                      <span>{locale === "en" ? "English" : "Português"}</span>
                       <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
+                      <span>{locale === "en" ? "English" : "Português"}</span>
                     </button>
                   </div>
                 )}
