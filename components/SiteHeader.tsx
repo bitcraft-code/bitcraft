@@ -34,6 +34,7 @@ type Props = {
   dark?: boolean;
   locale?: Locale;
   activePath?: string;
+  entranceDelay?: number;
   onToggleDark?: () => void;
   onToggleLocale?: () => void;
 };
@@ -42,6 +43,7 @@ export default function SiteHeader({
   dark = true,
   locale = "en",
   activePath,
+  entranceDelay = 0,
   onToggleDark,
   onToggleLocale,
 }: Props) {
@@ -93,7 +95,7 @@ export default function SiteHeader({
     <motion.header
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+      transition={{ duration: 0.5, delay: entranceDelay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
     >
       <motion.div
