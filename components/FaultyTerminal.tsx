@@ -276,9 +276,14 @@ export default function FaultyTerminal({
   const loadAnimationStartRef = useRef<number>(0);
   const timeOffsetRef = useRef<number>(Math.random() * 100);
 
-  const resolvedDpr = useMemo(() => dpr ?? Math.min((typeof window !== 'undefined' ? window.devicePixelRatio : 1) || 1, 2), [dpr]);
+  // Resolve dpr inside the component body to avoid SSR errors with window
+  const resolvedDpr = useMemo(
+    () => dpr ?? Math.min(window.devicePixelRatio || 1, 2),
+    [dpr]
+  );
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
+
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -310,6 +315,7 @@ export default function FaultyTerminal({
           value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
         },
         uScale: { value: scale },
+
         uGridMul: { value: new Float32Array(gridMul) },
         uDigitSize: { value: digitSize },
         uScanlineIntensity: { value: scanlineIntensity },
@@ -320,13 +326,15 @@ export default function FaultyTerminal({
         uDither: { value: ditherValue },
         uCurvature: { value: curvature },
         uTint: { value: new Color(tintVec[0], tintVec[1], tintVec[2]) },
-        uMouse: { value: new Float32Array([smoothMouseRef.current.x, smoothMouseRef.current.y]) },
+        uMouse: {
+          value: new Float32Array([smoothMouseRef.current.x, smoothMouseRef.current.y])
+        },
         uMouseStrength: { value: mouseStrength },
         uUseMouse: { value: mouseReact ? 1 : 0 },
         uPageLoadProgress: { value: pageLoadAnimation ? 0 : 1 },
         uUsePageLoadAnimation: { value: pageLoadAnimation ? 1 : 0 },
-        uBrightness: { value: brightness },
-      },
+        uBrightness: { value: brightness }
+      }
     });
     programRef.current = program;
 
@@ -374,6 +382,7 @@ export default function FaultyTerminal({
         const mouse = mouseRef.current;
         smoothMouse.x += (mouse.x - smoothMouse.x) * dampingFactor;
         smoothMouse.y += (mouse.y - smoothMouse.y) * dampingFactor;
+
         const mouseUniform = program.uniforms.uMouse.value as Float32Array;
         mouseUniform[0] = smoothMouse.x;
         mouseUniform[1] = smoothMouse.y;
@@ -396,18 +405,28 @@ export default function FaultyTerminal({
       timeOffsetRef.current = Math.random() * 100;
     };
   }, [
-    resolvedDpr, pause, timeScale, scale, gridMul, digitSize,
-    scanlineIntensity, glitchAmount, flickerAmount, noiseAmp,
-    chromaticAberration, ditherValue, curvature, tintVec,
-    mouseReact, mouseStrength, pageLoadAnimation, brightness, handleMouseMove,
+    resolvedDpr,
+    pause,
+    timeScale,
+    scale,
+    gridMul,
+    digitSize,
+    scanlineIntensity,
+    glitchAmount,
+    flickerAmount,
+    noiseAmp,
+    chromaticAberration,
+    ditherValue,
+    curvature,
+    tintVec,
+    mouseReact,
+    mouseStrength,
+    pageLoadAnimation,
+    brightness,
+    handleMouseMove
   ]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`w-full h-full relative overflow-hidden ${className ?? ''}`}
-      style={style}
-      {...rest}
-    />
+    <div ref={containerRef} className={`w-full h-full relative overflow-hidden ${className ?? ''}`} style={style} {...rest} />
   );
 }
