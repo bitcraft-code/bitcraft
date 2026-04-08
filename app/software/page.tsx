@@ -56,14 +56,14 @@ export default function SoftwarePage() {
     <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{
-        background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,170,255,0.14) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0,170,255,0.08) 0%, transparent 60%), linear-gradient(180deg, #080f1e 0%, #0a192f 100%)",
+        background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,255,159,0.10) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(255,215,0,0.07) 0%, transparent 60%), linear-gradient(180deg, #07130f 0%, #091a14 100%)",
       }} />
       <div className="absolute inset-0 ambient-noise" />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0,170,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0,170,255,0.07) 1px, transparent 1px)",
+            "linear-gradient(rgba(0,255,159,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,159,0.05) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
           maskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
         }}
@@ -100,9 +100,9 @@ export default function SoftwarePage() {
             variants={fadeUp}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase"
             style={{
-              background: "rgba(0,170,255,0.08)",
-              border: "1px solid rgba(0,170,255,0.22)",
-              color: "var(--primary)",
+              background: "rgba(0,255,159,0.07)",
+              border: "1px solid rgba(0,255,159,0.2)",
+              color: "var(--accent)",
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
@@ -118,7 +118,7 @@ export default function SoftwarePage() {
           >
             <span className="text-white">Bitcraft </span>
             <span style={{
-              backgroundImage: "linear-gradient(92deg, #00aaff, #00d4ff)",
+              backgroundImage: "linear-gradient(92deg, #00ff9f, #00d47a)",
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
               color: "transparent",
@@ -147,9 +147,9 @@ export default function SoftwarePage() {
             href="mailto:software@bitcraft.dev.br"
             className="cta-ripple mt-2 px-7 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300"
             style={{
-              background: "linear-gradient(135deg, var(--primary), #0090d4)",
-              color: "#fff",
-              boxShadow: "0 0 24px rgba(0,170,255,0.3)",
+              background: "linear-gradient(135deg, var(--accent), #00b870)",
+              color: "#05120d",
+              boxShadow: "0 0 24px rgba(0,255,159,0.25)",
             }}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
@@ -175,14 +175,14 @@ export default function SoftwarePage() {
               variants={fadeUp}
               className="flex gap-4 items-start rounded-xl p-5 text-left"
               style={{
-                background: "rgba(14,34,56,0.55)",
-                border: "1px solid rgba(0,170,255,0.12)",
+                background: "rgba(7,22,14,0.65)",
+                border: "1px solid rgba(0,255,159,0.1)",
                 backdropFilter: "blur(12px)",
               }}
             >
               <div
                 className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(0,170,255,0.1)", color: "var(--primary)" }}
+                style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)" }}
               >
                 {s.icon}
               </div>
