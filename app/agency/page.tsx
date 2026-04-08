@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
+import { detectLocale, type Locale } from "../../lib/translations";
 
 const services = [
   {
@@ -53,6 +55,9 @@ const fadeUp = {
 };
 
 export default function AgencyPage() {
+  const [locale, setLocale] = useState<Locale>("en");
+  useEffect(() => { setLocale(detectLocale()); }, []);
+
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Background */}
@@ -70,7 +75,7 @@ export default function AgencyPage() {
         }}
       />
 
-      <SiteHeader activePath="/agency" />
+      <SiteHeader activePath="/agency" locale={locale} onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))} />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">

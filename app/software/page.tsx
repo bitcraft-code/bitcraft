@@ -1,10 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
+import { detectLocale, type Locale } from "../../lib/translations";
+
+const TYPING_TEXTS: Record<Locale, string[]> = {
+  en: ["Welcome to BitCraft!", "Good to see you!", "Let's build some amazing experiences!"],
+  pt: ["Bem-vindo à BitCraft!", "Que bom ter você aqui!", "Vamos criar experiências incríveis!"],
+};
 
 const services = [
   {
@@ -55,6 +62,9 @@ const fadeUp = {
 };
 
 export default function SoftwarePage() {
+  const [locale, setLocale] = useState<Locale>("en");
+  useEffect(() => { setLocale(detectLocale()); }, []);
+
   return (
     <main className="relative flex flex-col overflow-hidden">
       {/* Background */}
@@ -72,7 +82,7 @@ export default function SoftwarePage() {
         }}
       />
 
-      <SiteHeader activePath="/software" />
+      <SiteHeader activePath="/software" locale={locale} onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))} />
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full h-[100dvh] flex items-center justify-center">
@@ -90,14 +100,7 @@ export default function SoftwarePage() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <TextType
             as="h1"
-            text={[
-              "Welcome to BitCraft!",
-              "Good to see you!",
-              "Let's build some amazing experiences!",
-              "Bem-vindo à BitCraft!",
-              "Que bom ter você aqui!",
-              "Vamos criar experiências incríveis!",
-            ]}
+            text={TYPING_TEXTS[locale]}
             typingSpeed={55}
             deletingSpeed={30}
             pauseDuration={2500}
