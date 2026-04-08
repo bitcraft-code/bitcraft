@@ -6,8 +6,8 @@ import Link from "next/link";
 import type { Locale } from "../lib/translations";
 
 const NAV_LABELS: Record<Locale, { home: string; software: string; agency: string; about: string; contact: string }> = {
-  en: { home: "Home", software: "Software", agency: "Agency", about: "About", contact: "Contact" },
-  pt: { home: "Início", software: "Software", agency: "Agency", about: "Quem Somos", contact: "Contato" },
+  en: { home: "Home", software: "Explore Software", agency: "Meet the Agency", about: "About Us", contact: "Contact" },
+  pt: { home: "Início", software: "Explore Software", agency: "Conheça a Agency", about: "Quem Somos", contact: "Contato" },
 };
 
 function scrollToSection(selector: string) {
