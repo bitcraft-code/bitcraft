@@ -149,10 +149,9 @@ export default function HomeContent() {
           animate="visible"
           variants={fadeUp}
           className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold"
-          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
           whileInView={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
           viewport={{ once: true }}
-          style={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
         >
           <span className="relative flex shrink-0 w-2 h-2">
             <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />

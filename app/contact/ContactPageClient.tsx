@@ -13,11 +13,13 @@ const HEADINGS: Record<Locale, Record<ContactVariant, string>> = {
     default: "Let's build something great",
     software: "Ready to ship?",
     agency: "Ready to grow?",
+    about: "Let's work together",
   },
   pt: {
     default: "Vamos construir algo incrível",
     software: "Pronto para lançar?",
     agency: "Pronto para crescer?",
+    about: "Vamos trabalhar juntos",
   },
 };
 
@@ -26,11 +28,13 @@ const SUBHEADINGS: Record<Locale, Record<ContactVariant, string>> = {
     default: "Tell us about your project and we'll get back to you within 24 hours.",
     software: "Tell us about your product. Let's turn your idea into a growth machine.",
     agency: "Tell us about your business. Let's build your acquisition engine.",
+    about: "Tell us about your project and we'll get back to you within 24 hours.",
   },
   pt: {
     default: "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
     software: "Fale-nos sobre o seu produto. Vamos transformar a sua ideia numa máquina de crescimento.",
     agency: "Fale-nos sobre o seu negócio. Vamos construir o seu motor de aquisição.",
+    about: "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
   },
 };
 
@@ -63,6 +67,14 @@ const CONFIG: Record<ContactVariant, {
     gridColor: "rgba(0,170,255,0.07)",
     accentColor: "#00aaff",
     badgeLabel: "Agency",
+  },
+  about: {
+    background: `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.28) 0%, transparent 55%),
+                 radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,255,159,0.20) 0%, transparent 55%),
+                 #0d2d45`,
+    gridColor: "rgba(0,170,255,0.07)",
+    accentColor: "#00ff9f",
+    badgeLabel: "Contact",
   },
 };
 
