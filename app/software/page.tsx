@@ -91,13 +91,15 @@ export default function SoftwarePage() {
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full min-h-screen flex items-center justify-center">
-        <LetterGlitch
-          glitchColors={["#07130f", "#00ff9f", "#00b870"]}
-          glitchSpeed={60}
-          outerVignette
-          centerVignette
-          smooth
-        />
+        <div className="absolute inset-0">
+          <LetterGlitch
+            glitchColors={["#07130f", "#00ff9f", "#00b870"]}
+            glitchSpeed={60}
+            outerVignette
+            centerVignette
+            smooth
+          />
+        </div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
