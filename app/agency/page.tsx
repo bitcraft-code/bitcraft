@@ -10,14 +10,14 @@ import { detectLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
   en: [
-    "Turn [[attention|accent,bold]] into revenue.",
-    "Your brand in every [[feed|accent,bold]].",
-    "Lower CAC. [[Higher|accent,bold]] revenue.",
+    "Turn [[attention|accent,bold]] into [[revenue|accent,bold]].",
+    "Your [[brand|accent,bold]] in every [[feed|accent,bold]].",
+    "Lower [[CAC|accent,bold]]. [[Higher|accent,bold]] revenue.",
   ],
   pt: [
-    "Transforme [[atenção|accent,bold]] em receita.",
-    "Sua marca em todos os [[feeds|accent,bold]].",
-    "CAC menor. Receita [[maior|accent,bold]].",
+    "Transforme [[atenção|accent,bold]] em [[receita|accent,bold]].",
+    "Sua [[marca|accent,bold]] em todos os [[feeds|accent,bold]].",
+    "[[CAC|accent,bold]] menor. Receita [[maior|accent,bold]].",
   ],
 };
 
