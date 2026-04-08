@@ -487,7 +487,7 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6"
+          className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8"
         >
           <motion.a
             href="/software"
