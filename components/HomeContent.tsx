@@ -420,8 +420,8 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight flex flex-wrap items-baseline justify-center gap-x-2 sm:gap-x-3 gap-y-2 max-w-full px-4"
-          style={{ fontFamily: "var(--font-manrope)" }}
+          className="font-black leading-[1.1] tracking-tight flex flex-nowrap items-baseline justify-center gap-x-2 sm:gap-x-3 max-w-full px-4"
+          style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(1.25rem, 5.8vw, 3.75rem)" }}
         >
           <LayoutGroup id="hero-heading">
           <motion.span layout animate={{ color: t.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: t.heading }}>
