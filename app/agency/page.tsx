@@ -133,7 +133,7 @@ export default function AgencyPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-sm sm:text-base max-w-md leading-relaxed"
-            style={{ color: "rgba(224,240,255,0.65)" }}
+            style={{ color: "rgba(224,240,255,0.88)" }}
           >
             {c.heroSubtitle}
           </motion.p>
@@ -199,7 +199,7 @@ export default function AgencyPage() {
             animate="visible"
             variants={fadeUp}
             className="text-base sm:text-lg max-w-xl leading-relaxed"
-            style={{ color: "rgba(224,247,250,0.6)" }}
+            style={{ color: "rgba(224,247,250,0.88)" }}
           >
             {c.subtitle}
           </motion.p>
