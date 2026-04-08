@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Manrope, Space_Grotesk, Caveat } from "next/font/google";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -15,6 +15,13 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  weight: ["700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "BITCRAFT | Código que Transforma",
   description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
@@ -23,7 +30,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body className={`${manrope.variable} ${spaceGrotesk.variable} ${caveat.variable} antialiased`}>
         {children}
       </body>
     </html>
