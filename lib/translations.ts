@@ -11,8 +11,8 @@ export const translations = {
       agency: "Agency",
       contact: "Contact",
     },
-    btnSoftware: "Software",
-    btnAgency: "Agency",
+    btnSoftware: "Explore Software",
+    btnAgency: "Meet the Agency",
   },
   pt: {
     badge: "Nova Geração de Produtos Digitais",
@@ -24,8 +24,8 @@ export const translations = {
       agency: "Agency",
       contact: "Contato",
     },
-    btnSoftware: "Software",
-    btnAgency: "Agency",
+    btnSoftware: "Explorar Software",
+    btnAgency: "Conhecer a Agency",
   },
 } satisfies Record<Locale, unknown>;
 
