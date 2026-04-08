@@ -10,12 +10,14 @@ const NAV_LABELS: Record<Locale, { software: string; agency: string; contact: st
   pt: { software: "Software", agency: "Agency", contact: "Contato" },
 };
 
-function scrollToCenter(selector: string) {
-  const el = document.querySelector(selector);
-  if (!el) return;
-  const rect = el.getBoundingClientRect();
-  const top = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
-  window.scrollTo({ top, behavior: 'smooth' });
+function scrollToSection(selector: string) {
+  requestAnimationFrame(() => {
+    const el = document.querySelector(selector);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const top = window.scrollY + rect.top - 16;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
 }
 
 function SunIcon() {
@@ -199,7 +201,7 @@ export default function SiteHeader({
                     href={item.href.startsWith('#') ? undefined : item.href}
                     onClick={item.href.startsWith('#') ? (e) => {
                       e.preventDefault();
-                      scrollToCenter(item.href);
+                      scrollToSection(item.href);
                     } : undefined}
                     className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
                     animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
@@ -343,7 +345,7 @@ export default function SiteHeader({
                           e.preventDefault();
                           setMobileOpen(false);
                           setTimeout(() => {
-                            scrollToCenter(item.href);
+                            scrollToSection(item.href);
                           }, 320);
                         } else {
                           setMobileOpen(false);
