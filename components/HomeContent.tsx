@@ -185,7 +185,6 @@ export default function HomeContent() {
           <RotatingText
             key={locale}
             texts={copy.rotatingTexts}
-            style={{ fontFamily: "var(--font-caveat)", fontSize: "1.4em" }}
             mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.08] text-white border border-white/[0.18]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
               if (wasTouched()) return;
