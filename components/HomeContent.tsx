@@ -32,7 +32,7 @@ const DARK = {
 };
 
 const LIGHT = {
-  grainient: { color1: "#00aaff", color2: "#e8f7ff", color3: "#00cc88", contrast: 1.0, gamma: 0.95, saturation: 0.7, zoom: 0.88 },
+  grainient: { color1: "#00aaff", color2: "#b0dcf8", color3: "#00cc88", contrast: 1.05, gamma: 0.95, saturation: 0.75, zoom: 0.88 },
   overlay: "rgba(240,252,255,0.28)",
   header: { bg: "rgba(255,255,255,0.55)", border: "1px solid rgba(0,100,160,0.18)", shadow: "0 4px 24px rgba(0,120,200,0.10)" },
   logoBg: "rgba(0,170,255,0.12)", logoBorder: "1px solid rgba(0,170,255,0.25)", logoStroke: "#0a192f", logoText: "#0a192f",
@@ -138,7 +138,7 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-8 pt-4 sm:px-6 sm:pb-16 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -175,11 +175,11 @@ export default function HomeContent() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="font-black leading-[1.1] tracking-tight flex flex-nowrap items-baseline justify-center gap-x-2 sm:gap-x-3 max-w-full px-4"
-          style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(1.25rem, 5.8vw, 3.75rem)" }}
+          className="font-black leading-[1.1] tracking-tight flex flex-wrap items-baseline justify-center gap-x-2 sm:gap-x-3 max-w-full px-4"
+          style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(2rem, 7vw, 5rem)" }}
         >
           <LayoutGroup id="hero-heading">
-          <motion.span layout animate={{ color: t.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: t.heading }}>
+          <motion.span layout animate={{ color: t.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: t.heading, whiteSpace: "nowrap" }}>
             {copy.headingStatic}
           </motion.span>
           <RotatingText
@@ -271,7 +271,7 @@ export default function HomeContent() {
 
           <motion.a
             href="/agency"
-            className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center"
+            className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-medium text-center"
             animate={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color }}
             transition={{ duration: 0.4 }}
             style={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}

@@ -126,7 +126,7 @@ export default function AgencyPage() {
             cursorClassName="text-[#00aaff]"
             accentColor="#00aaff"
             accentFontFamily="var(--font-caveat)"
-            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none"
+            className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-balance"
           />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -180,7 +180,7 @@ export default function AgencyPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none"
+            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-tight"
           >
             <span className="text-white">Bitcraft </span>
             <span style={{
@@ -262,7 +262,7 @@ export default function AgencyPage() {
         </motion.div>
       </div>
 
-      <SiteFooter />
+      <SiteFooter locale={locale} />
     </main>
   );
 }
