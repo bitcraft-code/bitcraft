@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import type { Locale } from "../lib/translations";
 
-const NAV_LABELS: Record<Locale, { software: string; agency: string; contact: string }> = {
-  en: { software: "Software", agency: "Agency", contact: "Contact" },
-  pt: { software: "Software", agency: "Agency", contact: "Contato" },
+const NAV_LABELS: Record<Locale, { home: string; software: string; agency: string; contact: string }> = {
+  en: { home: "Home", software: "Software", agency: "Agency", contact: "Contact" },
+  pt: { home: "Início", software: "Software", agency: "Agency", contact: "Contato" },
 };
 
 function scrollToSection(selector: string) {
@@ -109,6 +109,11 @@ export default function SiteHeader({
     { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
     { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
     { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: true },
+  ];
+
+  const mobileNavItems = [
+    { label: NAV_LABELS[locale].home,     href: "/",         activeColor: "#00ff9f" },
+    ...navItems,
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -336,7 +341,7 @@ export default function SiteHeader({
               >
                 <div style={{ borderTop: `1px solid ${T.divider}`, margin: "0 12px" }} />
                 <nav className="flex flex-col p-3 gap-1 pt-2">
-                  {navItems.map((item) => (
+                  {mobileNavItems.map((item) => (
                     <a
                       key={item.href + item.label}
                       href={item.href.startsWith('#') ? undefined : item.href}

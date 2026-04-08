@@ -132,6 +132,7 @@ export default function HomeContent() {
 
       {/* ── Header ── */}
       <SiteHeader
+        activePath="/"
         dark={dark}
         locale={locale}
         onToggleDark={() => setDark((d) => !d)}
