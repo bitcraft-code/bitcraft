@@ -158,7 +158,7 @@ export default function AgencyPage() {
       </section>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 h-[100dvh] max-w-4xl mx-auto w-full gap-14 overflow-y-auto">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
         <div className="flex flex-col items-center gap-5">
           <motion.div
             custom={0}
@@ -242,7 +242,7 @@ export default function AgencyPage() {
               className="flex gap-4 items-start rounded-xl p-5 text-left"
               style={{
                 background: "rgba(14,34,56,0.55)",
-                border: "1px solid rgba(0,170,255,0.12)",
+                border: "1px solid rgba(0,170,255,0.18)",
                 backdropFilter: "blur(12px)",
               }}
             >
@@ -254,7 +254,7 @@ export default function AgencyPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.5)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
                   {s.description}
                 </p>
               </div>

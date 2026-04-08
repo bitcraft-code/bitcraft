@@ -50,6 +50,7 @@ export default function SiteHeader({
   const [headerMouse, setHeaderMouse] = useState({ x: 0, y: 0, hover: false });
   const [navSpotlight, setNavSpotlight] = useState<{ idx: number | null; x: number; y: number }>({ idx: null, x: 0, y: 0 });
   const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
+  const [mobileOpen, setMobileOpen] = useState(false);
   const lastTouchAt = useRef(0);
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
@@ -92,6 +93,7 @@ export default function SiteHeader({
   );
 
   return (
+    <>
     <motion.header
       initial={{ y: -16 }}
       animate={{ y: 0 }}
@@ -173,6 +175,30 @@ export default function SiteHeader({
             ))}
           </nav>
 
+          {/* Hamburger — mobile only */}
+          <button
+            className="sm:hidden relative flex flex-col items-center justify-center w-8 h-8 rounded-full gap-[5px] shrink-0"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+            style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+          >
+            <motion.span
+              className="block h-[1.5px] w-4 rounded-full bg-current origin-center"
+              animate={mobileOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.22 }}
+            />
+            <motion.span
+              className="block h-[1.5px] w-4 rounded-full bg-current"
+              animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.18 }}
+            />
+            <motion.span
+              className="block h-[1.5px] w-4 rounded-full bg-current origin-center"
+              animate={mobileOpen ? { rotate: -45, y: -3 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.22 }}
+            />
+          </button>
+
           {/* Locale toggle, only rendered when handler is provided */}
           {onToggleLocale && (
             <motion.button
@@ -235,5 +261,69 @@ export default function SiteHeader({
         </div>
       </motion.div>
     </motion.header>
+
+    {/* Mobile drawer */}
+    <AnimatePresence>
+      {mobileOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 z-10 sm:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Drawer panel */}
+          <motion.div
+            className="fixed top-[72px] left-4 right-4 z-20 sm:hidden rounded-2xl overflow-hidden"
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              background: dark ? "rgba(10,15,30,0.88)" : "rgba(255,255,255,0.88)",
+              border: T.header.border,
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.3)",
+            }}
+          >
+            <nav className="flex flex-col p-3 gap-1">
+              {navItems.map((item) => (
+                <a
+                  key={item.href + item.label}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
+                  style={{
+                    color: activePath === item.href ? T.navHoverText : T.navText,
+                    background: activePath === item.href ? T.navHoverBg : "transparent",
+                  }}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            {onToggleLocale && (
+              <div className="px-3 pb-3">
+                <div style={{ height: "1px", background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", marginBottom: "12px" }} />
+                <button
+                  onClick={() => { onToggleLocale(); setMobileOpen(false); }}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium"
+                  style={{ color: T.navText, background: "transparent" }}
+                >
+                  <span>{locale === "en" ? "English" : "Português"}</span>
+                  <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
+                </button>
+              </div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

@@ -162,7 +162,7 @@ export default function SoftwarePage() {
       </section>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 h-[100dvh] max-w-4xl mx-auto w-full gap-14 overflow-y-auto">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
 
         {/* Intro */}
         <div className="flex flex-col items-center gap-5">
@@ -248,7 +248,7 @@ export default function SoftwarePage() {
               className="flex gap-4 items-start rounded-xl p-5 text-left"
               style={{
                 background: "rgba(7,22,14,0.65)",
-                border: "1px solid rgba(0,255,159,0.1)",
+                border: "1px solid rgba(0,255,159,0.18)",
                 backdropFilter: "blur(12px)",
               }}
             >
@@ -260,7 +260,7 @@ export default function SoftwarePage() {
               </div>
               <div>
                 <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.5)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
                   {s.description}
                 </p>
               </div>
