@@ -94,7 +94,7 @@ export default function SiteHeader({
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-      className="relative z-20 flex justify-center px-4 pt-5"
+      className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
     >
       <motion.div
         className="relative flex items-center justify-between w-full max-w-5xl px-4 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3 rounded-full"
