@@ -9,8 +9,8 @@ import TextType from "../../components/TextType";
 import { detectLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
-  en: ["Welcome to [[BitCraft|accent,bold,underline]]!", "Good to see [[you|accent]]!", "Let's build some amazing [[experiences|accent]]!"],
-  pt: ["Bem-vindo à [[BitCraft|accent,bold,underline]]!", "Que bom ter [[você|accent]] aqui!", "Vamos criar [[experiências|accent]] incríveis!"],
+  en: ["Welcome to [[BitCraft|accent,bold]]!", "Good to see [[you|accent]]!", "Let's build some amazing [[experiences|accent]]!"],
+  pt: ["Bem-vindo à [[BitCraft|accent,bold]]!", "Que bom ter [[você|accent]] aqui!", "Vamos criar [[experiências|accent]] incríveis!"],
 };
 
 const services = [
