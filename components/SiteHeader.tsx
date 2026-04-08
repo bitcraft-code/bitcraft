@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import type { Locale } from "../lib/translations";
@@ -51,7 +51,17 @@ export default function SiteHeader({
   const [navSpotlight, setNavSpotlight] = useState<{ idx: number | null; x: number; y: number }>({ idx: null, x: 0, y: 0 });
   const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pillExpanded, setPillExpanded] = useState(false);
   const lastTouchAt = useRef(0);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      setPillExpanded(true);
+    } else {
+      const t = setTimeout(() => setPillExpanded(false), 300);
+      return () => clearTimeout(t);
+    }
+  }, [mobileOpen]);
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
   const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
@@ -127,7 +137,7 @@ export default function SiteHeader({
           }}
           transition={{ duration: 0.4 }}
           style={{
-            borderRadius: mobileOpen ? 25 : 9999,
+            borderRadius: pillExpanded ? 25 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
