@@ -132,8 +132,8 @@ export default function AgencyPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-sm sm:text-base max-w-md leading-relaxed"
-            style={{ color: "rgba(224,240,255,0.88)" }}
+            className="text-base sm:text-lg max-w-lg leading-relaxed font-medium"
+            style={{ color: "rgba(224,240,255,0.92)", textShadow: "0 0 32px rgba(0,170,255,0.3)" }}
           >
             {c.heroSubtitle}
           </motion.p>
