@@ -108,7 +108,7 @@ export default function SiteHeader({
   const navItems = [
     { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
     { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
-    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: true },
+    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
   const mobileNavItems = [
