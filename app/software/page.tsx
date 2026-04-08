@@ -6,6 +6,7 @@ import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
+import ContactSection from "../../components/ContactSection";
 import { detectLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
@@ -83,15 +84,10 @@ const fadeUp = {
 
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
-  const [glitchSpeed, setGlitchSpeed] = useState(8);
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    const t = setTimeout(() => setGlitchSpeed(60), 2200);
-    return () => clearTimeout(t);
-  }, []);
 
   return (
-    <main className="relative flex flex-col overflow-hidden">
+    <main className="relative flex flex-col overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{
         background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,255,159,0.10) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(255,215,0,0.07) 0%, transparent 60%), linear-gradient(180deg, #07130f 0%, #091a14 100%)",
@@ -114,14 +110,14 @@ export default function SoftwarePage() {
         <div className="absolute inset-0">
           <LetterGlitch
             glitchColors={["#07130f", "#00ff9f", "#00b870"]}
-            glitchSpeed={glitchSpeed}
+            glitchSpeed={60}
             outerVignette
             centerVignette
             smooth
           />
         </div>
         {/* Extra vignette for text legibility */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <TextType
             as="h1"
@@ -166,7 +162,7 @@ export default function SoftwarePage() {
       </section>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 h-[100dvh] max-w-4xl mx-auto w-full gap-14 overflow-y-auto">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
 
         {/* Intro */}
         <div className="flex flex-col items-center gap-5">
@@ -252,7 +248,7 @@ export default function SoftwarePage() {
               className="flex gap-4 items-start rounded-xl p-5 text-left"
               style={{
                 background: "rgba(7,22,14,0.65)",
-                border: "1px solid rgba(0,255,159,0.1)",
+                border: "1px solid rgba(0,255,159,0.18)",
                 backdropFilter: "blur(12px)",
               }}
             >
@@ -264,7 +260,7 @@ export default function SoftwarePage() {
               </div>
               <div>
                 <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.5)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
                   {s.description}
                 </p>
               </div>
@@ -272,6 +268,8 @@ export default function SoftwarePage() {
           ))}
         </motion.div>
       </div>
+
+      <ContactSection variant="software" locale={locale} />
 
       <SiteFooter locale={locale} />
     </main>

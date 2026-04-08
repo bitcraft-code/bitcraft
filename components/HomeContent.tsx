@@ -6,6 +6,7 @@ import Grainient from "../components/Grainient";
 import RotatingText from "../components/RotatingText";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import ContactSection from "../components/ContactSection";
 import { translations, detectLocale, type Locale } from "../lib/translations";
 
 const fadeUp = {
@@ -25,8 +26,8 @@ const DARK = {
   logoBg: "rgba(255,255,255,0.18)", logoBorder: "1px solid rgba(255,255,255,0.25)", logoStroke: "#ffffff", logoText: "#ffffff",
   navText: "rgba(255,255,255,0.75)", navHoverText: "#ffffff", navHoverBg: "rgba(255,255,255,0.12)",
   badge: { bg: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.28)", color: "#ffffff", dot: "#00ff9f" },
-  heading: "#ffffff", subtitle: "rgba(255,255,255,0.75)",
-  btnPrimary: { bg: "#ffffff", color: "#0a192f", shadow: "0 2px 20px rgba(255,255,255,0.25)" },
+  heading: "#ffffff", subtitle: "rgba(255,255,255,0.82)",
+  btnPrimary: { bg: "#ffffff", color: "#0a192f", shadow: "0 0 24px rgba(0,255,159,0.28), 0 2px 20px rgba(255,255,255,0.25)" },
   btnSecondary: { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", color: "#ffffff" },
   toggleBg: "rgba(255,255,255,0.14)", toggleBorder: "1px solid rgba(255,255,255,0.28)", toggleColor: "#ffffff",
 };
@@ -38,7 +39,7 @@ const LIGHT = {
   logoBg: "rgba(0,170,255,0.12)", logoBorder: "1px solid rgba(0,170,255,0.25)", logoStroke: "#0a192f", logoText: "#0a192f",
   navText: "rgba(10,25,47,0.65)", navHoverText: "#0a192f", navHoverBg: "rgba(0,170,255,0.10)",
   badge: { bg: "rgba(255,255,255,0.6)", border: "1px solid rgba(0,170,255,0.25)", color: "#0a192f", dot: "#00aaff" },
-  heading: "#0a192f", subtitle: "rgba(10,25,47,0.65)",
+  heading: "#0a192f", subtitle: "rgba(10,25,47,0.75)",
   btnPrimary: { bg: "#0a192f", color: "#ffffff", shadow: "0 2px 20px rgba(10,25,47,0.20)" },
   btnSecondary: { bg: "rgba(255,255,255,0.55)", border: "1px solid rgba(0,170,255,0.28)", color: "#0a192f" },
   toggleBg: "rgba(255,255,255,0.55)", toggleBorder: "1px solid rgba(0,170,255,0.28)", toggleColor: "#0a192f",
@@ -138,7 +139,7 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center flex-1 px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[100dvh] px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -185,7 +186,7 @@ export default function HomeContent() {
           <RotatingText
             key={locale}
             texts={copy.rotatingTexts}
-            mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.08] text-white border border-white/[0.18]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
+            mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.13] text-white border border-white/[0.22]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
               if (wasTouched()) return;
               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -229,7 +230,7 @@ export default function HomeContent() {
               transition={{ duration: 0.25 }}
             >
               <motion.span
-                animate={{ color: dark ? "rgba(255,255,255,0.65)" : "rgba(10,25,47,0.60)" }}
+                animate={{ color: dark ? "rgba(255,255,255,0.82)" : "rgba(10,25,47,0.75)" }}
                 transition={{ duration: 0.4 }}
               >{copy.subtitle}</motion.span>
             </motion.span>
@@ -295,6 +296,9 @@ export default function HomeContent() {
           </motion.a>
         </motion.div>
       </div>
+
+      {/* ── Contact ── */}
+      <ContactSection variant="default" locale={locale} />
 
       {/* ── Footer ── */}
       <SiteFooter dark={dark} locale={locale} />
