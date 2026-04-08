@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Locale } from "@/lib/translations";
 
-export type ContactVariant = "default" | "software" | "agency";
+export type ContactVariant = "default" | "software" | "agency" | "about";
 
 const COPY = {
   en: {
@@ -69,6 +69,20 @@ const THEMES = {
     btnColor: "#ffffff",
     btnShadow: "0 0 24px rgba(0,170,255,0.32)",
     successColor: "#00aaff",
+  },
+  about: {
+    card: { background: "rgba(232,160,32,0.05)", border: "1px solid rgba(232,160,32,0.18)", backdropFilter: "blur(12px)" },
+    label: "rgba(232,160,32,0.70)",
+    inputBg: "rgba(20,14,4,0.7)",
+    inputBorder: "rgba(232,160,32,0.12)",
+    inputColor: "#fff5e0",
+    inputPlaceholder: "rgba(232,160,32,0.28)",
+    focusBorder: "rgba(232,160,32,0.65)",
+    focusShadow: "0 0 0 3px rgba(232,160,32,0.08)",
+    btnBg: "linear-gradient(135deg, #e8a020, #c4871a)",
+    btnColor: "#0d0900",
+    btnShadow: "0 0 24px rgba(232,160,32,0.28)",
+    successColor: "#e8a020",
   },
 };
 

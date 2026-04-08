@@ -9,11 +9,13 @@ const HEADINGS: Record<Locale, Record<ContactVariant, string>> = {
     default: "Let's build something great",
     software: "Ready to ship?",
     agency: "Ready to grow?",
+    about: "Let's talk.",
   },
   pt: {
     default: "Vamos construir algo incrível",
     software: "Pronto para lançar?",
     agency: "Pronto para crescer?",
+    about: "Vamos conversar.",
   },
 };
 
@@ -22,11 +24,13 @@ const SUBHEADINGS: Record<Locale, Record<ContactVariant, string>> = {
     default: "Tell us about your project and we'll get back to you within 24 hours.",
     software: "Tell us about your product. Let's turn your idea into a growth machine.",
     agency: "Tell us about your business. Let's build your acquisition engine.",
+    about: "Tell us what you're building. We'll tell you how we can help.",
   },
   pt: {
     default: "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
     software: "Fale-nos sobre o seu produto. Vamos transformar a sua ideia numa máquina de crescimento.",
     agency: "Fale-nos sobre o seu negócio. Vamos construir o seu motor de aquisição.",
+    about: "Fale-nos o que está construindo. A gente diz como podemos ajudar.",
   },
 };
 
@@ -34,12 +38,14 @@ const ACCENT: Record<ContactVariant, string> = {
   default: "#00ff9f",
   software: "#00ff9f",
   agency: "#00aaff",
+  about: "#e8a020",
 };
 
 const DIVIDER: Record<ContactVariant, string> = {
   default: "rgba(255,255,255,0.07)",
   software: "rgba(0,255,159,0.10)",
   agency: "rgba(0,170,255,0.10)",
+  about: "rgba(232,160,32,0.10)",
 };
 
 type Props = { variant?: ContactVariant; locale?: Locale };
