@@ -188,7 +188,11 @@ export default function SiteHeader({
                 {navItems.map((item, i) => (
                   <motion.a
                     key={item.href + item.label}
-                    href={item.href}
+                    href={item.href.startsWith('#') ? undefined : item.href}
+                    onClick={item.href.startsWith('#') ? (e) => {
+                      e.preventDefault();
+                      document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } : undefined}
                     className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
                     animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
                     style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
@@ -331,7 +335,7 @@ export default function SiteHeader({
                           e.preventDefault();
                           setMobileOpen(false);
                           setTimeout(() => {
-                            document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' });
+                            document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                           }, 320);
                         } else {
                           setMobileOpen(false);
