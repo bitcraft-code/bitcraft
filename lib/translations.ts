@@ -2,30 +2,30 @@ export type Locale = "en" | "pt";
 
 export const translations = {
   en: {
-    badge: "Next Generation Digital Products",
-    headingStatic: "Creative",
-    rotatingTexts: ["thinking.", "coding.", "shipping.", "growing!"],
-    subtitle: "From idea to product. From product to market. Engineering and growth that scale together.",
+    badge: "Where Code Meets Growth",
+    headingStatic: "Ideas that",
+    rotatingTexts: ["convert.", "scale.", "dominate.", "sell."],
+    subtitle: "Most companies build. Few companies grow. Bitcraft does both — engineering that ships and marketing that converts.",
     nav: {
       software: "Software",
       agency: "Agency",
       contact: "Contact",
     },
-    btnSoftware: "Explore Software",
-    btnAgency: "Meet the Agency",
+    btnSoftware: "Build my product →",
+    btnAgency: "Grow my business →",
   },
   pt: {
-    badge: "Nova Geração de Produtos Digitais",
-    headingStatic: "Criatividade",
-    rotatingTexts: ["pensando.", "criando.", "entregando.", "crescendo!"],
-    subtitle: "Da ideia ao produto. Do produto ao mercado. Engenharia e crescimento que escalam juntos.",
+    badge: "Onde Código Encontra Crescimento",
+    headingStatic: "Ideias que",
+    rotatingTexts: ["convertem.", "escalam.", "dominam.", "vendem."],
+    subtitle: "A maioria constrói. Poucos crescem. A Bitcraft faz os dois — engenharia que entrega e marketing que converte.",
     nav: {
       software: "Software",
       agency: "Agency",
       contact: "Contato",
     },
-    btnSoftware: "Explorar Software",
-    btnAgency: "Conhecer a Agency",
+    btnSoftware: "Construir meu produto →",
+    btnAgency: "Crescer meu negócio →",
   },
 } satisfies Record<Locale, unknown>;
 
