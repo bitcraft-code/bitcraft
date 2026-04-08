@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Manrope, Space_Grotesk, Caveat } from "next/font/google";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${manrope.variable} ${spaceGrotesk.variable} ${caveat.variable} antialiased`}>
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   );

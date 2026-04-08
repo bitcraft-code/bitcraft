@@ -83,12 +83,7 @@ const fadeUp = {
 
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
-  const [glitchSpeed, setGlitchSpeed] = useState(8);
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    const t = setTimeout(() => setGlitchSpeed(60), 2200);
-    return () => clearTimeout(t);
-  }, []);
 
   return (
     <main className="relative flex flex-col overflow-hidden">
@@ -114,14 +109,14 @@ export default function SoftwarePage() {
         <div className="absolute inset-0">
           <LetterGlitch
             glitchColors={["#07130f", "#00ff9f", "#00b870"]}
-            glitchSpeed={glitchSpeed}
+            glitchSpeed={60}
             outerVignette
             centerVignette
             smooth
           />
         </div>
         {/* Extra vignette for text legibility */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <TextType
             as="h1"
