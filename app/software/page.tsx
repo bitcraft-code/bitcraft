@@ -90,7 +90,14 @@ export default function SoftwarePage() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <TextType
             as="h1"
-            text={["Pronto para construir?", "Vamos criar algo incrível.", "Engenharia de alto nível."]}
+            text={[
+              "Welcome to BitCraft!",
+              "Good to see you!",
+              "Let's build some amazing experiences!",
+              "Bem-vindo à BitCraft!",
+              "Que bom ter você aqui!",
+              "Vamos criar experiências incríveis!",
+            ]}
             typingSpeed={55}
             deletingSpeed={30}
             pauseDuration={2500}
