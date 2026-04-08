@@ -24,7 +24,7 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "BITCRAFT | Código que Transforma",
+  title: "Bitcraft — Software, AI & Growth",
   description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
 };
 
