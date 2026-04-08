@@ -127,7 +127,7 @@ export default function SiteHeader({
           }}
           transition={{ duration: 0.4 }}
           style={{
-            borderRadius: 90,
+            borderRadius: mobileOpen ? 25 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
