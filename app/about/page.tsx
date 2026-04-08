@@ -300,7 +300,7 @@ export default function AboutPage() {
         </motion.div>
       </div>
 
-      <ContactSection locale={locale} />
+      <ContactSection variant="about" locale={locale} />
 
       <SiteFooter locale={locale} />
     </main>

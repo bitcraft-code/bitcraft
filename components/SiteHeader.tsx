@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import type { Locale } from "../lib/translations";
 
-const NAV_LABELS: Record<Locale, { home: string; software: string; agency: string; contact: string }> = {
-  en: { home: "Home", software: "Software", agency: "Agency", contact: "Contact" },
-  pt: { home: "Início", software: "Software", agency: "Agency", contact: "Contato" },
+const NAV_LABELS: Record<Locale, { home: string; software: string; agency: string; about: string; contact: string }> = {
+  en: { home: "Home", software: "Software", agency: "Agency", about: "About", contact: "Contact" },
+  pt: { home: "Início", software: "Software", agency: "Agency", about: "Quem Somos", contact: "Contato" },
 };
 
 function scrollToSection(selector: string) {
@@ -103,11 +103,13 @@ export default function SiteHeader({
   const pageAccent =
     activePath === "/software" ? "#00ff9f" :
     activePath === "/agency"   ? "#00aaff" :
+    activePath === "/about"    ? "#e8a020" :
     "#00ff9f"; // home
 
   const navItems = [
     { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
     { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
+    { label: NAV_LABELS[locale].about,    href: "/about",    activeColor: "#e8a020" },
     { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
@@ -115,6 +117,7 @@ export default function SiteHeader({
     { label: NAV_LABELS[locale].home,     href: "/",         activeColor: "#00ff9f" },
     { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
     { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
+    { label: NAV_LABELS[locale].about,    href: "/about",    activeColor: "#e8a020" },
     { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
