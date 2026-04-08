@@ -1,19 +1,55 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import type { Locale } from "../lib/translations";
 
-const NAV = [
-  { label: "Software", href: "/software" },
-  { label: "Agency", href: "/agency" },
-  { label: "Contact", href: "#" },
-];
+const NAV_LABELS: Record<Locale, { software: string; agency: string; contact: string }> = {
+  en: { software: "Software", agency: "Agency", contact: "Contact" },
+  pt: { software: "Software", agency: "Agency", contact: "Contato" },
+};
 
-export default function SiteHeader({ activePath }: { activePath?: string }) {
+function SunIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <line x1="12" y1="2" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="22" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="2" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="22" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+type Props = {
+  dark?: boolean;
+  locale?: Locale;
+  activePath?: string;
+  onToggleDark?: () => void;
+  onToggleLocale?: () => void;
+};
+
+export default function SiteHeader({
+  dark = true,
+  locale = "en",
+  activePath,
+  onToggleDark,
+  onToggleLocale,
+}: Props) {
   const [headerMouse, setHeaderMouse] = useState({ x: 0, y: 0, hover: false });
   const [navSpotlight, setNavSpotlight] = useState<{ idx: number | null; x: number; y: number }>({ idx: null, x: 0, y: 0 });
+  const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
   const lastTouchAt = useRef(0);
+
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
   const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
     lastTouchAt.current = Date.now();
@@ -22,22 +58,49 @@ export default function SiteHeader({ activePath }: { activePath?: string }) {
     setter(touch.clientX - rect.left, touch.clientY - rect.top);
   };
 
+  const T = {
+    header: dark
+      ? { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", shadow: "0 4px 24px rgba(0,0,0,0.12)" }
+      : { bg: "rgba(255,255,255,0.55)", border: "1px solid rgba(0,100,160,0.18)", shadow: "0 4px 24px rgba(0,120,200,0.10)" },
+    logoBg: dark ? "rgba(255,255,255,0.18)" : "rgba(0,170,255,0.12)",
+    logoBorder: dark ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(0,170,255,0.25)",
+    logoStroke: dark ? "#ffffff" : "#0a192f",
+    logoText: dark ? "#ffffff" : "#0a192f",
+    navText: dark ? "rgba(255,255,255,0.75)" : "rgba(10,25,47,0.65)",
+    navHoverText: dark ? "#ffffff" : "#0a192f",
+    navHoverBg: dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.10)",
+    toggleBg: dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.55)",
+    toggleBorder: dark ? "1px solid rgba(255,255,255,0.28)" : "1px solid rgba(0,170,255,0.28)",
+    toggleColor: dark ? "#ffffff" : "#0a192f",
+    spotlightFill: dark ? "rgba(255,255,255,0.10)" : "rgba(0,170,255,0.10)",
+    spotlightBorder: dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)",
+  };
+
+  const navItems = [
+    { label: NAV_LABELS[locale].software, href: "/software" },
+    { label: NAV_LABELS[locale].agency, href: "/agency" },
+    { label: NAV_LABELS[locale].contact, href: "#" },
+  ];
+
+  const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
+    <>
+      <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightFill}, transparent 70%)` }} />
+      <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+    </>
+  );
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-      className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
+      className="relative z-20 flex justify-center px-4 pt-5"
     >
       <motion.div
         className="relative flex items-center justify-between w-full max-w-5xl px-4 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3 rounded-full"
-        style={{
-          background: "rgba(255,255,255,0.10)",
-          border: "1px solid rgba(255,255,255,0.18)",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-        }}
+        animate={{ background: T.header.bg, border: T.header.border, boxShadow: T.header.shadow }}
+        transition={{ duration: 0.4 }}
+        style={{ background: T.header.bg, border: T.header.border, boxShadow: T.header.shadow, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         onMouseMove={(e) => {
           if (wasTouched()) return;
           const rect = e.currentTarget.getBoundingClientRect();
@@ -48,64 +111,126 @@ export default function SiteHeader({ activePath }: { activePath?: string }) {
         onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
         onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
       >
-        {/* Fill spotlight */}
-        <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, rgba(255,255,255,0.08), transparent 70%)` }} />
-        {/* Border spotlight */}
-        <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
+        <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
+        <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 md:gap-3">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.22)" }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" stroke="#ffffff">
+          <motion.div
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0"
+            animate={{ background: T.logoBg, border: T.logoBorder }}
+            transition={{ duration: 0.4 }}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" stroke={T.logoStroke}>
               <polyline points="16 18 22 12 16 6" />
               <polyline points="8 6 2 12 8 18" />
             </svg>
-          </div>
-          <span className="font-bold text-sm tracking-wide text-white">Bitcraft</span>
+          </motion.div>
+          <motion.span className="font-bold text-sm tracking-wide" animate={{ color: T.logoText }} transition={{ duration: 0.4 }}>
+            Bitcraft
+          </motion.span>
         </Link>
 
-        {/* Nav */}
-        <nav className="hidden sm:flex items-center gap-0.5">
-          {NAV.map((item, i) => {
-            const isActive = activePath === item.href;
-            return (
-              <a
-                key={item.href}
+        {/* Nav + controls */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <nav className="hidden sm:flex items-center gap-0.5">
+            {navItems.map((item, i) => (
+              <motion.a
+                key={item.href + item.label}
                 href={item.href}
                 className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
-                style={{ color: isActive ? "#ffffff" : "rgba(255,255,255,0.65)", background: isActive ? "rgba(255,255,255,0.10)" : "transparent" }}
+                animate={{ color: activePath === item.href ? T.navHoverText : T.navText }}
+                style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
+                transition={{ duration: 0.4 }}
                 onMouseMove={(e) => {
                   if (wasTouched()) return;
                   const rect = e.currentTarget.getBoundingClientRect();
                   setNavSpotlight({ idx: i, x: e.clientX - rect.left, y: e.clientY - rect.top });
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff";
-                  if (!isActive) (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.08)";
+                  (e.currentTarget as HTMLAnchorElement).style.color = T.navHoverText;
+                  (e.currentTarget as HTMLAnchorElement).style.background = T.navHoverBg;
                 }}
                 onMouseLeave={(e) => {
                   if (wasTouched()) return;
                   setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = isActive ? "#ffffff" : "rgba(255,255,255,0.65)";
-                  (e.currentTarget as HTMLAnchorElement).style.background = isActive ? "rgba(255,255,255,0.10)" : "transparent";
+                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
+                  (e.currentTarget as HTMLAnchorElement).style.background = activePath === item.href ? T.navHoverBg : "transparent";
                 }}
                 onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
                 onTouchEnd={(e) => {
                   setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = isActive ? "#ffffff" : "rgba(255,255,255,0.65)";
+                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
                 }}
                 onTouchCancel={(e) => {
                   setNavSpotlight((p) => ({ ...p, idx: null }));
-                  (e.currentTarget as HTMLAnchorElement).style.color = isActive ? "#ffffff" : "rgba(255,255,255,0.65)";
+                  (e.currentTarget as HTMLAnchorElement).style.color = activePath === item.href ? T.navHoverText : T.navText;
                 }}
               >
-                {/* Fill spotlight */}
-                <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: navSpotlight.idx === i ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 60px at ${navSpotlight.x}px ${navSpotlight.y}px, rgba(255,255,255,0.10), transparent 70%)` }} />
-                {/* Border spotlight */}
-                <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: navSpotlight.idx === i ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 60px at ${navSpotlight.x}px ${navSpotlight.y}px, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+                {spotlightSpans(navSpotlight.idx === i, navSpotlight.x, navSpotlight.y, 60)}
                 {item.label}
-              </a>
-            );
-          })}
-        </nav>
+              </motion.a>
+            ))}
+          </nav>
+
+          {/* Locale toggle — only rendered when handler is provided */}
+          {onToggleLocale && (
+            <motion.button
+              onClick={onToggleLocale}
+              className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-colors duration-200"
+              animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+              transition={{ duration: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.93 }}
+              aria-label="Toggle language"
+              style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
+              onMouseMove={(e) => {
+                if (wasTouched()) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                setCtrlSpotlight({ id: "locale", x: e.clientX - rect.left, y: e.clientY - rect.top });
+              }}
+              onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+              onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
+              onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+              onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+            >
+              {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+                  {locale === "en" ? "EN" : "PT"}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
+          )}
+
+          {/* Theme toggle — only rendered when handler is provided */}
+          {onToggleDark && (
+            <motion.button
+              onClick={onToggleDark}
+              className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+              animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+              transition={{ duration: 0.4 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.93 }}
+              aria-label="Toggle theme"
+              style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+              onMouseMove={(e) => {
+                if (wasTouched()) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                setCtrlSpotlight({ id: "theme", x: e.clientX - rect.left, y: e.clientY - rect.top });
+              }}
+              onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+              onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
+              onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+              onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+            >
+              {spotlightSpans(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span key={dark ? "moon" : "sun"} initial={{ opacity: 0, rotate: -30, scale: 0.7 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={{ opacity: 0, rotate: 30, scale: 0.7 }} transition={{ duration: 0.2 }}>
+                  {dark ? <MoonIcon /> : <SunIcon />}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
+          )}
+        </div>
       </motion.div>
     </motion.header>
   );

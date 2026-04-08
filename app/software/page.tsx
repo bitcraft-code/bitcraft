@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
+import SiteFooter from "../../components/SiteFooter";
 
 const services = [
   {
@@ -236,6 +237,8 @@ export default function SoftwarePage() {
           ))}
         </motion.div>
       </div>
+
+      <SiteFooter />
     </main>
   );
 }
