@@ -91,9 +91,9 @@ export default function SiteHeader({
   };
 
   const navItems = [
-    { label: NAV_LABELS[locale].software, href: "/software" },
-    { label: NAV_LABELS[locale].agency, href: "/agency" },
-    { label: NAV_LABELS[locale].contact, href: "#contact" },
+    { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
+    { label: NAV_LABELS[locale].agency, href: "/agency", activeColor: "#00aaff" },
+    { label: NAV_LABELS[locale].contact, href: "#contact", activeColor: T.navHoverText },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -323,8 +323,8 @@ export default function SiteHeader({
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150"
                       style={{
-                        color: activePath === item.href ? T.navHoverText : T.navText,
-                        background: activePath === item.href ? T.navHoverBg : "transparent",
+                        color: activePath === item.href ? item.activeColor : T.navText,
+                        background: "transparent",
                       }}
                     >
                       {item.label}
