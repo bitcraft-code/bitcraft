@@ -104,7 +104,7 @@ export default function SoftwarePage() {
             initialDelay={400}
             loop
             showCursor
-            cursorCharacter="|"
+            cursorCharacter="_"
             cursorClassName="text-[#00ff9f]"
             className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-none"
           />
