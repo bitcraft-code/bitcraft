@@ -26,6 +26,8 @@
 html,
 body {
   min-height: 100%;
+  /* overflow-x: clip não cria stacking context, logo não quebra backdrop-filter no iOS Safari */
+  overflow-x: clip;
 }
 
 body {
