@@ -316,7 +316,7 @@ export default function HomeContent() {
             >
               {(() => { const s = sp(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y); return (<>
               <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)` }} />
-              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 100px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
               </>); })()}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -353,7 +353,7 @@ export default function HomeContent() {
             >
               {(() => { const s = sp(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y); return (<>
               <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 50px at ${s.pos}, ${dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.14)"}, transparent 70%)` }} />
-              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 100px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+              <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
               </>); })()}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -498,8 +498,8 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.30)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 100px at ${s.pos}, ${dark ? "rgba(0,0,0,1)" : "rgba(255,255,255,1)"} 0%, transparent 65%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1.5px)", padding: "2px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 55px at ${s.pos}, ${dark ? "rgba(0,0,0,0.18)" : "rgba(255,255,255,0.30)"}, transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(0,0,0,1)" : "rgba(255,255,255,1)"} 0%, transparent 65%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1.5px)", padding: "2px" }} />
             </>); })()}
             {copy.btnSoftware}
           </motion.a>
@@ -523,8 +523,8 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "agency", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 100px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 55px at ${s.pos}, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: spT(s.active), background: `radial-gradient(circle 70px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", filter: "blur(1px)", padding: "1px" }} />
             </>); })()}
             {copy.btnAgency}
           </motion.a>
