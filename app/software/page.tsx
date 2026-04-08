@@ -90,7 +90,7 @@ export default function SoftwarePage() {
       </motion.div>
 
       {/* LetterGlitch hero section */}
-      <section className="relative w-full min-h-screen flex items-center justify-center">
+      <section className="relative w-full h-[100dvh] flex items-center justify-center">
         <div className="absolute inset-0">
           <LetterGlitch
             glitchColors={["#07130f", "#00ff9f", "#00b870"]}
@@ -146,7 +146,7 @@ export default function SoftwarePage() {
       </section>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 h-[100dvh] max-w-4xl mx-auto w-full gap-14 overflow-y-auto">
 
         {/* Intro */}
         <div className="flex flex-col items-center gap-5">
