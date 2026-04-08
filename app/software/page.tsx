@@ -102,7 +102,7 @@ export default function SoftwarePage() {
         }}
       />
 
-      <SiteHeader activePath="/software" locale={locale} entranceDelay={0.35} onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))} />
+      <SiteHeader activePath="/software" locale={locale} onToggleLocale={() => setLocale((l) => (l === "en" ? "pt" : "en"))} />
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full h-[100dvh] flex items-center justify-center">
