@@ -185,7 +185,8 @@ export default function HomeContent() {
           <RotatingText
             key={locale}
             texts={copy.rotatingTexts}
-            mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.08] text-white border border-white/[0.18]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
+            style={{ fontFamily: "var(--font-caveat)", fontSize: "1.15em", color: dark ? "#00aaff" : "#0077cc" }}
+            mainClassName={`px-5 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 ${dark ? "bg-[rgba(0,170,255,0.10)] border border-[rgba(0,170,255,0.28)]" : "bg-[rgba(0,119,204,0.10)] border border-[rgba(0,119,204,0.35)]"}`}
             onMouseMove={(e) => {
               if (wasTouched()) return;
               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
