@@ -325,9 +325,19 @@ export default function SiteHeader({
                   {navItems.map((item) => (
                     <a
                       key={item.href + item.label}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150"
+                      href={item.href.startsWith('#') ? undefined : item.href}
+                      onClick={(e) => {
+                        if (item.href.startsWith('#')) {
+                          e.preventDefault();
+                          setMobileOpen(false);
+                          setTimeout(() => {
+                            document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' });
+                          }, 320);
+                        } else {
+                          setMobileOpen(false);
+                        }
+                      }}
+                      className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150 cursor-pointer"
                       style={{
                         color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? item.activeColor : T.navText),
                         background: "transparent",
