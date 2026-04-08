@@ -311,7 +311,7 @@ export default function SiteHeader({
                       key={item.href + item.label}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-end px-4 py-3 rounded-xl text-sm font-medium transition-colors duration-150"
+                      className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150"
                       style={{
                         color: activePath === item.href ? T.navHoverText : T.navText,
                         background: activePath === item.href ? T.navHoverBg : "transparent",
