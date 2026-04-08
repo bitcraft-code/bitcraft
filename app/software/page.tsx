@@ -21,43 +21,55 @@ const TYPING_TEXTS: Record<Locale, string[]> = {
   ],
 };
 
-const services = [
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-      </svg>
-    ),
-    title: "Entregue mais rápido, quebre menos",
-    description: "Squads focados em resultado, não em reuniões. Arquitetura que aguenta o crescimento antes de ele chegar.",
+const COPY: Record<Locale, {
+  badge: string;
+  heroSubtitle: string;
+  heroCta: string;
+  subtitle: string;
+  cta: string;
+  services: { title: string; description: string }[];
+}> = {
+  pt: {
+    badge: "Engenharia de Alta Performance",
+    heroSubtitle: "Cada semana sem o sistema certo é receita que o seu concorrente está embolsando.",
+    heroCta: "Destrave meu produto →",
+    subtitle: "Pare de financiar código que não vende. A Bitcraft transforma ideias em máquinas de crescimento — do MVP ao produto escalável, com IA integrada desde o primeiro dia.",
+    cta: "Destrave meu produto →",
+    services: [
+      { title: "Entregue mais rápido, quebre menos", description: "Squads focados em resultado, não em reuniões. Arquitetura que aguenta o crescimento antes de ele chegar." },
+      { title: "Automatize o que devora seu tempo", description: "Agentes e modelos que eliminam tarefas repetitivas e transformam dados em decisões — enquanto você foca no que só você pode fazer." },
+      { title: "Interfaces que convertem na primeira visita", description: "UX que guia o usuário até a ação certa, sem fricção, sem desculpa para não comprar." },
+      { title: "Cresça 10x sem reescrever nada", description: "Cloud-native, CI/CD e sistemas que escalam com o negócio — não contra ele." },
+    ],
   },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /><path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
-      </svg>
-    ),
-    title: "Automatize o que devora seu tempo",
-    description: "Agentes e modelos que eliminam tarefas repetitivas e transformam dados em decisões — enquanto você foca no que só você pode fazer.",
+  en: {
+    badge: "High Performance Engineering",
+    heroSubtitle: "Every week without the right system is revenue your competitor is pocketing.",
+    heroCta: "Unlock my product →",
+    subtitle: "Stop funding code that doesn't sell. Bitcraft turns ideas into growth machines — from MVP to scalable product, with AI baked in from day one.",
+    cta: "Unlock my product →",
+    services: [
+      { title: "Ship faster, break less", description: "Squads focused on results, not meetings. Architecture that handles growth before it arrives." },
+      { title: "Automate what's eating your time", description: "Agents and models that kill repetitive tasks and turn data into decisions — while you focus on what only you can do." },
+      { title: "Interfaces that convert on the first visit", description: "UX that drives users to the right action, no friction, no excuses not to buy." },
+      { title: "Scale 10x without rewriting a thing", description: "Cloud-native, CI/CD and systems that scale with the business — not against it." },
+    ],
   },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
-    title: "Interfaces que convertem na primeira visita",
-    description: "UX que guia o usuário até a ação certa, sem fricção, sem desculpa para não comprar.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" />
-      </svg>
-    ),
-    title: "Cresça 10x sem reescrever nada",
-    description: "Cloud-native, CI/CD e sistemas que escalam com o negócio — não contra ele.",
-  },
+};
+
+const SERVICE_ICONS = [
+  <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+  </svg>,
+  <svg key="1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /><path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
+  </svg>,
+  <svg key="2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+  </svg>,
+  <svg key="3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" />
+  </svg>,
 ];
 
 const fadeUp = {
@@ -127,7 +139,7 @@ export default function SoftwarePage() {
             className="text-sm sm:text-base max-w-md leading-relaxed"
             style={{ color: "rgba(224,247,250,0.6)" }}
           >
-            Cada semana sem o sistema certo é receita que o seu concorrente está embolsando.
+            {COPY[locale].heroSubtitle}
           </motion.p>
           <motion.a
             href="mailto:software@bitcraft.dev.br"
@@ -143,7 +155,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            Destrave meu produto →
+            {COPY[locale].heroCta}
           </motion.a>
         </div>
       </section>
@@ -166,7 +178,7 @@ export default function SoftwarePage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            Engenharia de Alta Performance
+            {COPY[locale].badge}
           </motion.div>
 
           <motion.h2
@@ -195,7 +207,7 @@ export default function SoftwarePage() {
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.6)" }}
           >
-            Pare de financiar código que não vende. A Bitcraft transforma ideias em máquinas de crescimento — do MVP ao produto escalável, com IA integrada desde o primeiro dia.
+            {COPY[locale].subtitle}
           </motion.p>
 
           <motion.a
@@ -213,7 +225,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            Destrave meu produto →
+            {COPY[locale].cta}
           </motion.a>
         </div>
 
@@ -225,7 +237,7 @@ export default function SoftwarePage() {
           variants={fadeUp}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >
-          {services.map((s, i) => (
+          {COPY[locale].services.map((s, i) => (
             <motion.div
               key={s.title}
               custom={4 + i * 0.5}
@@ -243,7 +255,7 @@ export default function SoftwarePage() {
                 className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
                 style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)" }}
               >
-                {s.icon}
+                {SERVICE_ICONS[i]}
               </div>
               <div>
                 <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
