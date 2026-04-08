@@ -28,8 +28,8 @@ const services = [
         <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
       </svg>
     ),
-    title: "Engenharia de Produto",
-    description: "Arquitetura robusta, stack moderna e squads de alta entrega.",
+    title: "Entregue mais rápido, quebre menos",
+    description: "Squads focados em resultado, não em reuniões. Arquitetura que aguenta o crescimento antes de ele chegar.",
   },
   {
     icon: (
@@ -37,8 +37,8 @@ const services = [
         <circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /><path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
       </svg>
     ),
-    title: "IA Aplicada",
-    description: "Automação inteligente, agentes e modelos que viram vantagem competitiva.",
+    title: "Automatize o que devora seu tempo",
+    description: "Agentes e modelos que eliminam tarefas repetitivas e transformam dados em decisões — enquanto você foca no que só você pode fazer.",
   },
   {
     icon: (
@@ -46,8 +46,8 @@ const services = [
         <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
       </svg>
     ),
-    title: "Web & Mobile",
-    description: "Interfaces rápidas, acessíveis e com UX que converte.",
+    title: "Interfaces que convertem na primeira visita",
+    description: "UX que guia o usuário até a ação certa, sem fricção, sem desculpa para não comprar.",
   },
   {
     icon: (
@@ -55,8 +55,8 @@ const services = [
         <path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" />
       </svg>
     ),
-    title: "Infraestrutura & Scale",
-    description: "Cloud-native, CI/CD e sistemas que crescem com o negócio.",
+    title: "Cresça 10x sem reescrever nada",
+    description: "Cloud-native, CI/CD e sistemas que escalam com o negócio — não contra ele.",
   },
 ];
 
@@ -127,7 +127,7 @@ export default function SoftwarePage() {
             className="text-sm sm:text-base max-w-md leading-relaxed"
             style={{ color: "rgba(224,247,250,0.6)" }}
           >
-            Transformamos ideias em sistemas de alto desempenho. Vamos conversar.
+            Cada semana sem o sistema certo é receita que o seu concorrente está embolsando.
           </motion.p>
           <motion.a
             href="mailto:software@bitcraft.dev.br"
@@ -143,7 +143,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            Falar com a equipe
+            Destrave meu produto →
           </motion.a>
         </div>
       </section>
@@ -166,7 +166,7 @@ export default function SoftwarePage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            Engenharia & IA
+            Engenharia de Alta Performance
           </motion.div>
 
           <motion.h2
@@ -195,8 +195,7 @@ export default function SoftwarePage() {
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.6)" }}
           >
-            Construímos sistemas digitais de alto desempenho — do MVP ao produto escalável,
-            com IA integrada em cada camada.
+            Pare de financiar código que não vende. A Bitcraft transforma ideias em máquinas de crescimento — do MVP ao produto escalável, com IA integrada desde o primeiro dia.
           </motion.p>
 
           <motion.a
@@ -214,7 +213,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            Falar com a equipe
+            Destrave meu produto →
           </motion.a>
         </div>
 
