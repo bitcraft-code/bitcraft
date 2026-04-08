@@ -89,10 +89,64 @@ export default function SoftwarePage() {
         </Link>
       </motion.div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 min-h-screen max-w-4xl mx-auto w-full gap-14 justify-center">
+      {/* LetterGlitch hero section */}
+      <section className="relative w-full min-h-screen flex items-center justify-center">
+        <LetterGlitch
+          glitchColors={["#07130f", "#00ff9f", "#00b870"]}
+          glitchSpeed={60}
+          outerVignette
+          centerVignette
+          smooth
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-none"
+          >
+            Pronto para{" "}
+            <span style={{
+              backgroundImage: "linear-gradient(92deg, #00ff9f, #00d47a)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}>
+              construir?
+            </span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-sm sm:text-base max-w-md leading-relaxed"
+            style={{ color: "rgba(224,247,250,0.6)" }}
+          >
+            Transformamos ideias em sistemas de alto desempenho. Vamos conversar.
+          </motion.p>
+          <motion.a
+            href="mailto:software@bitcraft.dev.br"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="px-8 py-3 rounded-full text-sm font-bold tracking-wide"
+            style={{
+              background: "linear-gradient(135deg, var(--accent), #00b870)",
+              color: "#05120d",
+              boxShadow: "0 0 32px rgba(0,255,159,0.3)",
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Falar com a equipe
+          </motion.a>
+        </div>
+      </section>
 
-        {/* Hero */}
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
+
+        {/* Intro */}
         <div className="flex flex-col items-center gap-5">
           <motion.div
             custom={0}
@@ -110,7 +164,7 @@ export default function SoftwarePage() {
             Engenharia & IA
           </motion.div>
 
-          <motion.h1
+          <motion.h2
             custom={1}
             initial="hidden"
             animate="visible"
@@ -126,7 +180,7 @@ export default function SoftwarePage() {
             }}>
               Software
             </span>
-          </motion.h1>
+          </motion.h2>
 
           <motion.p
             custom={2}
@@ -197,63 +251,6 @@ export default function SoftwarePage() {
           ))}
         </motion.div>
       </div>
-
-      {/* LetterGlitch CTA section */}
-      <section className="relative w-full min-h-[420px] sm:min-h-[500px] flex items-center justify-center">
-        <LetterGlitch
-          glitchColors={["#07130f", "#00ff9f", "#00b870"]}
-          glitchSpeed={60}
-          outerVignette
-          centerVignette
-          smooth
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-none"
-          >
-            Pronto para{" "}
-            <span style={{
-              backgroundImage: "linear-gradient(92deg, #00ff9f, #00d47a)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}>
-              construir?
-            </span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-sm sm:text-base max-w-md leading-relaxed"
-            style={{ color: "rgba(224,247,250,0.6)" }}
-          >
-            Transformamos ideias em sistemas de alto desempenho. Vamos conversar.
-          </motion.p>
-          <motion.a
-            href="mailto:software@bitcraft.dev.br"
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="px-8 py-3 rounded-full text-sm font-bold tracking-wide"
-            style={{
-              background: "linear-gradient(135deg, var(--accent), #00b870)",
-              color: "#05120d",
-              boxShadow: "0 0 32px rgba(0,255,159,0.3)",
-            }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Falar com a equipe
-          </motion.a>
-        </div>
-      </section>
     </main>
   );
 }
