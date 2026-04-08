@@ -278,7 +278,7 @@ export default function FaultyTerminal({
 
   // Resolve dpr inside the component body to avoid SSR errors with window
   const resolvedDpr = useMemo(
-    () => dpr ?? Math.min(window.devicePixelRatio || 1, 2),
+    () => dpr ?? Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, 2),
     [dpr]
   );
 
