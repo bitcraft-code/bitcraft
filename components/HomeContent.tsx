@@ -199,7 +199,7 @@ export default function HomeContent() {
             style={{
               opacity: headerMouse.hover ? 1 : 0,
               transition: spT(headerMouse.hover),
-              background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)`,
+              background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.12)"}, transparent 70%)`,
             }}
           />
           {/* Border spotlight */}
@@ -208,7 +208,7 @@ export default function HomeContent() {
             style={{
               opacity: headerMouse.hover ? 1 : 0,
               transition: spT(headerMouse.hover),
-              background: `radial-gradient(circle 140px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`,
+              background: `radial-gradient(circle 150px at ${headerMouse.x}px ${headerMouse.y}px, ${dark ? "rgba(255,255,255,1)" : "rgba(0,0,0,1)"} 0%, transparent 70%)`,
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               WebkitMaskComposite: "xor",
               mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
