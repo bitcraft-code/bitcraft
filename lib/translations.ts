@@ -6,7 +6,7 @@ export const translations = {
     headingStatic: 'Ideas that',
     rotatingTexts: ['convert,', 'scale,', 'dominate,', 'sell!'],
     subtitle:
-      'Most companies build. Few companies grow. Bitcraft does both — engineering that ships and marketing that converts.',
+      'Most companies build. Few companies grow. Bitcraft does both! Engineering that ships and marketing that converts.',
     nav: {
       software: 'Software',
       agency: 'Agency',
@@ -20,7 +20,7 @@ export const translations = {
     headingStatic: 'Ideias que',
     rotatingTexts: ['convertem,', 'escalam,', 'dominam,', 'vendem!'],
     subtitle:
-      'A maioria constrói. Poucos crescem. A Bitcraft faz os dois — engenharia que entrega e marketing que converte.',
+      'A maioria constrói. Poucos crescem. A Bitcraft faz os dois! Engenharia que entrega e marketing que converte.',
     nav: {
       software: 'Software',
       agency: 'Agency',

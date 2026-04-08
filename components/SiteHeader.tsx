@@ -171,7 +171,7 @@ export default function SiteHeader({
             ))}
           </nav>
 
-          {/* Locale toggle — only rendered when handler is provided */}
+          {/* Locale toggle, only rendered when handler is provided */}
           {onToggleLocale && (
             <motion.button
               onClick={onToggleLocale}
@@ -201,7 +201,7 @@ export default function SiteHeader({
             </motion.button>
           )}
 
-          {/* Theme toggle — only rendered when handler is provided */}
+          {/* Theme toggle, only rendered when handler is provided */}
           {onToggleDark && (
             <motion.button
               onClick={onToggleDark}

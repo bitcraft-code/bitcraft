@@ -69,7 +69,7 @@ export default function HomeContent() {
     <main className="relative min-h-[100dvh] flex flex-col select-none overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        {/* CSS gradient fallback — sempre visível quando WebGL falha (mobile) */}
+        {/* CSS gradient fallback, sempre visível quando WebGL falha (mobile) */}
         <motion.div
           className="absolute inset-0"
           animate={{ opacity: 1 }}
