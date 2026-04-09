@@ -93,7 +93,7 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <section className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden sm:pt-20 md:pt-24">
         {/* Grainient background — scoped to hero only */}
         <div className="absolute inset-0">
           <motion.div
