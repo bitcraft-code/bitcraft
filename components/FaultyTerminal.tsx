@@ -1,6 +1,5 @@
 "use client";
 
-import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 
 type Vec2 = [number, number];
@@ -276,11 +275,8 @@ export default function FaultyTerminal({
   const loadAnimationStartRef = useRef<number>(0);
   const timeOffsetRef = useRef<number>(Math.random() * 100);
 
-  // Resolve dpr inside the component body to avoid SSR errors with window
-  const resolvedDpr = useMemo(
-    () => dpr ?? Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, 2),
-    [dpr]
-  );
+  // Cap DPR at 1 — terminal background doesn't benefit from retina resolution
+  const resolvedDpr = useMemo(() => Math.min(dpr ?? 1, 1), [dpr]);
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
 
@@ -299,14 +295,21 @@ export default function FaultyTerminal({
     const ctn = containerRef.current;
     if (!ctn) return;
 
-    const renderer = new Renderer({ dpr: resolvedDpr });
-    rendererRef.current = renderer;
-    const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 1);
+    let cancelled = false;
+    let roCleanup: (() => void) | null = null;
 
-    const geometry = new Triangle(gl);
+    const setup = async () => {
+      const { Renderer, Program, Mesh, Color, Triangle } = await import('ogl');
+      if (cancelled || !containerRef.current) return;
 
-    const program = new Program(gl, {
+      const renderer = new Renderer({ dpr: resolvedDpr });
+      rendererRef.current = renderer;
+      const gl = renderer.gl;
+      gl.clearColor(0, 0, 0, 1);
+
+      const geometry = new Triangle(gl);
+
+      const program = new Program(gl, {
       vertex: vertexShader,
       fragment: fragmentShader,
       uniforms: {
@@ -361,8 +364,15 @@ export default function FaultyTerminal({
     resizeObserver.observe(ctn);
     resize();
 
+    const isMobile = window.navigator.maxTouchPoints > 0;
+    const FPS_CAP = isMobile ? 24 : 30;
+    const FRAME_INTERVAL = 1000 / FPS_CAP;
+    let lastFrameTime = 0;
+
     const update = (t: number) => {
       rafRef.current = requestAnimationFrame(update);
+      if (t - lastFrameTime < FRAME_INTERVAL) return;
+      lastFrameTime = t;
 
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
@@ -402,15 +412,23 @@ export default function FaultyTerminal({
 
     if (mouseReact) ctn.addEventListener('mousemove', handleMouseMove);
 
-    return () => {
+    roCleanup = () => {
       cancelAnimationFrame(rafRef.current);
       resizeObserver.disconnect();
       if (mouseReact) ctn.removeEventListener('mousemove', handleMouseMove);
       if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
-      loadAnimationStartRef.current = 0;
-      timeOffsetRef.current = Math.random() * 100;
     };
+  };
+
+  setup();
+
+  return () => {
+    cancelled = true;
+    roCleanup?.();
+    loadAnimationStartRef.current = 0;
+    timeOffsetRef.current = Math.random() * 100;
+  };
   }, [
     resolvedDpr,
     pause,
