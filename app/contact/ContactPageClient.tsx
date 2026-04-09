@@ -130,7 +130,7 @@ export default function ContactPageClient() {
           <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-3">
             {HEADINGS[locale][variant]}
           </h1>
-          <p className="text-base leading-relaxed" style={{ color: "rgba(224,240,255,0.65)" }}>
+          <p className="text-base leading-relaxed" style={{ color: "rgba(224,240,255,0.93)" }}>
             {SUBHEADINGS[locale][variant]}
           </p>
         </motion.div>

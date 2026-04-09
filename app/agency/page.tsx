@@ -144,7 +144,7 @@ function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"
                   </div>
                   <div style={{ transformStyle: "preserve-3d" }}>
                     <h3 className="font-semibold text-white text-base mb-1" style={{ transform: "translateZ(20px)" }}>{s.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(224,247,250,0.72)", transform: "translateZ(10px)" }}>
+                    <p className="text-sm leading-relaxed" style={{ color: "rgba(224,247,250,0.93)", transform: "translateZ(10px)" }}>
                       {s.description}
                     </p>
                   </div>

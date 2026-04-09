@@ -171,7 +171,7 @@ function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] })
                   </div>
                   <div style={{ transformStyle: "preserve-3d" }}>
                     <h3 className="font-semibold text-white text-base mb-1" style={{ transform: "translateZ(20px)" }}>{p.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(255,240,210,0.72)", transform: "translateZ(10px)" }}>
+                    <p className="text-sm leading-relaxed" style={{ color: "rgba(255,240,210,0.93)", transform: "translateZ(10px)" }}>
                       {p.description}
                     </p>
                   </div>
@@ -315,7 +315,7 @@ export default function AboutPage() {
             animate="visible"
             variants={fadeUp}
             className="text-base sm:text-lg max-w-2xl leading-relaxed"
-            style={{ color: "rgba(255,240,210,0.88)" }}
+            style={{ color: "rgba(255,240,210,0.95)" }}
           >
             {c.subtitle}
           </motion.p>

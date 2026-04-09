@@ -238,7 +238,7 @@ export default function NotFound() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="text-sm sm:text-base max-w-sm leading-relaxed"
-              style={{ color: "rgba(255,220,220,0.72)" }}
+              style={{ color: "rgba(255,220,220,0.93)" }}
             >
               {c.subtitle}
             </motion.p>

@@ -65,8 +65,8 @@ export default function ContactSection({ variant = "default", locale = "en", dar
 
   const headingColor = variant === "home" ? (dark ? "#ffffff" : "#0a192f") : "#ffffff";
   const subtitleColor = variant === "home"
-    ? (dark ? "rgba(224,240,255,0.65)" : "rgba(10,25,47,0.65)")
-    : "rgba(224,240,255,0.65)";
+    ? (dark ? "rgba(224,240,255,0.93)" : "rgba(10,25,47,0.88)")
+    : "rgba(224,240,255,0.93)";
 
   const sectionStyle = variant === "home" ? {
     background: dark
