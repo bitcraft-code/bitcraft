@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import TextType from "../../components/TextType";
+import HeroSoftwareCycle from "../../components/HeroSoftwareCycle";
+// import TextType from "../../components/TextType"; // kept for easy revert
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
@@ -122,19 +123,13 @@ export default function SoftwarePage() {
         {/* Extra vignette for text legibility */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <TextType
-            as="h1"
-            text={TYPING_TEXTS[locale]}
-            typingSpeed={55}
-            deletingSpeed={30}
-            pauseDuration={2500}
-            initialDelay={400}
-            loop
-            showCursor
-            cursorCharacter="_"
-            cursorClassName="text-[#00ff9f]"
-            accentFontFamily="var(--font-caveat)"
-            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight"
+          <HeroSoftwareCycle
+            phrases={TYPING_TEXTS[locale]}
+            accentColor="#00ff9f"
+            accentFont="var(--font-caveat)"
+            speed={90}
+            displayDuration={2800}
+            className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-center w-full max-w-3xl"
           />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
