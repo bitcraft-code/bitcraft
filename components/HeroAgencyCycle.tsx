@@ -17,7 +17,7 @@ function buildHTML(
     if (match.index > last)
       parts.push(`<span>${phrase.slice(last, match.index)}</span>`);
     parts.push(
-      `<span style="color:${accentColor};font-family:${accentFont ?? ""};font-weight:bold">${match[1]}</span>`,
+      `<span style="color:${accentColor};font-family:${accentFont ?? ""};font-weight:bold;font-size:1.4em;line-height:1">${match[1]}</span>`,
     );
     last = match.index + match[0].length;
   }

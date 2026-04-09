@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import DecryptedText from "./DecryptedText";
+import { useState, useEffect, useRef, useCallback } from "react";
+
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
+const FADE_MS = 350;
+
+function randomChar() {
+  return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+}
 
 function parsePhrase(phrase: string): { text: string; accent: boolean }[] {
   const segments: { text: string; accent: boolean }[] = [];
@@ -18,12 +24,21 @@ function parsePhrase(phrase: string): { text: string; accent: boolean }[] {
   return segments;
 }
 
-/** Estimate decrypt time: parallel segments, each takes (len * speed) ms */
-function estimateDecryptMs(phrase: string, speed: number): number {
-  const maxSegLen = Math.max(
-    ...parsePhrase(phrase).map((s) => s.text.length),
-  );
-  return maxSegLen * speed + 300; // +buffer
+interface CharItem {
+  char: string;
+  accent: boolean;
+  scrambled: string;
+  revealed: boolean;
+}
+
+function buildChars(phrase: string): CharItem[] {
+  const items: CharItem[] = [];
+  for (const seg of parsePhrase(phrase)) {
+    for (const c of seg.text) {
+      items.push({ char: c, accent: seg.accent, scrambled: randomChar(), revealed: false });
+    }
+  }
+  return items;
 }
 
 export interface HeroSoftwareCycleProps {
@@ -35,8 +50,6 @@ export interface HeroSoftwareCycleProps {
   speed?: number;
 }
 
-const FADE_MS = 350;
-
 export default function HeroSoftwareCycle({
   phrases,
   accentColor = "#00ff9f",
@@ -45,47 +58,89 @@ export default function HeroSoftwareCycle({
   displayDuration = 3500,
   speed = 45,
 }: HeroSoftwareCycleProps) {
-  const [phraseIdx, setPhraseIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
-  // Incremented on each phrase change — used as key to force-remount DecryptedText
-  const cycleKeyRef = useRef(0);
-  const [cycleKey, setCycleKey] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [chars, setChars] = useState<CharItem[]>([]);
+  // Stable refs so the effect closure captures the latest prop values
+  const speedRef = useRef(speed);
+  const displayDurationRef = useRef(displayDuration);
+  speedRef.current = speed;
+  displayDurationRef.current = displayDuration;
+
+  const phrasesRef = useRef(phrases);
+  phrasesRef.current = phrases;
 
   useEffect(() => {
     let alive = true;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    function scheduleNext() {
-      const entryMs = estimateDecryptMs(phrases[cycleKeyRef.current % phrases.length], speed);
-      const holdMs = entryMs + displayDuration;
-
-      const t1 = setTimeout(() => {
-        if (!alive) return;
-        setVisible(false); // start fade out
-
-        const t2 = setTimeout(() => {
-          if (!alive) return;
-          cycleKeyRef.current += 1;
-          setPhraseIdx(cycleKeyRef.current % phrases.length);
-          setCycleKey(cycleKeyRef.current);
-          // Brief pause so React mounts new DecryptedText instances before fading in
-          const t3 = setTimeout(() => {
-            if (!alive) return;
-            setVisible(true);
-            scheduleNext();
-          }, 50);
-          return () => clearTimeout(t3);
-        }, FADE_MS);
-        return () => clearTimeout(t2);
-      }, holdMs);
-      return () => clearTimeout(t1);
+    function cleanup() {
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+      if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
     }
 
-    scheduleNext();
-    return () => { alive = false; };
+    function runPhrase(idx: number) {
+      cleanup();
+      const phrase = phrasesRef.current[idx % phrasesRef.current.length];
+      const allChars = buildChars(phrase);
+
+      setChars([...allChars]);
+
+      // Brief pause so React renders the new chars before fading in
+      timeoutId = setTimeout(() => {
+        if (!alive) return;
+        setVisible(true);
+
+        let ptr = 0;
+
+        intervalId = setInterval(() => {
+          if (!alive) return;
+
+          // Skip consecutive spaces
+          while (ptr < allChars.length && allChars[ptr].char === " ") {
+            allChars[ptr].revealed = true;
+            ptr++;
+          }
+          // Reveal next non-space char
+          if (ptr < allChars.length) {
+            allChars[ptr].revealed = true;
+            ptr++;
+          }
+          // Scramble still-unrevealed non-space chars
+          for (let i = ptr; i < allChars.length; i++) {
+            if (allChars[i].char !== " ") {
+              allChars[i].scrambled = randomChar();
+            }
+          }
+
+          setChars([...allChars]);
+
+          if (ptr >= allChars.length) {
+            clearInterval(intervalId!);
+            intervalId = null;
+
+            timeoutId = setTimeout(() => {
+              if (!alive) return;
+              setVisible(false);
+
+              timeoutId = setTimeout(() => {
+                if (!alive) return;
+                runPhrase(idx + 1);
+              }, FADE_MS);
+            }, displayDurationRef.current);
+          }
+        }, speedRef.current);
+      }, 50);
+    }
+
+    runPhrase(0);
+
+    return () => {
+      alive = false;
+      cleanup();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const segments = parsePhrase(phrases[phraseIdx]);
 
   return (
     <h1
@@ -95,31 +150,31 @@ export default function HeroSoftwareCycle({
         transition: `opacity ${FADE_MS}ms ease`,
       }}
     >
-      {segments.map((seg, i) =>
-        seg.accent ? (
-          <DecryptedText
-            key={`${cycleKey}-${i}`}
-            text={seg.text}
-            sequential
-            revealDirection="start"
-            speed={speed}
-            animateOn="view"
-            encryptedClassName="opacity-40"
-            style={{ color: accentColor, fontFamily: accentFont, fontWeight: "bold" }}
-          />
-        ) : (
-          <DecryptedText
-            key={`${cycleKey}-${i}`}
-            text={seg.text}
-            sequential
-            revealDirection="start"
-            speed={speed}
-            animateOn="view"
-            className="text-white"
-            encryptedClassName="text-white/40"
-          />
-        ),
-      )}
+      {chars.map((c, i) => {
+        const displayChar = c.char === " " ? "\u00a0" : (c.revealed ? c.char : c.scrambled);
+        if (c.accent) {
+          return (
+            <span
+              key={i}
+              style={{
+                color: accentColor,
+                fontFamily: accentFont,
+                fontWeight: "bold",
+                fontSize: "1.4em",
+                lineHeight: 1,
+                opacity: c.revealed ? 1 : 0.4,
+              }}
+            >
+              {displayChar}
+            </span>
+          );
+        }
+        return (
+          <span key={i} className={c.revealed ? "text-white" : "text-white/40"}>
+            {displayChar}
+          </span>
+        );
+      })}
     </h1>
   );
 }
