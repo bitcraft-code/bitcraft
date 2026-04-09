@@ -343,11 +343,18 @@ export default function FaultyTerminal({
     function resize() {
       if (!ctn || !renderer) return;
       renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
+      const ar = ctn.offsetWidth / ctn.offsetHeight;
       program.uniforms.iResolution.value = new Color(
         gl.canvas.width,
         gl.canvas.height,
-        gl.canvas.width / gl.canvas.height
+        ar
       );
+      // Keep digit cells square regardless of viewport aspect ratio.
+      // Preserve visual density (geometric mean) while adjusting x/y ratio to match ar.
+      const density = Math.sqrt(gridMul[0] * gridMul[1]);
+      const sqrtAr = Math.sqrt(ar);
+      (program.uniforms.uGridMul.value as Float32Array)[0] = density * sqrtAr;
+      (program.uniforms.uGridMul.value as Float32Array)[1] = density / sqrtAr;
     }
 
     const resizeObserver = new ResizeObserver(() => resize());

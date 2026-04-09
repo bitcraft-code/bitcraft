@@ -195,17 +195,18 @@ export default function AboutPage() {
     <title>{locale === "pt" ? "BITCRAFT | Quem Somos" : "BITCRAFT | About Us"}</title>
     <main className="relative flex flex-col overflow-x-hidden">
       {/* Background */}
-      <div className="absolute inset-0" style={{
+      <div className="fixed inset-0 -z-10" style={{
         background: `radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232,160,32,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(196,135,26,0.07) 0%, transparent 60%), linear-gradient(180deg, #130e04 0%, #1a1205 100%)`,
       }} />
-      <div className="absolute inset-0 ambient-noise" />
+      <div className="fixed inset-0 -z-10 ambient-noise" />
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
             "linear-gradient(rgba(232,160,32,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232,160,32,0.05) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
           maskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
         }}
       />
 
