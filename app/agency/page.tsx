@@ -7,6 +7,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
+import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
@@ -84,6 +85,7 @@ const fadeUp = {
 
 export default function AgencyPage() {
   const [locale, setLocale] = useState<Locale>("en");
+  const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   useEffect(() => { setLocale(detectLocale()); }, []);
   const c = COPY[locale];
 
@@ -233,34 +235,64 @@ export default function AgencyPage() {
           variants={fadeUp}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >
-          {c.services.map((s, i) => (
+          {c.services.map((s, i) => {
+            const tilt = cardTilt[i] ?? { rx: 0, ry: 0 };
+            return (
             <motion.div
               key={s.title}
               custom={4 + i * 0.5}
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="flex gap-4 items-start rounded-xl p-5 text-left"
-              style={{
-                background: "rgba(14,34,56,0.55)",
-                border: "1px solid rgba(0,170,255,0.18)",
-                backdropFilter: "blur(12px)",
-              }}
+              style={{ perspective: "800px" }}
             >
               <div
-                className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(0,170,255,0.1)", color: "var(--primary)" }}
+                style={{
+                  transform: `rotateX(${tilt.ry}deg) rotateY(${tilt.rx}deg)`,
+                  transition: "transform 0.18s ease-out",
+                  transformStyle: "preserve-3d",
+                  height: "100%",
+                }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - rect.left) / rect.width - 0.5;
+                  const y = (e.clientY - rect.top) / rect.height - 0.5;
+                  setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                }}
+                onMouseLeave={() => setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } }))}
               >
-                {SERVICE_ICONS[i]}
-              </div>
-              <div>
-                <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
-                  {s.description}
-                </p>
+                <BorderGlow
+                  className="h-full backdrop-blur-md"
+                  colors={["#00aaff", "#0090d4", "#00d4ff"]}
+                  glowColor="200 100 55"
+                  backgroundColor="rgba(14,34,56,0.72)"
+                  borderRadius={12}
+                  edgeSensitivity={0}
+                  glowRadius={80}
+                  glowIntensity={3}
+                  coneSpread={27}
+                  fillOpacity={0}
+                  animated
+                >
+                  <div className="flex gap-4 items-start p-5 text-left" style={{ transformStyle: "preserve-3d" }}>
+                    <div
+                      className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+                      style={{ background: "rgba(0,170,255,0.1)", color: "var(--primary)", transform: "translateZ(28px)" }}
+                    >
+                      {SERVICE_ICONS[i]}
+                    </div>
+                    <div style={{ transformStyle: "preserve-3d" }}>
+                      <h3 className="font-semibold text-white text-base mb-1" style={{ transform: "translateZ(20px)" }}>{s.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: "rgba(224,247,250,0.72)", transform: "translateZ(10px)" }}>
+                        {s.description}
+                      </p>
+                    </div>
+                  </div>
+                </BorderGlow>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
 
