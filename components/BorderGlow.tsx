@@ -13,6 +13,7 @@ interface BorderGlowProps {
   glowIntensity?: number;
   coneSpread?: number;
   animated?: boolean;
+  animationDelay?: number;
   colors?: string[];
   fillOpacity?: number;
 }
@@ -83,6 +84,7 @@ const BorderGlow: FC<BorderGlowProps> = ({
   glowIntensity = 1.0,
   coneSpread = 25,
   animated = false,
+  animationDelay = 0,
   colors = ['#c084fc', '#f472b6', '#38bdf8'],
   fillOpacity = 0.5,
 }) => {
@@ -133,21 +135,26 @@ const BorderGlow: FC<BorderGlowProps> = ({
     if (!animated) return;
     const angleStart = 110;
     const angleEnd = 465;
-    setSweepActive(true);
-    setCursorAngle(angleStart);
 
-    animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) });
-    animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
-      setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
-    }});
-    animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
-      setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
-    }});
-    animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
-      onUpdate: v => setEdgeProximity(v / 100),
-      onEnd: () => setSweepActive(false),
-    });
-  }, [animated]);
+    const timer = setTimeout(() => {
+      setSweepActive(true);
+      setCursorAngle(angleStart);
+
+      animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) });
+      animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
+        setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
+      }});
+      animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
+        setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
+      }});
+      animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
+        onUpdate: v => setEdgeProximity(v / 100),
+        onEnd: () => setSweepActive(false),
+      });
+    }, animationDelay);
+
+    return () => clearTimeout(timer);
+  }, [animated, animationDelay]);
 
   const colorSensitivity = edgeSensitivity + 20;
   const isVisible = isHovered || sweepActive;
