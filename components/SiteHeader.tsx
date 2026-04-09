@@ -136,7 +136,7 @@ export default function SiteHeader({
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-10 md:hidden"
+            className="fixed inset-0 z-10 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -184,7 +184,7 @@ export default function SiteHeader({
           <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
 
           {/* Top bar */}
-          <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3">
+          <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-2.5 md:pl-7 md:pr-9 md:py-3">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 md:gap-3">
               <motion.div
@@ -204,7 +204,7 @@ export default function SiteHeader({
 
             {/* Desktop nav + controls */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <nav className="hidden md:flex items-center gap-0.5">
+              <nav className="hidden lg:flex items-center gap-0.5">
                 {navItems.map((item, i) => (
                   <motion.a
                     key={item.href + item.label}
@@ -305,9 +305,9 @@ export default function SiteHeader({
                 </motion.button>
               )}
 
-              {/* Hamburger — below md, rightmost */}
+              {/* Hamburger — below lg, rightmost */}
               <button
-                className="md:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+                className="lg:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-label="Toggle menu"
                 style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
@@ -338,7 +338,7 @@ export default function SiteHeader({
             {mobileOpen && (
               <motion.div
                 key="mobile-nav"
-                className="md:hidden overflow-hidden"
+                className="lg:hidden overflow-hidden"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
