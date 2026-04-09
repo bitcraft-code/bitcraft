@@ -201,8 +201,8 @@ export default function HomeContent() {
             onTouchEnd={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
             onTouchCancel={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
             overlay={(() => { const s = sp(pillSpotlight.hover, pillSpotlight.x, pillSpotlight.y); return (<>
-                <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, ${dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.12)"}, transparent 70%)` }} />
-                <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+                <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, rgba(255,255,255,0.12), transparent 70%)` }} />
+                <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
               </>); })()}
             staggerFrom="last"
             initial={{ y: "100%" }}
@@ -293,8 +293,8 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "agency", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(255,255,255,0.10)" : "rgba(0,170,255,0.10)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.10), transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
             </>); })()}
             {copy.btnAgency}
           </motion.a>
