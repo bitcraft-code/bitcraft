@@ -5,11 +5,13 @@ import { motion } from "framer-motion";
 import Iridescence from "../../components/Iridescence";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import HeroAgencyCycle from "../../components/HeroAgencyCycle";
-// import TextType from "../../components/TextType"; // kept for easy revert
+import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
+
+// ▼ Change this one value to swap the hero animation
+const HERO_ANIMATION: HeroAnimation = "split"; // "decrypt" | "split" | "type"
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
   en: [
@@ -189,7 +191,8 @@ export default function AgencyPage() {
         </div>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <HeroAgencyCycle
+          <HeroCycle
+            animation={HERO_ANIMATION}
             phrases={TYPING_TEXTS[locale]}
             accentColor="#00aaff"
             accentFont="var(--font-caveat)"
