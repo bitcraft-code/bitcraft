@@ -230,7 +230,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="text-xl sm:text-2xl font-bold text-white"
+              className="text-2xl sm:text-4xl font-bold text-white"
             >
               {c.title}
             </motion.h1>
@@ -239,11 +239,11 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="text-sm sm:text-base max-w-sm leading-relaxed"
+              className="text-base sm:text-xl max-w-sm leading-relaxed"
               style={{ color: "rgba(255,220,220,0.93)" }}
             >
               {c.subtitle}
-              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.35em", color: ACCENT }}>
+              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: ACCENT }}>
                 {c.subtitleAccent}
               </span>
             </motion.p>
