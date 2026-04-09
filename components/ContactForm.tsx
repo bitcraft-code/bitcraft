@@ -127,7 +127,7 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
   });
 
   return (
-    <div style={{ ...t.card, borderRadius: "1.5rem", padding: "2rem", width: "100%" }}>
+    <div style={{ ...theme.card, borderRadius: "1.5rem", padding: "2rem", width: "100%" }}>
       <AnimatePresence mode="wait">
         {status === "success" ? (
           <motion.div
