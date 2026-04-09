@@ -69,7 +69,7 @@ export default function HomeContent() {
   return (
     <main
       className="relative flex flex-col select-none overflow-x-hidden"
-      style={{ background: dark ? "#0d2d45" : "#e8f7ff", transition: "background 0.6s ease" }}
+      style={{ background: dark ? "#071a14" : "#edfaf4", transition: "background 0.6s ease" }}
     >
       {/* ── Header ── */}
       <SiteHeader
