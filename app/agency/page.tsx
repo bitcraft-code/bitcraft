@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import Iridescence from "../../components/Iridescence";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import TextType from "../../components/TextType";
+import HeroAgencyCycle from "../../components/HeroAgencyCycle";
+// import TextType from "../../components/TextType"; // kept for easy revert
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
@@ -188,20 +189,12 @@ export default function AgencyPage() {
         </div>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <TextType
-            as="h1"
-            text={TYPING_TEXTS[locale]}
-            typingSpeed={55}
-            deletingSpeed={30}
-            pauseDuration={2500}
-            initialDelay={400}
-            loop
-            showCursor
-            cursorCharacter="|"
-            cursorClassName="text-[#00aaff]"
+          <HeroAgencyCycle
+            phrases={TYPING_TEXTS[locale]}
             accentColor="#00aaff"
-            accentFontFamily="var(--font-caveat)"
-            className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-balance"
+            accentFont="var(--font-caveat)"
+            displayDuration={3200}
+            className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-balance text-center w-full max-w-3xl"
           />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
