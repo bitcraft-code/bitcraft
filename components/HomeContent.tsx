@@ -142,6 +142,16 @@ export default function HomeContent() {
           style={{ background: t.overlay }}
         />
 
+        {/* Grid lines */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(${dark ? "rgba(255,255,255,0.05)" : "rgba(0,100,160,0.07)"} 1px, transparent 1px), linear-gradient(90deg, ${dark ? "rgba(255,255,255,0.05)" : "rgba(0,100,160,0.07)"} 1px, transparent 1px)`,
+            backgroundSize: "56px 56px",
+            maskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
+          }}
+        />
+
         <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
