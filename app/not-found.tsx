@@ -230,7 +230,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="text-2xl sm:text-4xl font-bold text-white"
+              className="text-xl sm:text-2xl font-bold text-white"
             >
               {c.title}
             </motion.h1>
