@@ -107,9 +107,25 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
-    // TODO: replace with actual API endpoint
-    await new Promise(r => setTimeout(r, 1000));
-    setStatus("success");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      setStatus("success");
+      setFields({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Contact form error:", error);
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   const inputStyle = (field: string): React.CSSProperties => ({
