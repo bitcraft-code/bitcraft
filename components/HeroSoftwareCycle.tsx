@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+";
 const FADE_MS = 350;
 
-function randomChar() {
-  return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+function randomCharFrom(pool: string[]): string {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function phraseCharPool(phrase: string): string[] {
+  // Strip markup syntax, collect unique non-space chars from the actual text
+  const plain = phrase.replace(/\[\[([^|]+)\|[^\]]+\]\]/g, "$1");
+  return Array.from(new Set(plain.split("").filter((c) => c !== " ")));
 }
 
 function parsePhrase(phrase: string): { text: string; accent: boolean }[] {
@@ -31,11 +36,11 @@ interface CharItem {
   revealed: boolean;
 }
 
-function buildChars(phrase: string): CharItem[] {
+function buildChars(phrase: string, pool: string[]): CharItem[] {
   const items: CharItem[] = [];
   for (const seg of parsePhrase(phrase)) {
     for (const c of seg.text) {
-      items.push({ char: c, accent: seg.accent, scrambled: randomChar(), revealed: false });
+      items.push({ char: c, accent: seg.accent, scrambled: randomCharFrom(pool), revealed: false });
     }
   }
   return items;
@@ -82,7 +87,8 @@ export default function HeroSoftwareCycle({
     function runPhrase(idx: number) {
       cleanup();
       const phrase = phrasesRef.current[idx % phrasesRef.current.length];
-      const allChars = buildChars(phrase);
+      const pool = phraseCharPool(phrase);
+      const allChars = buildChars(phrase, pool);
 
       setChars([...allChars]);
 
@@ -109,7 +115,7 @@ export default function HeroSoftwareCycle({
           // Scramble still-unrevealed non-space chars
           for (let i = ptr; i < allChars.length; i++) {
             if (allChars[i].char !== " ") {
-              allChars[i].scrambled = randomChar();
+              allChars[i].scrambled = randomCharFrom(pool);
             }
           }
 
