@@ -79,7 +79,7 @@ const LetterGlitch = ({
     if (!canvas) return;
     const parent = canvas.parentElement;
     if (!parent) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = 1; // cap at 1 — glitch background doesn't need retina resolution
     const rect = parent.getBoundingClientRect();
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
