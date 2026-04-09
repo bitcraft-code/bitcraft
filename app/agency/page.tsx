@@ -85,13 +85,11 @@ const fadeUp = {
 export default function AgencyPage() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    document.title = locale === "pt" ? "BITCRAFT Agency | Growth & Performance" : "BITCRAFT Agency | Growth & Performance";
-  }, [locale]);
-
   const c = COPY[locale];
 
   return (
+    <>
+    <title>{"BITCRAFT Agency | Growth & Performance"}</title>
     <main className="relative flex flex-col overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{
@@ -270,5 +268,6 @@ export default function AgencyPage() {
 
       <SiteFooter locale={locale} />
     </main>
+    </>
   );
 }

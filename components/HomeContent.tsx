@@ -56,9 +56,6 @@ export default function HomeContent() {
   const copy = translations[locale];
 
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    document.title = locale === "pt" ? "BITCRAFT | Onde Código Encontra Crescimento" : "BITCRAFT | Where Code Meets Growth";
-  }, [locale]);
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
   const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
@@ -69,7 +66,11 @@ export default function HomeContent() {
   };
   const sp = (hover: boolean, x: number, y: number) => ({ active: hover, pos: `${x}px ${y}px` });
 
+  const pageTitle = locale === "pt" ? "BITCRAFT | Onde Código Encontra Crescimento" : "BITCRAFT | Where Code Meets Growth";
+
   return (
+    <>
+    <title>{pageTitle}</title>
     <main
       className="relative flex flex-col select-none overflow-x-hidden"
       style={{ background: dark ? "#071a14" : "#edfaf4", transition: "background 0.6s ease" }}
@@ -311,5 +312,6 @@ export default function HomeContent() {
       {/* ── Footer ── */}
       <SiteFooter dark={dark} locale={locale} />
     </main>
+    </>
   );
 }
