@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import FaultyTerminal from "../components/FaultyTerminal";
 import SiteHeader from "../components/SiteHeader";
-import SiteFooter from "../components/SiteFooter";
 import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 
 const ACCENT = "#e83535";
@@ -186,7 +185,7 @@ export default function NotFound() {
     <>
       <style>{NEON_KEYFRAMES}</style>
       <title>BITCRAFT | 404</title>
-      <main className="relative flex flex-col min-h-[100dvh] overflow-x-hidden">
+      <main className="relative flex flex-col h-[100dvh] overflow-hidden">
         {/* Background */}
         <div className="fixed inset-0 -z-10" style={{
           background: `radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232,53,53,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(176,30,30,0.07) 0%, transparent 60%), linear-gradient(180deg, #130404 0%, #1a0505 100%)`,
@@ -282,7 +281,11 @@ export default function NotFound() {
           </div>
         </section>
 
-        <SiteFooter locale={locale} />
+        <footer className="relative z-10 w-full px-6 pb-4 pt-2 shrink-0">
+          <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
+            © {new Date().getFullYear()} Bitcraft. All rights reserved.
+          </p>
+        </footer>
       </main>
     </>
   );
