@@ -40,6 +40,25 @@ type Props = {
   onToggleDark?: () => void;
 };
 
+// Mobile stagger variants — defined outside to avoid recreation on each render
+const mobileNavVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.08 } },
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 as const } },
+};
+
+const mobileItemVariants = {
+  hidden: { opacity: 0, x: 20, filter: "blur(5px)" },
+  visible: {
+    opacity: 1, x: 0, filter: "blur(0px)",
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
+  },
+  exit: {
+    opacity: 0, x: 12, filter: "blur(3px)",
+    transition: { duration: 0.12, ease: "easeIn" as const },
+  },
+};
+
 export default function SiteHeader({
   dark = true,
   activePath,
@@ -84,18 +103,18 @@ export default function SiteHeader({
   const T = {
     header: dark
       ? {
-          bg: scrolled ? "rgba(8,8,18,0.82)" : "rgba(255,255,255,0.08)",
+          bg: scrolled ? "rgba(8,8,18,0.82)" : "rgba(12,12,24,0.12)",
           border: scrolled ? "1px solid rgba(255,255,255,0.13)" : "1px solid rgba(255,255,255,0.18)",
           shadow: scrolled
-            ? "0 8px 48px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.06) inset"
-            : "0 4px 28px rgba(0,0,0,0.16), 0 1px 0 rgba(255,255,255,0.06) inset",
+            ? "0 8px 48px rgba(0,0,0,0.40)"
+            : "0 4px 28px rgba(0,0,0,0.16)",
         }
       : {
           bg: scrolled ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.50)",
           border: scrolled ? "1px solid rgba(0,100,160,0.22)" : "1px solid rgba(0,100,160,0.14)",
           shadow: scrolled
-            ? "0 8px 48px rgba(0,100,200,0.18), 0 1px 0 rgba(255,255,255,0.9) inset"
-            : "0 4px 28px rgba(0,120,200,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
+            ? "0 8px 48px rgba(0,100,200,0.18)"
+            : "0 4px 28px rgba(0,120,200,0.12)",
         },
     logoBg: dark ? "rgba(255,255,255,0.14)" : "rgba(0,170,255,0.10)",
     logoBorder: dark ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(0,170,255,0.22)",
@@ -113,6 +132,16 @@ export default function SiteHeader({
     ctaText: dark ? "#ffffff" : "#0a192f",
     spotlightFill: "rgba(255,255,255,0.08)",
     spotlightBorder: "rgba(255,255,255,0.9)",
+    // Liquid glass layers
+    specular: dark
+      ? "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.05) 50%, transparent 100%)"
+      : "linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.10) 50%, transparent 100%)",
+    causticBorder: dark
+      ? "linear-gradient(175deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.10) 30%, rgba(255,255,255,0.06) 65%, rgba(255,255,255,0.12) 100%)"
+      : "linear-gradient(175deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.18) 30%, rgba(255,255,255,0.10) 65%, rgba(255,255,255,0.25) 100%)",
+    iridescent: dark
+      ? "linear-gradient(125deg, rgba(130,210,255,0.05) 0%, transparent 28%, rgba(210,160,255,0.04) 56%, transparent 78%, rgba(130,255,200,0.03) 100%)"
+      : "linear-gradient(125deg, rgba(100,180,255,0.08) 0%, transparent 28%, rgba(180,130,255,0.06) 56%, transparent 78%, rgba(100,255,180,0.05) 100%)",
   };
 
   const pageAccent =
@@ -128,11 +157,11 @@ export default function SiteHeader({
   ];
 
   const mobileNavItems = [
-    { label: t("nav.home"),     href: "/",         activeColor: "#00ff9f" },
-    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
-    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
-    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
-    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent },
+    { label: t("nav.home"),     href: "/",         activeColor: "#00ff9f",  isCta: false },
+    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f",  isCta: false },
+    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff",  isCta: false },
+    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020",  isCta: false },
+    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, isCta: true  },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -167,22 +196,23 @@ export default function SiteHeader({
         transition={{ duration: 0.55, delay: entranceDelay, ease: easeOut }}
         className="fixed top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
       >
-        {/* Unified pill — expands to include mobile nav */}
+        {/* Unified pill */}
         <motion.div
           className="relative w-full max-w-5xl overflow-hidden"
           animate={{
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
-          }}
-          transition={{ duration: 0.35 }}
-          style={{
             borderRadius: pillExpanded ? 25 : 9999,
+          }}
+          transition={{ duration: 0.35, borderRadius: { type: "spring", stiffness: 260, damping: 28 } }}
+          style={{
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
+            borderRadius: pillExpanded ? 25 : 9999,
           }}
           onMouseMove={(e) => {
             if (wasTouched() || headerRafRef.current !== null) return;
@@ -204,13 +234,47 @@ export default function SiteHeader({
           onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
           onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
         >
-          {/* Spotlight overlay on the pill */}
+          {/* ── Liquid Glass Layers ────────────────────────────────── */}
+
+          {/* 1. Specular top highlight — light reflecting off the curved top edge, breathing */}
+          <motion.span
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            animate={{ opacity: [0.75, 1, 0.75] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
+            style={{
+              height: "58%",
+              borderRadius: "inherit",
+              background: T.specular,
+            }}
+          />
+
+          {/* 2. Caustic gradient border — brighter at top edge, dimmer at bottom (glass thickness illusion) */}
+          <span
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              borderRadius: "inherit",
+              background: T.causticBorder,
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              maskComposite: "exclude",
+              padding: "1px",
+            }}
+          />
+
+          {/* 3. Iridescent prismatic overlay — very subtle rainbow refraction */}
+          <span
+            className="absolute inset-0 pointer-events-none"
+            style={{ borderRadius: "inherit", background: T.iridescent }}
+          />
+
+          {/* 4. Mouse spotlight (interactive) */}
           <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 220px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
           <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
 
-          {/* Top bar — padding compacts on scroll */}
+          {/* ── Top bar ───────────────────────────────────────────── */}
           <motion.div
-            className="flex items-center justify-between px-4 sm:px-5 md:pl-7 md:pr-5"
+            className="relative flex items-center justify-between px-4 sm:px-5 md:pl-7 md:pr-5"
             animate={{ paddingTop: scrolled ? 8 : 12, paddingBottom: scrolled ? 8 : 12 }}
             transition={{ duration: 0.35 }}
           >
@@ -233,7 +297,7 @@ export default function SiteHeader({
 
             {/* Desktop nav + controls */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Nav with sliding pill highlight */}
+              {/* Sliding pill nav */}
               <nav className="hidden lg:flex items-center gap-0.5">
                 {navItems.map((item) => {
                   const isActive = activePath === item.href;
@@ -262,21 +326,14 @@ export default function SiteHeader({
                 })}
               </nav>
 
-              {/* Divider */}
               <div className="hidden lg:block w-px h-5 shrink-0" style={{ background: T.divider }} />
 
-              {/* CTA — Contact as a distinct pill button */}
+              {/* CTA — Contact */}
               <motion.a
                 href="#contact"
                 onClick={(e) => { e.preventDefault(); scrollToSection("#contact"); }}
                 className="hidden lg:flex items-center px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap cursor-pointer"
-                style={{
-                  background: T.ctaBg,
-                  border: T.ctaBorder,
-                  color: T.ctaText,
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                }}
+                style={{ background: T.ctaBg, border: T.ctaBorder, color: T.ctaText, backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
                 animate={{ background: T.ctaBg, border: T.ctaBorder, color: T.ctaText }}
                 transition={{ duration: 0.35 }}
                 whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 22 } }}
@@ -352,7 +409,7 @@ export default function SiteHeader({
                 </motion.button>
               )}
 
-              {/* Hamburger — below lg */}
+              {/* Hamburger */}
               <button
                 className="lg:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
                 onClick={() => setMobileOpen((o) => !o)}
@@ -368,43 +425,65 @@ export default function SiteHeader({
             </div>
           </motion.div>
 
-          {/* Mobile expandable nav — inside the pill */}
+          {/* ── Mobile expandable nav ─────────────────────────────── */}
           <AnimatePresence initial={false}>
             {mobileOpen && (
               <motion.div
                 key="mobile-nav"
                 className="lg:hidden overflow-hidden"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: easeOut }}
+                initial={{ height: 0 }}
+                animate={{ height: "auto" }}
+                exit={{ height: 0 }}
+                transition={{ duration: 0.35, ease: easeOut }}
               >
                 <div style={{ borderTop: `1px solid ${T.divider}`, margin: "0 12px" }} />
-                <nav className="flex flex-col p-3 gap-1 pt-2">
-                  {mobileNavItems.map((item) => (
-                    <a
-                      key={item.href + item.label}
-                      href={item.href.startsWith("#") ? undefined : item.href}
-                      onClick={(e) => {
-                        if (item.href.startsWith("#")) {
-                          e.preventDefault();
-                          setMobileOpen(false);
-                          setTimeout(() => scrollToSection(item.href), 320);
-                        } else {
-                          setMobileOpen(false);
-                        }
-                      }}
-                      className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150 cursor-pointer"
-                      style={{
-                        color: activePath === item.href ? item.activeColor : T.navText,
-                        background: "transparent",
-                      }}
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                </nav>
-                <div className="px-3 pb-3">
+
+                {/* Staggered nav items */}
+                <motion.nav
+                  className="flex flex-col p-3 gap-1 pt-2"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={mobileNavVariants}
+                >
+                  {mobileNavItems.map((item) => {
+                    const isActive = activePath === item.href;
+                    return (
+                      <motion.a
+                        key={item.href + item.label}
+                        variants={mobileItemVariants}
+                        whileTap={{ scale: 0.97 }}
+                        href={item.href.startsWith("#") ? undefined : item.href}
+                        onClick={(e) => {
+                          if (item.href.startsWith("#")) {
+                            e.preventDefault();
+                            setMobileOpen(false);
+                            setTimeout(() => scrollToSection(item.href), 320);
+                          } else {
+                            setMobileOpen(false);
+                          }
+                        }}
+                        className="flex items-center justify-end px-4 py-3 rounded-2xl text-base font-bold cursor-pointer"
+                        style={{
+                          color: item.isCta ? T.ctaText : (isActive ? item.activeColor : T.navText),
+                          background: item.isCta ? T.ctaBg : "transparent",
+                          border: item.isCta ? T.ctaBorder : "1px solid transparent",
+                        }}
+                      >
+                        {item.label}
+                      </motion.a>
+                    );
+                  })}
+                </motion.nav>
+
+                {/* Language toggle in mobile */}
+                <motion.div
+                  className="px-3 pb-3"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ delay: 0.38, duration: 0.22, ease: "easeOut" }}
+                >
                   <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
                   <button
                     onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
@@ -414,7 +493,7 @@ export default function SiteHeader({
                     <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
                     <span>{t("nav.languageLabel")}</span>
                   </button>
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
