@@ -78,51 +78,218 @@ function getEmailTemplate(name: string, email: string, message: string): string 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background-color: #f5f5f5; line-height: 1.6; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .header { background: linear-gradient(135deg, #00aaff 0%, #00ff9f 100%); padding: 40px 20px; text-align: center; color: white; }
-    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .header p { font-size: 14px; opacity: 0.9; }
-    .content { padding: 40px; }
-    .content h2 { color: #0a192f; font-size: 20px; margin-bottom: 20px; border-bottom: 2px solid #00aaff; padding-bottom: 12px; }
-    .field { margin-bottom: 20px; }
-    .field label { display: block; font-weight: 600; color: #0a192f; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .field-value { background-color: #f9f9f9; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #00aaff; color: #333; font-size: 14px; word-break: break-word; white-space: pre-wrap; }
-    .message-box { background-color: #f0f7ff; padding: 16px; border-radius: 6px; border-left: 4px solid #00aaff; margin-top: 8px; }
-    .footer { background-color: #f5f5f5; padding: 20px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #666; }
-    .footer a { color: #00aaff; text-decoration: none; }
-    .badge { display: inline-block; background-color: #00aaff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background-color: #0a1f35;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .wrapper { max-width: 640px; margin: 0 auto; }
+    .container {
+      background: linear-gradient(135deg, rgba(10,25,47,0.95) 0%, rgba(7,22,20,0.95) 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,170,255,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .header {
+      background: linear-gradient(135deg, #00aaff 0%, #00ff9f 100%);
+      padding: 60px 40px;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.3;
+    }
+    .header-content { position: relative; z-index: 1; }
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .header p {
+      font-size: 15px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+    .content {
+      padding: 48px 40px;
+      background: rgba(255,255,255,0.02);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(0,170,255,0.15);
+      border: 1px solid rgba(0,170,255,0.3);
+      color: #00aaff;
+      padding: 8px 16px;
+      border-radius: 24px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .section-title {
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(0,170,255,0.3);
+    }
+    .fields {
+      display: grid;
+      gap: 24px;
+    }
+    .field { }
+    .field-label {
+      display: block;
+      font-weight: 700;
+      color: rgba(0,170,255,0.8);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .field-value {
+      background: rgba(255,255,255,0.04);
+      padding: 16px 20px;
+      border-radius: 8px;
+      border-left: 4px solid #00aaff;
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .message-field .field-value {
+      min-height: 120px;
+      background: rgba(0,170,255,0.05);
+      border-left-color: #00ff9f;
+    }
+    .footer {
+      background: rgba(255,255,255,0.02);
+      padding: 32px 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    .footer-text {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .footer-link {
+      display: inline-block;
+      color: #00aaff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .footer-link:hover { opacity: 0.8; }
+    .cta-section {
+      background: linear-gradient(135deg, rgba(0,170,255,0.1) 0%, rgba(0,255,159,0.05) 100%);
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(0,170,255,0.2);
+    }
+    .cta-section strong {
+      color: #00ff9f;
+    }
+    .reply-email {
+      display: inline-block;
+      background: rgba(0,170,255,0.1);
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #00aaff;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+    }
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 24px 0;
+    }
+    .credit {
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🚀 Novo Contato Recebido</h1>
-      <p>Um cliente está interessado em seus serviços</p>
-    </div>
-    <div class="content">
-      <span class="badge">Bitcraft Contact</span>
-      <h2>Detalhes do Contato</h2>
-      <div class="field">
-        <label>Nome</label>
-        <div class="field-value">${escapeHtml(name)}</div>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <div class="header-content">
+          <div class="logo">⚡ BITCRAFT</div>
+          <h1>Novo Contato Recebido</h1>
+          <p>Um cliente está interessado em seus serviços</p>
+        </div>
       </div>
-      <div class="field">
-        <label>Email</label>
-        <div class="field-value"><a href="mailto:${escapeHtml(email)}" style="color: #00aaff; text-decoration: none;">${escapeHtml(email)}</a></div>
+
+      <div class="content">
+        <span class="badge">Bitcraft Contact Form</span>
+
+        <h2 class="section-title">Detalhes do Contato</h2>
+
+        <div class="fields">
+          <div class="field">
+            <label class="field-label">Nome</label>
+            <div class="field-value">${escapeHtml(name)}</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Email de Contato</label>
+            <div class="field-value">
+              <a href="mailto:${escapeHtml(email)}" style="color: #00aaff; text-decoration: none; word-break: break-all;">
+                ${escapeHtml(email)}
+              </a>
+            </div>
+          </div>
+
+          <div class="field message-field">
+            <label class="field-label">Mensagem</label>
+            <div class="field-value">${escapeHtml(message)}</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="cta-section">
+          <strong>📧 Para responder:</strong><br>
+          Responda diretamente para <span class="reply-email">${escapeHtml(email)}</span>
+        </div>
       </div>
-      <div class="field">
-        <label>Mensagem</label>
-        <div class="field-value message-box">${escapeHtml(message)}</div>
+
+      <div class="footer">
+        <div class="footer-text">
+          Este email foi gerado automaticamente pelo sistema de contato da Bitcraft.
+        </div>
+        <a href="https://bitcraft.dev.br" class="footer-link">Visite nosso site →</a>
+
+        <div class="credit">
+          Bitcraft • Engenharia de Software & Growth Marketing<br>
+          © 2026 • Todos os direitos reservados
+        </div>
       </div>
-    </div>
-    <div class="footer">
-      <p><strong>Próximos passos:</strong></p>
-      <p>Responda diretamente para <strong>${escapeHtml(email)}</strong> para entrar em contato com o cliente.</p>
-      <p style="margin-top: 16px; color: #999;">
-        Este email foi gerado automaticamente pelo sistema de contato da Bitcraft<br>
-        <a href="https://bitcraft.dev.br">Visite nosso site</a>
-      </p>
     </div>
   </div>
 </body>
