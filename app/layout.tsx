@@ -26,6 +26,21 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: "BITCRAFT",
   description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+  metadataBase: new URL("https://bitcraft.dev.br"),
+  openGraph: {
+    title: "BITCRAFT",
+    description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+    siteName: "BITCRAFT",
+    url: "https://bitcraft.dev.br",
+    locale: "pt_BR",
+    alternateLocale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BITCRAFT",
+    description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
