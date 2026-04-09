@@ -181,8 +181,8 @@ export default function SiteHeader({
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
-            backdropFilter: "blur(28px) saturate(180%)",
-            WebkitBackdropFilter: "blur(28px) saturate(180%)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
           }}
           onMouseMove={(e) => {
             if (wasTouched() || headerRafRef.current !== null) return;
