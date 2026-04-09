@@ -57,7 +57,7 @@ export default function HomeContent() {
 
   useEffect(() => { setLocale(detectLocale()); }, []);
   useEffect(() => {
-    document.title = locale === "pt" ? "BITCRAFT | Código que Transforma" : "BITCRAFT | Code that Transforms";
+    document.title = locale === "pt" ? "BITCRAFT | Onde Código Encontra Crescimento" : "BITCRAFT | Where Code Meets Growth";
   }, [locale]);
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
