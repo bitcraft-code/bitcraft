@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import type { Program, Renderer } from 'ogl';
 
 type Vec2 = [number, number];
 
