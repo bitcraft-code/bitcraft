@@ -157,37 +157,9 @@ export default function HomeContent() {
 
         <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-5 py-8 sm:px-6 sm:pb-24 sm:pt-8 gap-10 sm:gap-10 md:gap-12">
 
-        {/* Badge */}
-        <motion.div
-          custom={0}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold"
-          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
-          whileInView={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
-          viewport={{ once: true }}
-        >
-          <span className="relative flex shrink-0 w-2 h-2">
-            <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
-            <motion.span className="relative inline-flex w-2 h-2 rounded-full" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
-          </span>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={locale + "-badge"}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
-            >
-              {copy.badge}
-            </motion.span>
-          </AnimatePresence>
-        </motion.div>
-
         {/* Heading */}
         <motion.h1
-          custom={1}
+          custom={0}
           initial="hidden"
           animate="visible"
           variants={fadeUp}
@@ -229,7 +201,7 @@ export default function HomeContent() {
 
         {/* Subtitle */}
         <motion.p
-          custom={2}
+          custom={1}
           initial="hidden"
           animate="visible"
           variants={fadeUp}
@@ -251,6 +223,34 @@ export default function HomeContent() {
             </motion.span>
           </AnimatePresence>
         </motion.p>
+
+        {/* Badge — repositioned below subtitle, above CTAs */}
+        <motion.div
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mt-6 sm:mt-10"
+          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
+          whileInView={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
+          viewport={{ once: true }}
+        >
+          <span className="relative flex shrink-0 w-2 h-2">
+            <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+            <motion.span className="relative inline-flex w-2 h-2 rounded-full" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+          </span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={locale + "-badge"}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
+              {copy.badge}
+            </motion.span>
+          </AnimatePresence>
+        </motion.div>
 
         {/* CTA Buttons */}
         <motion.div
