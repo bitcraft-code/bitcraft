@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -99,6 +99,8 @@ const cardsContainerVariant = {
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
+  const gridRef = useRef<HTMLDivElement>(null);
+  const isGridInView = useInView(gridRef, { once: true, amount: 0.1 });
   useEffect(() => { setLocale(detectLocale()); }, []);
   return (
     <>
@@ -243,9 +245,9 @@ export default function SoftwarePage() {
 
         {/* Services grid */}
         <motion.div
+          ref={gridRef}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
+          animate={isGridInView ? "visible" : "hidden"}
           variants={cardsContainerVariant}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >

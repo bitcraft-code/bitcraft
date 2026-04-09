@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import Iridescence from "../../components/Iridescence";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -98,11 +98,13 @@ const cardsContainerVariant = {
 
 function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   return (
     <motion.div
+      ref={containerRef}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
+      animate={isInView ? "visible" : "hidden"}
       variants={cardsContainerVariant}
       className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
     >
