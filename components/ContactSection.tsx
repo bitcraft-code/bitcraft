@@ -54,11 +54,6 @@ const DIVIDER: Record<ContactVariant, string | ((dark: boolean) => string)> = {
   home: (dark: boolean) => dark ? "rgba(0,255,159,0.10)" : "rgba(0,170,255,0.10)",
 };
 
-const SECTION_BG: Partial<Record<ContactVariant, (dark: boolean) => string>> = {
-  home: (dark: boolean) => dark
-    ? "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0,255,159,0.07) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 70%, rgba(0,170,255,0.07) 0%, transparent 60%), linear-gradient(180deg, #071a14 0%, #091a1f 100%)"
-    : "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0,204,136,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 70%, rgba(0,170,255,0.12) 0%, transparent 60%), linear-gradient(180deg, #e6f7ff 0%, #edfaf4 100%)",
-};
 
 type Props = { variant?: ContactVariant; locale?: Locale; dark?: boolean };
 
@@ -73,14 +68,10 @@ export default function ContactSection({ variant = "default", locale = "en", dar
     ? (dark ? "rgba(224,240,255,0.65)" : "rgba(10,25,47,0.65)")
     : "rgba(224,240,255,0.65)";
 
-  const sectionBgFn = SECTION_BG[variant];
-  const sectionBg = sectionBgFn ? sectionBgFn(dark) : undefined;
-
   return (
     <section
       id="contact"
       className="relative z-10 w-full flex flex-col items-center justify-center px-5 sm:px-6 py-28 gap-10 min-h-[100dvh]"
-      style={sectionBg ? { background: sectionBg } : undefined}
     >
       {/* Top divider */}
       <div
