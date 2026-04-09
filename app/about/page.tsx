@@ -113,14 +113,24 @@ const fadeUp = {
   }),
 };
 
+const cardVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+};
+
+const cardsContainerVariant = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
 function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   return (
     <motion.div
-      custom={4}
       initial="hidden"
-      animate="visible"
-      variants={fadeUp}
+      whileInView="visible"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={cardsContainerVariant}
       className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
     >
       {pillars.map((p, i) => {
@@ -128,11 +138,7 @@ function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] })
         return (
           <motion.div
             key={p.title}
-            custom={i * 1.5}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
+            variants={cardVariant}
             style={{ perspective: "800px" }}
           >
             <div

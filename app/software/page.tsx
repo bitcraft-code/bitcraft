@@ -86,6 +86,16 @@ const fadeUp = {
   }),
 };
 
+const cardVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+};
+
+const cardsContainerVariant = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
@@ -233,10 +243,10 @@ export default function SoftwarePage() {
 
         {/* Services grid */}
         <motion.div
-          custom={4}
           initial="hidden"
-          animate="visible"
-          variants={fadeUp}
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={cardsContainerVariant}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >
           {COPY[locale].services.map((s, i) => {
@@ -244,11 +254,7 @@ export default function SoftwarePage() {
             return (
             <motion.div
               key={s.title}
-              custom={i * 1.5}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
+              variants={cardVariant}
               style={{ perspective: "800px" }}
             >
               <div
