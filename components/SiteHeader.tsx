@@ -63,6 +63,9 @@ export default function SiteHeader({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pillExpanded, setPillExpanded] = useState(false);
   const lastTouchAt = useRef(0);
+  const headerRafRef = useRef<number | null>(null);
+  const navRafRef = useRef<number | null>(null);
+  const ctrlRafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -170,11 +173,16 @@ export default function SiteHeader({
             WebkitBackdropFilter: "blur(20px)",
           }}
           onMouseMove={(e) => {
-            if (wasTouched()) return;
+            if (wasTouched() || headerRafRef.current !== null) return;
             const rect = e.currentTarget.getBoundingClientRect();
-            setHeaderMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top, hover: true });
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            headerRafRef.current = requestAnimationFrame(() => {
+              setHeaderMouse({ x, y, hover: true });
+              headerRafRef.current = null;
+            });
           }}
-          onMouseLeave={() => { if (!wasTouched()) setHeaderMouse((p) => ({ ...p, hover: false })); }}
+          onMouseLeave={() => { if (!wasTouched()) { if (headerRafRef.current !== null) { cancelAnimationFrame(headerRafRef.current); headerRafRef.current = null; } setHeaderMouse((p) => ({ ...p, hover: false })); } }}
           onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
           onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
           onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
@@ -219,10 +227,17 @@ export default function SiteHeader({
                     transition={{ duration: 0.4 }}
                     onMouseMove={(e) => {
                       if (wasTouched()) return;
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setNavSpotlight({ idx: i, x: e.clientX - rect.left, y: e.clientY - rect.top });
-                      (e.currentTarget as HTMLAnchorElement).style.color = T.navHoverText;
-                      (e.currentTarget as HTMLAnchorElement).style.background = T.navHoverBg;
+                      const el = e.currentTarget as HTMLAnchorElement;
+                      el.style.color = T.navHoverText;
+                      el.style.background = T.navHoverBg;
+                      if (navRafRef.current !== null) return;
+                      const rect = el.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
+                      navRafRef.current = requestAnimationFrame(() => {
+                        setNavSpotlight({ idx: i, x, y });
+                        navRafRef.current = null;
+                      });
                     }}
                     onMouseLeave={(e) => {
                       if (wasTouched()) return;
@@ -258,11 +273,16 @@ export default function SiteHeader({
                   aria-label="Toggle language"
                   style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
                   onMouseMove={(e) => {
-                    if (wasTouched()) return;
+                    if (wasTouched() || ctrlRafRef.current !== null) return;
                     const rect = e.currentTarget.getBoundingClientRect();
-                    setCtrlSpotlight({ id: "locale", x: e.clientX - rect.left, y: e.clientY - rect.top });
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    ctrlRafRef.current = requestAnimationFrame(() => {
+                      setCtrlSpotlight({ id: "locale", x, y });
+                      ctrlRafRef.current = null;
+                    });
                   }}
-                  onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+                  onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
                   onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
                   onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                   onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
@@ -287,11 +307,16 @@ export default function SiteHeader({
                   aria-label="Toggle theme"
                   style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                   onMouseMove={(e) => {
-                    if (wasTouched()) return;
+                    if (wasTouched() || ctrlRafRef.current !== null) return;
                     const rect = e.currentTarget.getBoundingClientRect();
-                    setCtrlSpotlight({ id: "theme", x: e.clientX - rect.left, y: e.clientY - rect.top });
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    ctrlRafRef.current = requestAnimationFrame(() => {
+                      setCtrlSpotlight({ id: "theme", x, y });
+                      ctrlRafRef.current = null;
+                    });
                   }}
-                  onMouseLeave={() => { if (!wasTouched()) setCtrlSpotlight((p) => ({ ...p, id: null })); }}
+                  onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
                   onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
                   onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                   onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
