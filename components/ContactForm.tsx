@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Locale } from "@/lib/translations";
 
-export type ContactVariant = "default" | "software" | "agency" | "about";
+export type ContactVariant = "default" | "software" | "agency" | "about" | "home";
 
 const COPY = {
   en: {
@@ -84,17 +84,46 @@ const THEMES = {
     btnShadow: "0 0 24px rgba(232,160,32,0.28)",
     successColor: "#e8a020",
   },
+  home_dark: {
+    card: { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(20px)" },
+    label: "rgba(255,255,255,0.55)",
+    inputBg: "rgba(5,18,12,0.65)",
+    inputBorder: "rgba(0,255,159,0.14)",
+    inputColor: "#e0fff0",
+    inputPlaceholder: "rgba(255,255,255,0.28)",
+    focusBorder: "rgba(0,255,159,0.65)",
+    focusShadow: "0 0 0 3px rgba(0,255,159,0.10)",
+    btnBg: "#ffffff",
+    btnColor: "#0a192f",
+    btnShadow: "0 2px 20px rgba(255,255,255,0.2)",
+    successColor: "#00ff9f",
+  },
+  home_light: {
+    card: { background: "rgba(255,255,255,0.65)", border: "1px solid rgba(0,170,255,0.22)", backdropFilter: "blur(20px)" },
+    label: "rgba(10,25,47,0.60)",
+    inputBg: "rgba(255,255,255,0.72)",
+    inputBorder: "rgba(0,170,255,0.18)",
+    inputColor: "#0a192f",
+    inputPlaceholder: "rgba(10,25,47,0.35)",
+    focusBorder: "rgba(0,170,255,0.65)",
+    focusShadow: "0 0 0 3px rgba(0,170,255,0.10)",
+    btnBg: "#0a192f",
+    btnColor: "#ffffff",
+    btnShadow: "0 2px 20px rgba(10,25,47,0.18)",
+    successColor: "#00aaff",
+  },
 };
 
-type Props = { variant?: ContactVariant; locale?: Locale };
+type Props = { variant?: ContactVariant; locale?: Locale; dark?: boolean };
 
-export default function ContactForm({ variant = "default", locale = "en" }: Props) {
+export default function ContactForm({ variant = "default", locale = "en", dark = true }: Props) {
   const [fields, setFields] = useState({ name: "", email: "", message: "" });
   const [focused, setFocused] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const c = COPY[locale];
-  const t = THEMES[variant];
+  const themeKey = variant === "home" ? (dark ? "home_dark" : "home_light") : variant;
+  const t = THEMES[themeKey as keyof typeof THEMES];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

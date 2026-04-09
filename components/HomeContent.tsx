@@ -100,16 +100,16 @@ export default function HomeContent() {
               color2={t.grainient.color2}
               color3={t.grainient.color3}
               timeSpeed={0.32}
-              colorBalance={0.1}
-              warpStrength={1.2}
-              warpFrequency={4}
-              warpSpeed={1.5}
-              warpAmplitude={60}
-              blendAngle={15}
+              colorBalance={0.0}
+              warpStrength={1.4}
+              warpFrequency={3.5}
+              warpSpeed={1.2}
+              warpAmplitude={55}
+              blendAngle={20}
               blendSoftness={0.08}
               rotationAmount={400}
               noiseScale={2}
-              grainAmount={0.06}
+              grainAmount={0.05}
               grainScale={2}
               grainAnimated={false}
               contrast={t.grainient.contrast}
@@ -299,7 +299,7 @@ export default function HomeContent() {
       </div>
 
       {/* ── Contact ── */}
-      <ContactSection variant="default" locale={locale} />
+      <ContactSection variant="home" locale={locale} dark={dark} />
 
       {/* ── Footer ── */}
       <SiteFooter dark={dark} locale={locale} />
