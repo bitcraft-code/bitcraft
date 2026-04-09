@@ -9,7 +9,7 @@ function scrollToSection(selector: string) {
   requestAnimationFrame(() => {
     const el = document.querySelector(selector);
     if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -48,22 +48,28 @@ export default function SiteHeader({
 }: Props) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language as "en" | "pt";
+  const [scrolled, setScrolled] = useState(false);
   const [headerMouse, setHeaderMouse] = useState({ x: 0, y: 0, hover: false });
-  const [navSpotlight, setNavSpotlight] = useState<{ idx: number | null; x: number; y: number }>({ idx: null, x: 0, y: 0 });
+  const [navHovered, setNavHovered] = useState<string | null>(null);
   const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pillExpanded, setPillExpanded] = useState(false);
   const lastTouchAt = useRef(0);
   const headerRafRef = useRef<number | null>(null);
-  const navRafRef = useRef<number | null>(null);
   const ctrlRafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (mobileOpen) {
       setPillExpanded(true);
     } else {
-      const t = setTimeout(() => setPillExpanded(false), 300);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => setPillExpanded(false), 300);
+      return () => clearTimeout(timer);
     }
   }, [mobileOpen]);
 
@@ -77,34 +83,48 @@ export default function SiteHeader({
 
   const T = {
     header: dark
-      ? { bg: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.28)", shadow: "0 4px 24px rgba(0,0,0,0.12)" }
-      : { bg: "rgba(255,255,255,0.55)", border: "1px solid rgba(0,100,160,0.18)", shadow: "0 4px 24px rgba(0,120,200,0.10)" },
-    logoBg: dark ? "rgba(255,255,255,0.18)" : "rgba(0,170,255,0.12)",
-    logoBorder: dark ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(0,170,255,0.25)",
+      ? {
+          bg: scrolled ? "rgba(8,8,18,0.82)" : "rgba(255,255,255,0.08)",
+          border: scrolled ? "1px solid rgba(255,255,255,0.13)" : "1px solid rgba(255,255,255,0.18)",
+          shadow: scrolled
+            ? "0 8px 48px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.06) inset"
+            : "0 4px 28px rgba(0,0,0,0.16), 0 1px 0 rgba(255,255,255,0.06) inset",
+        }
+      : {
+          bg: scrolled ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.50)",
+          border: scrolled ? "1px solid rgba(0,100,160,0.22)" : "1px solid rgba(0,100,160,0.14)",
+          shadow: scrolled
+            ? "0 8px 48px rgba(0,100,200,0.18), 0 1px 0 rgba(255,255,255,0.9) inset"
+            : "0 4px 28px rgba(0,120,200,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
+        },
+    logoBg: dark ? "rgba(255,255,255,0.14)" : "rgba(0,170,255,0.10)",
+    logoBorder: dark ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(0,170,255,0.22)",
     logoStroke: dark ? "#ffffff" : "#0a192f",
     logoText: dark ? "#ffffff" : "#0a192f",
-    navText: dark ? "rgba(255,255,255,0.75)" : "rgba(10,25,47,0.65)",
+    navText: dark ? "rgba(255,255,255,0.62)" : "rgba(10,25,47,0.58)",
     navHoverText: dark ? "#ffffff" : "#0a192f",
-    navHoverBg: dark ? "rgba(255,255,255,0.12)" : "rgba(0,170,255,0.10)",
-    divider: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)",
-    toggleBg: dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.55)",
-    toggleBorder: dark ? "1px solid rgba(255,255,255,0.28)" : "1px solid rgba(0,170,255,0.28)",
+    navPillBg: dark ? "rgba(255,255,255,0.10)" : "rgba(0,140,220,0.09)",
+    divider: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)",
+    toggleBg: dark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.60)",
+    toggleBorder: dark ? "1px solid rgba(255,255,255,0.20)" : "1px solid rgba(0,170,255,0.22)",
     toggleColor: dark ? "#ffffff" : "#0a192f",
-    spotlightFill: "rgba(255,255,255,0.10)",
-    spotlightBorder: "rgba(255,255,255,1)",
+    ctaBg: dark ? "rgba(255,255,255,0.13)" : "rgba(0,140,220,0.10)",
+    ctaBorder: dark ? "1px solid rgba(255,255,255,0.28)" : "1px solid rgba(0,140,220,0.32)",
+    ctaText: dark ? "#ffffff" : "#0a192f",
+    spotlightFill: "rgba(255,255,255,0.08)",
+    spotlightBorder: "rgba(255,255,255,0.9)",
   };
 
   const pageAccent =
     activePath === "/software" ? "#00ff9f" :
     activePath === "/agency"   ? "#00aaff" :
     activePath === "/about"    ? "#e8a020" :
-    "#00ff9f"; // home
+    "#00ff9f";
 
   const navItems = [
     { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
     { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
     { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
-    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
   const mobileNavItems = [
@@ -112,7 +132,7 @@ export default function SiteHeader({
     { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
     { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
     { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
-    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
+    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -123,10 +143,11 @@ export default function SiteHeader({
   );
 
   const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
+  const springNav = { type: "spring" as const, stiffness: 380, damping: 32 };
 
   return (
     <>
-      {/* Invisible backdrop to close on outside tap */}
+      {/* Invisible backdrop to close mobile menu on outside tap */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -141,9 +162,9 @@ export default function SiteHeader({
       </AnimatePresence>
 
       <motion.header
-        initial={{ y: -16 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5, delay: entranceDelay, ease: easeOut }}
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.55, delay: entranceDelay, ease: easeOut }}
         className="fixed top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
       >
         {/* Unified pill — expands to include mobile nav */}
@@ -154,14 +175,14 @@ export default function SiteHeader({
             border: T.header.border,
             boxShadow: T.header.shadow,
           }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.35 }}
           style={{
             borderRadius: pillExpanded ? 25 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
+            backdropFilter: "blur(28px) saturate(180%)",
+            WebkitBackdropFilter: "blur(28px) saturate(180%)",
           }}
           onMouseMove={(e) => {
             if (wasTouched() || headerRafRef.current !== null) return;
@@ -173,17 +194,26 @@ export default function SiteHeader({
               headerRafRef.current = null;
             });
           }}
-          onMouseLeave={() => { if (!wasTouched()) { if (headerRafRef.current !== null) { cancelAnimationFrame(headerRafRef.current); headerRafRef.current = null; } setHeaderMouse((p) => ({ ...p, hover: false })); } }}
+          onMouseLeave={() => {
+            if (!wasTouched()) {
+              if (headerRafRef.current !== null) { cancelAnimationFrame(headerRafRef.current); headerRafRef.current = null; }
+              setHeaderMouse((p) => ({ ...p, hover: false }));
+            }
+          }}
           onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
           onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
           onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
         >
           {/* Spotlight overlay on the pill */}
-          <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 200px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
+          <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 220px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
           <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
 
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-4 py-2 sm:px-5 sm:py-2.5 md:pl-7 md:pr-9 md:py-3">
+          {/* Top bar — padding compacts on scroll */}
+          <motion.div
+            className="flex items-center justify-between px-4 sm:px-5 md:pl-7 md:pr-5"
+            animate={{ paddingTop: scrolled ? 8 : 12, paddingBottom: scrolled ? 8 : 12 }}
+            transition={{ duration: 0.35 }}
+          >
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 md:gap-3">
               <motion.div
@@ -202,95 +232,96 @@ export default function SiteHeader({
             </Link>
 
             {/* Desktop nav + controls */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Nav with sliding pill highlight */}
               <nav className="hidden lg:flex items-center gap-0.5">
-                {navItems.map((item, i) => (
-                  <motion.a
-                    key={item.href + item.label}
-                    href={item.href.startsWith('#') ? undefined : item.href}
-                    onClick={item.href.startsWith('#') ? (e) => {
-                      e.preventDefault();
-                      scrollToSection(item.href);
-                    } : undefined}
-                    className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200"
-                    animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
-                    style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
-                    transition={{ duration: 0.4 }}
-                    onMouseMove={(e) => {
-                      if (wasTouched()) return;
-                      const el = e.currentTarget as HTMLAnchorElement;
-                      el.style.color = T.navHoverText;
-                      el.style.background = T.navHoverBg;
-                      if (navRafRef.current !== null) return;
-                      const rect = el.getBoundingClientRect();
-                      const x = e.clientX - rect.left;
-                      const y = e.clientY - rect.top;
-                      navRafRef.current = requestAnimationFrame(() => {
-                        setNavSpotlight({ idx: i, x, y });
-                        navRafRef.current = null;
-                      });
-                    }}
-                    onMouseLeave={(e) => {
-                      if (wasTouched()) return;
-                      setNavSpotlight((p) => ({ ...p, idx: null }));
-                      const restColor = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
-                      (e.currentTarget as HTMLAnchorElement).style.color = restColor;
-                      (e.currentTarget as HTMLAnchorElement).style.background = activePath === item.href ? T.navHoverBg : "transparent";
-                    }}
-                    onTouchStart={onTouchBegin((x, y) => setNavSpotlight({ idx: i, x, y }))}
-                    onTouchEnd={(e) => {
-                      setNavSpotlight((p) => ({ ...p, idx: null }));
-                      (e.currentTarget as HTMLAnchorElement).style.color = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
-                    }}
-                    onTouchCancel={(e) => {
-                      setNavSpotlight((p) => ({ ...p, idx: null }));
-                      (e.currentTarget as HTMLAnchorElement).style.color = item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText);
-                    }}
-                  >
-                    {spotlightSpans(navSpotlight.idx === i, navSpotlight.x, navSpotlight.y, 60)}
-                    {item.label}
-                  </motion.a>
-                ))}
+                {navItems.map((item) => {
+                  const isActive = activePath === item.href;
+                  const isHighlighted = navHovered ? navHovered === item.href : isActive;
+                  return (
+                    <div key={item.href} className="relative">
+                      {isHighlighted && (
+                        <motion.div
+                          layoutId="nav-pill"
+                          className="absolute inset-0 rounded-full"
+                          style={{ background: T.navPillBg }}
+                          transition={springNav}
+                        />
+                      )}
+                      <Link
+                        href={item.href}
+                        className="relative z-10 flex px-4 py-2 md:px-5 rounded-full text-sm font-medium whitespace-nowrap"
+                        style={{ color: isActive ? T.navHoverText : T.navText, transition: "color 0.22s ease" }}
+                        onMouseEnter={() => setNavHovered(item.href)}
+                        onMouseLeave={() => setNavHovered(null)}
+                      >
+                        {item.label}
+                      </Link>
+                    </div>
+                  );
+                })}
               </nav>
 
-              {(
-                <motion.button
-                  onClick={() => i18n.changeLanguage(locale === "en" ? "pt" : "en")}
-                  className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-colors duration-200"
-                  animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
-                  transition={{ duration: 0.4 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.93 }}
-                  aria-label="Toggle language"
-                  style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
-                  onMouseMove={(e) => {
-                    if (wasTouched() || ctrlRafRef.current !== null) return;
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    ctrlRafRef.current = requestAnimationFrame(() => {
-                      setCtrlSpotlight({ id: "locale", x, y });
-                      ctrlRafRef.current = null;
-                    });
-                  }}
-                  onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
-                  onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
-                  onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-                  onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-                >
-                  {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
-                      {locale === "en" ? "EN" : "PT"}
-                    </motion.span>
-                  </AnimatePresence>
-                </motion.button>
-              )}
+              {/* Divider */}
+              <div className="hidden lg:block w-px h-5 shrink-0" style={{ background: T.divider }} />
+
+              {/* CTA — Contact as a distinct pill button */}
+              <motion.a
+                href="#contact"
+                onClick={(e) => { e.preventDefault(); scrollToSection("#contact"); }}
+                className="hidden lg:flex items-center px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap cursor-pointer"
+                style={{
+                  background: T.ctaBg,
+                  border: T.ctaBorder,
+                  color: T.ctaText,
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                }}
+                animate={{ background: T.ctaBg, border: T.ctaBorder, color: T.ctaText }}
+                transition={{ duration: 0.35 }}
+                whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 22 } }}
+                whileTap={{ scale: 0.96 }}
+              >
+                {t("nav.contact")}
+              </motion.a>
+
+              {/* Language toggle */}
+              <motion.button
+                onClick={() => i18n.changeLanguage(locale === "en" ? "pt" : "en")}
+                className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest"
+                animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
+                transition={{ duration: 0.4 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.93 }}
+                aria-label="Toggle language"
+                style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
+                onMouseMove={(e) => {
+                  if (wasTouched() || ctrlRafRef.current !== null) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  ctrlRafRef.current = requestAnimationFrame(() => {
+                    setCtrlSpotlight({ id: "locale", x, y });
+                    ctrlRafRef.current = null;
+                  });
+                }}
+                onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
+                onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
+                onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+                onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+              >
+                {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+                    {locale === "en" ? "EN" : "PT"}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.button>
 
               {onToggleDark && (
                 <motion.button
                   onClick={onToggleDark}
-                  className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+                  className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center"
                   animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
                   transition={{ duration: 0.4 }}
                   whileHover={{ scale: 1.08 }}
@@ -321,7 +352,7 @@ export default function SiteHeader({
                 </motion.button>
               )}
 
-              {/* Hamburger — below lg, rightmost */}
+              {/* Hamburger — below lg */}
               <button
                 className="lg:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
                 onClick={() => setMobileOpen((o) => !o)}
@@ -329,25 +360,13 @@ export default function SiteHeader({
                 style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
               >
                 <span className="relative w-4 h-4 flex items-center justify-center">
-                  <motion.span
-                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                    animate={mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
-                    transition={{ duration: 0.25, ease: easeOut }}
-                  />
-                  <motion.span
-                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                    animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-                    transition={{ duration: 0.15 }}
-                  />
-                  <motion.span
-                    className="absolute block h-[1.5px] w-4 rounded-full bg-current"
-                    animate={mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }}
-                    transition={{ duration: 0.25, ease: easeOut }}
-                  />
+                  <motion.span className="absolute block h-[1.5px] w-4 rounded-full bg-current" animate={mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }} transition={{ duration: 0.25, ease: easeOut }} />
+                  <motion.span className="absolute block h-[1.5px] w-4 rounded-full bg-current" animate={mobileOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }} transition={{ duration: 0.15 }} />
+                  <motion.span className="absolute block h-[1.5px] w-4 rounded-full bg-current" animate={mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }} transition={{ duration: 0.25, ease: easeOut }} />
                 </span>
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Mobile expandable nav — inside the pill */}
           <AnimatePresence initial={false}>
@@ -365,21 +384,19 @@ export default function SiteHeader({
                   {mobileNavItems.map((item) => (
                     <a
                       key={item.href + item.label}
-                      href={item.href.startsWith('#') ? undefined : item.href}
+                      href={item.href.startsWith("#") ? undefined : item.href}
                       onClick={(e) => {
-                        if (item.href.startsWith('#')) {
+                        if (item.href.startsWith("#")) {
                           e.preventDefault();
                           setMobileOpen(false);
-                          setTimeout(() => {
-                            scrollToSection(item.href);
-                          }, 320);
+                          setTimeout(() => scrollToSection(item.href), 320);
                         } else {
                           setMobileOpen(false);
                         }
                       }}
                       className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150 cursor-pointer"
                       style={{
-                        color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? item.activeColor : T.navText),
+                        color: activePath === item.href ? item.activeColor : T.navText,
                         background: "transparent",
                       }}
                     >
@@ -387,19 +404,17 @@ export default function SiteHeader({
                     </a>
                   ))}
                 </nav>
-                {(
-                  <div className="px-3 pb-3">
-                    <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
-                    <button
-                      onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
-                      className="w-full flex items-center justify-end gap-3 px-4 py-3 rounded-xl text-sm font-medium"
-                      style={{ color: T.navText }}
-                    >
-                      <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
-                      <span>{t("nav.languageLabel")}</span>
-                    </button>
-                  </div>
-                )}
+                <div className="px-3 pb-3">
+                  <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
+                  <button
+                    onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
+                    className="w-full flex items-center justify-end gap-3 px-4 py-3 rounded-xl text-sm font-medium"
+                    style={{ color: T.navText }}
+                  >
+                    <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
+                    <span>{t("nav.languageLabel")}</span>
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
