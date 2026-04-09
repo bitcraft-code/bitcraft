@@ -264,7 +264,7 @@ export default function AboutPage() {
         </div>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <div className="w-full max-w-3xl min-h-[5rem] sm:min-h-[7rem] md:min-h-[8rem] flex items-center justify-center">
+          <div className="w-full max-w-3xl h-[5rem] sm:h-[7.5rem] md:h-[9rem] flex items-center justify-center overflow-visible">
             <TextType
               as="h1"
               text={TYPING_TEXTS[locale]}
