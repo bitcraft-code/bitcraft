@@ -11,15 +11,17 @@ import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 const ACCENT = "#e83535";
 const ACCENT_DARK = "#b01e1e";
 
-const COPY: Record<Locale, { title: string; subtitle: string; cta: string }> = {
+const COPY: Record<Locale, { title: string; subtitle: string; subtitleAccent: string; cta: string }> = {
   en: {
     title: "This page didn't ship.",
-    subtitle: "Some things don't make it to production. Your idea should.",
+    subtitle: "Some things don't make it to production.",
+    subtitleAccent: "Your idea should!",
     cta: "Let's build it →",
   },
   pt: {
     title: "Esta página não foi entregue.",
-    subtitle: "Nem tudo vai para produção. A sua ideia deveria.",
+    subtitle: "Nem tudo vai para produção.",
+    subtitleAccent: "A sua ideia deveria!",
     cta: "Vamos construir →",
   },
 };
@@ -241,6 +243,9 @@ export default function NotFound() {
               style={{ color: "rgba(255,220,220,0.93)" }}
             >
               {c.subtitle}
+              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.35em", color: ACCENT }}>
+                {c.subtitleAccent}
+              </span>
             </motion.p>
 
             <motion.div
