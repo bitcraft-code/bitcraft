@@ -224,14 +224,16 @@ export default function AgencyPage() {
         </div>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 100%)" }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
-          <HeroCycle
-            animation={HERO_ANIMATION}
-            phrases={TYPING_TEXTS[locale]}
-            accentColor="#00aaff"
-            accentFont="var(--font-caveat)"
-            displayDuration={3200}
-            className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-balance text-center w-full max-w-3xl"
-          />
+          <div className="w-full max-w-3xl min-h-[5.5rem] sm:min-h-[7rem] md:min-h-[8.5rem] flex items-center justify-center">
+            <HeroCycle
+              animation={HERO_ANIMATION}
+              phrases={TYPING_TEXTS[locale]}
+              accentColor="#00aaff"
+              accentFont="var(--font-caveat)"
+              displayDuration={3200}
+              className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight text-balance text-center w-full max-w-3xl"
+            />
+          </div>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -261,7 +263,7 @@ export default function AgencyPage() {
       </section>
 
       {/* Section 2: Services */}
-      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center text-center px-6 py-20 gap-14">
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start text-center px-6 pt-28 sm:pt-32 pb-20 gap-14">
         <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
@@ -335,15 +337,17 @@ export default function AgencyPage() {
       </section>
 
       {/* Section 3: FAQ */}
-      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center px-6 py-20">
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start px-6 pt-28 sm:pt-32 pb-20">
         <div className="max-w-4xl w-full">
           <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" locale={locale} />
         </div>
       </section>
 
       {/* Section 4: Contact + Footer */}
-      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col">
-        <ContactSection variant="agency" locale={locale} />
+      <section className="relative z-10 snap-start h-dvh w-full flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <ContactSection variant="agency" locale={locale} />
+        </div>
         <SiteFooter locale={locale} />
       </section>
     </main>
