@@ -83,7 +83,7 @@ export default function HomeContent() {
     <>
     <title>{pageTitle}</title>
     <main
-      className="relative flex flex-col select-none overflow-x-hidden"
+      className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden select-none"
       style={{ background: dark ? "#071a14" : "#edfaf4", transition: "background 0.6s ease" }}
     >
       {/* ── Header ── */}
@@ -96,7 +96,7 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <section className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden sm:pt-20 md:pt-24">
+      <section className="relative w-full h-dvh snap-start flex items-center justify-center overflow-hidden">
         {/* Grainient background — scoped to hero only */}
         <div className="absolute inset-0">
           <motion.div
@@ -338,11 +338,13 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ── Contact ── */}
-      <ContactSection variant="home" locale={locale} dark={dark} />
-
-      {/* ── Footer ── */}
-      <SiteFooter dark={dark} locale={locale} />
+      {/* ── Contact + Footer ── */}
+      <section className="relative snap-start h-dvh flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <ContactSection variant="home" locale={locale} dark={dark} />
+        </div>
+        <SiteFooter dark={dark} locale={locale} />
+      </section>
     </main>
     </>
   );
