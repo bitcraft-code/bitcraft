@@ -1,0 +1,10 @@
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bitcraft icon">
+  <!-- Left code bracket < -->
+  <path d="M12 7L6 20L12 33" stroke="#00ff9f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Right code bracket > -->
+  <path d="M28 7L34 20L28 33" stroke="#00ff9f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Growth bars — ascending left to right, anchored at bottom -->
+  <rect x="14" y="25" width="3" height="8" rx="1.5" fill="#00ff9f" opacity="0.4"/>
+  <rect x="18.5" y="18" width="3" height="15" rx="1.5" fill="#00ff9f" opacity="0.7"/>
+  <rect x="23" y="11" width="3" height="22" rx="1.5" fill="#00ff9f"/>
+</svg>
