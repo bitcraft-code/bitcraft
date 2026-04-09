@@ -136,7 +136,7 @@ export default function SiteHeader({
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-10 sm:hidden"
+            className="fixed inset-0 z-10 md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -204,7 +204,7 @@ export default function SiteHeader({
 
             {/* Desktop nav + controls */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <nav className="hidden sm:flex items-center gap-0.5">
+              <nav className="hidden md:flex items-center gap-0.5">
                 {navItems.map((item, i) => (
                   <motion.a
                     key={item.href + item.label}
@@ -213,7 +213,7 @@ export default function SiteHeader({
                       e.preventDefault();
                       scrollToSection(item.href);
                     } : undefined}
-                    className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium transition-colors duration-200"
+                    className="relative px-4 py-2 md:px-5 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200"
                     animate={{ color: item.alwaysAccent ? item.activeColor : (activePath === item.href ? T.navHoverText : T.navText) }}
                     style={{ background: activePath === item.href ? T.navHoverBg : "transparent" }}
                     transition={{ duration: 0.4 }}
@@ -305,9 +305,9 @@ export default function SiteHeader({
                 </motion.button>
               )}
 
-              {/* Hamburger — mobile only, rightmost */}
+              {/* Hamburger — below md, rightmost */}
               <button
-                className="sm:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+                className="md:hidden relative flex items-center justify-center w-8 h-8 rounded-full shrink-0"
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-label="Toggle menu"
                 style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
@@ -338,7 +338,7 @@ export default function SiteHeader({
             {mobileOpen && (
               <motion.div
                 key="mobile-nav"
-                className="sm:hidden overflow-hidden"
+                className="md:hidden overflow-hidden"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
