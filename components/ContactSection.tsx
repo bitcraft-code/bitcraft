@@ -68,10 +68,21 @@ export default function ContactSection({ variant = "default", locale = "en", dar
     ? (dark ? "rgba(224,240,255,0.65)" : "rgba(10,25,47,0.65)")
     : "rgba(224,240,255,0.65)";
 
+  const sectionStyle = variant === "home" ? {
+    background: dark
+      ? `radial-gradient(ellipse 80% 55% at 15% 30%, rgba(0,170,255,0.12) 0%, transparent 55%),
+         radial-gradient(ellipse 65% 55% at 85% 70%, rgba(0,255,159,0.09) 0%, transparent 55%),
+         linear-gradient(180deg, #0a1f35 0%, #071a14 100%)`
+      : `radial-gradient(ellipse 80% 55% at 15% 30%, rgba(0,170,255,0.14) 0%, transparent 55%),
+         radial-gradient(ellipse 65% 55% at 85% 70%, rgba(0,204,136,0.12) 0%, transparent 55%),
+         linear-gradient(180deg, #e6f4ff 0%, #edfaf4 100%)`,
+  } : undefined;
+
   return (
     <section
       id="contact"
       className="relative z-10 w-full flex flex-col items-center justify-center px-5 sm:px-6 py-28 gap-10 min-h-[100dvh]"
+      style={sectionStyle}
     >
       {/* Top divider */}
       <div
