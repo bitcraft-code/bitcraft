@@ -151,7 +151,7 @@ export default function HeroSoftwareCycle({
       }}
     >
       {chars.map((c, i) => {
-        const displayChar = c.char === " " ? "\u00a0" : (c.revealed ? c.char : c.scrambled);
+        const displayChar = c.char === " " ? " " : (c.revealed ? c.char : c.scrambled);
         if (c.accent) {
           return (
             <span
