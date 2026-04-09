@@ -53,6 +53,9 @@ export default function HomeContent() {
   const [pillSpotlight, setPillSpotlight] = useState({ hover: false, x: 0, y: 0 });
   const [btnParallax, setBtnParallax] = useState<Record<string, { tx: number; ty: number }>>({});
   const lastTouchAt = useRef(0);
+  const heroRafRef = useRef<number | null>(null);
+  const pillRafRef = useRef<number | null>(null);
+  const btnRafRef = useRef<number | null>(null);
   const t = dark ? DARK : LIGHT;
   const copy = translations[locale];
 
@@ -175,9 +178,14 @@ export default function HomeContent() {
             texts={copy.rotatingTexts}
             mainClassName={`px-3 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.13] text-white border border-white/[0.22]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
-              if (wasTouched()) return;
+              if (wasTouched() || pillRafRef.current !== null) return;
               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-              setPillSpotlight({ hover: true, x: e.clientX - rect.left, y: e.clientY - rect.top });
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              pillRafRef.current = requestAnimationFrame(() => {
+                setPillSpotlight({ hover: true, x, y });
+                pillRafRef.current = null;
+              });
             }}
             onMouseLeave={() => { if (!wasTouched()) setPillSpotlight((p) => ({ ...p, hover: false })); }}
             onTouchStart={onTouchBegin((x, y) => setPillSpotlight({ hover: true, x, y }))}
@@ -269,16 +277,19 @@ export default function HomeContent() {
             whileHover={{ scale: 1.04, boxShadow: primaryHoverShadow }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
-              if (wasTouched()) return;
+              if (wasTouched() || heroRafRef.current !== null) return;
               const rect = e.currentTarget.getBoundingClientRect();
               const x = e.clientX - rect.left;
               const y = e.clientY - rect.top;
               const tx = (x - rect.width / 2) / (rect.width / 2);
               const ty = (y - rect.height / 2) / (rect.height / 2);
-              setHeroSpotlight({ id: "software", x, y });
-              setBtnParallax(p => ({ ...p, software: { tx, ty } }));
+              heroRafRef.current = requestAnimationFrame(() => {
+                setHeroSpotlight({ id: "software", x, y });
+                setBtnParallax(p => ({ ...p, software: { tx, ty } }));
+                heroRafRef.current = null;
+              });
             }}
-            onMouseLeave={() => { if (!wasTouched()) { setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, software: { tx: 0, ty: 0 } })); } }}
+            onMouseLeave={() => { if (!wasTouched()) { if (heroRafRef.current !== null) { cancelAnimationFrame(heroRafRef.current); heroRafRef.current = null; } setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, software: { tx: 0, ty: 0 } })); } }}
             onTouchStart={onTouchBegin((x, y) => setHeroSpotlight({ id: "software", x, y }))}
             onTouchEnd={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
@@ -300,16 +311,19 @@ export default function HomeContent() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
-              if (wasTouched()) return;
+              if (wasTouched() || btnRafRef.current !== null) return;
               const rect = e.currentTarget.getBoundingClientRect();
               const x = e.clientX - rect.left;
               const y = e.clientY - rect.top;
               const tx = (x - rect.width / 2) / (rect.width / 2);
               const ty = (y - rect.height / 2) / (rect.height / 2);
-              setHeroSpotlight({ id: "agency", x, y });
-              setBtnParallax(p => ({ ...p, agency: { tx, ty } }));
+              btnRafRef.current = requestAnimationFrame(() => {
+                setHeroSpotlight({ id: "agency", x, y });
+                setBtnParallax(p => ({ ...p, agency: { tx, ty } }));
+                btnRafRef.current = null;
+              });
             }}
-            onMouseLeave={() => { if (!wasTouched()) { setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, agency: { tx: 0, ty: 0 } })); } }}
+            onMouseLeave={() => { if (!wasTouched()) { if (btnRafRef.current !== null) { cancelAnimationFrame(btnRafRef.current); btnRafRef.current = null; } setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, agency: { tx: 0, ty: 0 } })); } }}
             onTouchStart={onTouchBegin((x, y) => setHeroSpotlight({ id: "agency", x, y }))}
             onTouchEnd={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
