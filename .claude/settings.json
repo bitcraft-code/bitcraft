@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // \"\"' | { read -r f; echo \"$f\" | grep -qE '/(app|components|lib)/' && printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"DOC CHECK: file edited in a tracked domain (app/, components/, lib/). Ask yourself: does this change affect project structure, stack, pages, animation architecture, or multi-agent domain ownership? If yes, update the relevant doc — README.md for structure/stack/pages, CLAUDE.md for architecture/patterns, AGENTS.md for domain ownership/coordination rules. Skip if the change is a routine bug fix or style tweak with no structural impact.\"}}' || true; }",
+            "statusMessage": "Checking if docs need updating..."
+          }
+        ]
+      }
+    ]
+  }
+}
