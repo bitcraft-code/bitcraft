@@ -23,24 +23,24 @@
       "home": "Vamos construir algo incrível"
     },
     "subheadings": {
-      "default": "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
-      "software": "Fale-nos sobre o seu produto. Vamos transformar a sua ideia numa máquina de crescimento.",
-      "agency": "Fale-nos sobre o seu negócio. Vamos construir o seu motor de aquisição.",
-      "about": "Fale-nos o que está construindo. A gente diz como podemos ajudar.",
-      "home": "Fale-nos sobre o seu projeto e responderemos em 24 horas."
+      "default": "Nos fale sobre seu projeto e respondemos em 24 horas.",
+      "software": "Nos fale sobre seu produto. Vamos transformar sua ideia em uma máquina de crescimento.",
+      "agency": "Nos fale sobre seu negócio. Vamos construir seu motor de aquisição.",
+      "about": "Nos fale o que você está construindo. A gente diz como podemos ajudar.",
+      "home": "Nos fale sobre seu projeto e respondemos em 24 horas."
     }
   },
   "form": {
     "name": "Nome",
     "email": "Email",
     "message": "Mensagem",
-    "namePlaceholder": "O seu nome",
+    "namePlaceholder": "Seu nome",
     "emailPlaceholder": "seu@email.com",
-    "messagePlaceholder": "Fale-nos sobre o seu projeto...",
+    "messagePlaceholder": "Nos conte sobre seu projeto...",
     "submit": "Enviar mensagem",
-    "sending": "A enviar...",
-    "success": "Mensagem enviada! Entraremos em contacto em breve.",
-    "error": "Algo correu mal. Por favor tente novamente."
+    "sending": "Enviando...",
+    "success": "Mensagem enviada! Entraremos em contato em breve.",
+    "error": "Algo deu errado. Tente novamente."
   },
   "faq": {
     "title": "Perguntas Frequentes",
@@ -177,11 +177,11 @@
       "home": "Vamos construir algo incrível"
     },
     "subheadings": {
-      "default": "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
-      "software": "Fale-nos sobre o seu produto. Vamos transformar a sua ideia numa máquina de crescimento.",
-      "agency": "Fale-nos sobre o seu negócio. Vamos construir o seu motor de aquisição.",
-      "about": "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
-      "home": "Fale-nos sobre o seu projeto e responderemos em 24 horas."
+      "default": "Nos fale sobre seu projeto e respondemos em 24 horas.",
+      "software": "Nos fale sobre seu produto. Vamos transformar sua ideia em uma máquina de crescimento.",
+      "agency": "Nos fale sobre seu negócio. Vamos construir seu motor de aquisição.",
+      "about": "Nos fale sobre seu projeto e respondemos em 24 horas.",
+      "home": "Nos fale sobre seu projeto e respondemos em 24 horas."
     }
   },
   "about": {
