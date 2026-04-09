@@ -243,7 +243,7 @@ export default function NotFound() {
               style={{ color: "rgba(255,220,220,0.93)" }}
             >
               {c.subtitle}
-              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: ACCENT }}>
+              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: ACCENT, textShadow: `0 0 18px rgba(232,53,53,0.7), 0 0 40px rgba(232,53,53,0.4), 0 0 80px rgba(232,53,53,0.2)` }}>
                 {c.subtitleAccent}
               </span>
             </motion.p>
