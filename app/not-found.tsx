@@ -8,8 +8,8 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 
-const ACCENT = "#e8a020";
-const ACCENT_DARK = "#c4871a";
+const ACCENT = "#e83535";
+const ACCENT_DARK = "#b01e1e";
 
 const COPY: Record<Locale, { title: string; subtitle: string; cta: string }> = {
   en: {
@@ -35,14 +35,14 @@ export default function NotFound() {
       <main className="relative flex flex-col min-h-[100dvh] overflow-x-hidden">
         {/* Background */}
         <div className="fixed inset-0 -z-10" style={{
-          background: `radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232,160,32,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(196,135,26,0.07) 0%, transparent 60%), linear-gradient(180deg, #130e04 0%, #1a1205 100%)`,
+          background: `radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232,53,53,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(176,30,30,0.07) 0%, transparent 60%), linear-gradient(180deg, #130404 0%, #1a0505 100%)`,
         }} />
         <div className="fixed inset-0 -z-10 ambient-noise" />
         <div
           className="fixed inset-0 -z-10 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(232,160,32,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232,160,32,0.05) 1px, transparent 1px)",
+              "linear-gradient(rgba(232,53,53,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232,53,53,0.05) 1px, transparent 1px)",
             backgroundSize: "56px 56px",
             maskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
             WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
