@@ -1,6 +1,5 @@
 "use client";
 
-import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
 import { useEffect, useRef } from "react";
 
 const vertexShader = `
@@ -68,69 +67,111 @@ export default function Iridescence({
 
   useEffect(() => {
     if (!ctnDom.current) return;
-    const ctn = ctnDom.current;
-    const renderer = new Renderer();
-    const gl = renderer.gl;
-    gl.clearColor(1, 1, 1, 1);
 
-    let program: Program;
+    let cancelled = false;
+    let animateId = 0;
+    let resourceCleanup: (() => void) | null = null;
+    let idleHandle: number | ReturnType<typeof setTimeout> | null = null;
 
-    function resize() {
-      renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
-      if (program) {
-        program.uniforms.uResolution.value = new Color(
-          gl.canvas.width,
-          gl.canvas.height,
-          gl.canvas.width / gl.canvas.height
-        );
-      }
-    }
-    window.addEventListener("resize", resize, false);
-    resize();
+    const init = async () => {
+      if (cancelled || !ctnDom.current) return;
+      const ctn = ctnDom.current;
 
-    const geometry = new Triangle(gl);
-    program = new Program(gl, {
-      vertex: vertexShader,
-      fragment: fragmentShader,
-      uniforms: {
-        uTime: { value: 0 },
-        uColor: { value: new Color(...color) },
-        uResolution: {
-          value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height),
+      // Dynamic import keeps OGL out of the initial JS parse
+      const { Renderer, Program, Mesh, Color, Triangle } = await import("ogl");
+      if (cancelled || !ctnDom.current) return;
+
+      const renderer = new Renderer({ dpr: 1 });
+      const gl = renderer.gl;
+      const canvas = gl.canvas as HTMLCanvasElement;
+      gl.clearColor(1, 1, 1, 1);
+
+      let program: Program;
+
+      const resize = () => {
+        renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
+        if (program) {
+          program.uniforms.uResolution.value = new Color(
+            gl.canvas.width,
+            gl.canvas.height,
+            gl.canvas.width / gl.canvas.height
+          );
+        }
+      };
+      window.addEventListener("resize", resize, false);
+      resize();
+
+      const geometry = new Triangle(gl);
+      program = new Program(gl, {
+        vertex: vertexShader,
+        fragment: fragmentShader,
+        uniforms: {
+          uTime: { value: 0 },
+          uColor: { value: new Color(...color) },
+          uResolution: {
+            value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height),
+          },
+          uMouse: { value: new Float32Array([mousePos.current.x, mousePos.current.y]) },
+          uAmplitude: { value: amplitude },
+          uSpeed: { value: speed },
         },
-        uMouse: { value: new Float32Array([mousePos.current.x, mousePos.current.y]) },
-        uAmplitude: { value: amplitude },
-        uSpeed: { value: speed },
-      },
-    });
+      });
 
-    const mesh = new Mesh(gl, { geometry, program });
-    let animateId: number;
+      const mesh = new Mesh(gl, { geometry, program });
 
-    function update(t: number) {
+      const isMobile = window.navigator.maxTouchPoints > 0;
+      const FPS_CAP = isMobile ? 24 : 30;
+      const FRAME_INTERVAL = 1000 / FPS_CAP;
+      let lastFrameTime = 0;
+
+      const update = (t: number) => {
+        animateId = requestAnimationFrame(update);
+        if (t - lastFrameTime < FRAME_INTERVAL) return;
+        lastFrameTime = t;
+        program.uniforms.uTime.value = t * 0.001;
+        renderer.render({ scene: mesh });
+      };
       animateId = requestAnimationFrame(update);
-      program.uniforms.uTime.value = t * 0.001;
-      renderer.render({ scene: mesh });
-    }
-    animateId = requestAnimationFrame(update);
-    ctn.appendChild(gl.canvas);
+      ctn.appendChild(canvas);
 
-    function handleMouseMove(e: MouseEvent) {
-      const rect = ctn.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = 1.0 - (e.clientY - rect.top) / rect.height;
-      mousePos.current = { x, y };
-      program.uniforms.uMouse.value[0] = x;
-      program.uniforms.uMouse.value[1] = y;
+      const handleMouseMove = (e: MouseEvent) => {
+        const rect = ctn.getBoundingClientRect();
+        mousePos.current = {
+          x: (e.clientX - rect.left) / rect.width,
+          y: 1.0 - (e.clientY - rect.top) / rect.height,
+        };
+        program.uniforms.uMouse.value[0] = mousePos.current.x;
+        program.uniforms.uMouse.value[1] = mousePos.current.y;
+      };
+      if (mouseReact) ctn.addEventListener("mousemove", handleMouseMove);
+
+      resourceCleanup = () => {
+        cancelAnimationFrame(animateId);
+        window.removeEventListener("resize", resize);
+        if (mouseReact) ctn.removeEventListener("mousemove", handleMouseMove);
+        if (canvas.parentElement) canvas.parentElement.removeChild(canvas);
+        gl.getExtension("WEBGL_lose_context")?.loseContext();
+      };
+    };
+
+    // Defer WebGL init to idle time to avoid contributing to TBT
+    if ("requestIdleCallback" in window) {
+      idleHandle = window.requestIdleCallback(() => { init(); }, { timeout: 2000 });
+    } else {
+      idleHandle = setTimeout(init, 0);
     }
-    if (mouseReact) ctn.addEventListener("mousemove", handleMouseMove);
 
     return () => {
+      cancelled = true;
+      if (idleHandle !== null) {
+        if ("cancelIdleCallback" in window) {
+          window.cancelIdleCallback(idleHandle as number);
+        } else {
+          clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
+        }
+      }
       cancelAnimationFrame(animateId);
-      window.removeEventListener("resize", resize);
-      if (mouseReact) ctn.removeEventListener("mousemove", handleMouseMove);
-      if (ctn.contains(gl.canvas)) ctn.removeChild(gl.canvas);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      resourceCleanup?.();
     };
   }, [color, speed, amplitude, mouseReact]);
 
