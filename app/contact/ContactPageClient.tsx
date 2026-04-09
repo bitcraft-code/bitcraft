@@ -84,6 +84,9 @@ export default function ContactPageClient() {
   const variant: ContactVariant = from === "software" ? "software" : from === "agency" ? "agency" : "default";
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
+  useEffect(() => {
+    document.title = locale === "pt" ? "BITCRAFT | Contato" : "BITCRAFT | Contact";
+  }, [locale]);
 
   const cfg = CONFIG[variant];
 
