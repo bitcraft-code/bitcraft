@@ -7,6 +7,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
+import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const TYPING_TEXTS: Record<Locale, string[]> = {
@@ -246,25 +247,33 @@ export default function SoftwarePage() {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="flex gap-4 items-start rounded-xl p-5 text-left"
-              style={{
-                background: "rgba(7,22,14,0.65)",
-                border: "1px solid rgba(0,255,159,0.18)",
-                backdropFilter: "blur(12px)",
-              }}
             >
-              <div
-                className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)" }}
+              <BorderGlow
+                className="h-full backdrop-blur-md"
+                colors={["#00ff9f", "#00cc7a", "#00aaff"]}
+                glowColor="153 100 60"
+                backgroundColor="rgba(7,22,14,0.72)"
+                borderRadius={12}
+                glowRadius={36}
+                glowIntensity={0.9}
+                coneSpread={22}
+                fillOpacity={0.35}
               >
-                {SERVICE_ICONS[i]}
-              </div>
-              <div>
-                <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
-                  {s.description}
-                </p>
-              </div>
+                <div className="flex gap-4 items-start p-5 text-left">
+                  <div
+                    className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+                    style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)" }}
+                  >
+                    {SERVICE_ICONS[i]}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
+                    <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
+                      {s.description}
+                    </p>
+                  </div>
+                </div>
+              </BorderGlow>
             </motion.div>
           ))}
         </motion.div>
