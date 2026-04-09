@@ -14,9 +14,7 @@ function scrollToSection(selector: string) {
   requestAnimationFrame(() => {
     const el = document.querySelector(selector);
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const top = window.scrollY + rect.top - 16;
-    window.scrollTo({ top, behavior: 'smooth' });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
@@ -153,7 +151,7 @@ export default function SiteHeader({
         initial={{ y: -16 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, delay: entranceDelay, ease: easeOut }}
-        className="absolute top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
+        className="fixed top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
       >
         {/* Unified pill — expands to include mobile nav */}
         <motion.div

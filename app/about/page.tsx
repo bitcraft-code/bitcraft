@@ -226,7 +226,7 @@ export default function AboutPage() {
   return (
     <>
     <title>{locale === "pt" ? "BITCRAFT | Quem Somos" : "BITCRAFT | About Us"}</title>
-    <main className="relative flex flex-col overflow-x-hidden">
+    <main className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden">
       {/* Background */}
       <div className="fixed inset-0 -z-10" style={{
         background: `radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232,160,32,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(196,135,26,0.07) 0%, transparent 60%), linear-gradient(180deg, #130e04 0%, #1a1205 100%)`,
@@ -246,7 +246,7 @@ export default function AboutPage() {
       <SiteHeader activePath="/about" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
 
       {/* Hero */}
-      <section className="relative w-full h-[100dvh] flex items-center justify-center">
+      <section className="relative w-full h-dvh snap-start flex items-center justify-center">
         <div className="absolute inset-0">
           <FaultyTerminal
             tint={ACCENT}
@@ -307,9 +307,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
-        <div className="flex flex-col items-center gap-5">
+      {/* Section 2: Pillars */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center text-center px-6 py-20 gap-14">
+        <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
             initial="hidden"
@@ -376,14 +376,24 @@ export default function AboutPage() {
         </div>
 
         {/* Pillars grid */}
-        <PillarCardsGrid pillars={c.pillars} />
+        <div className="max-w-4xl w-full">
+          <PillarCardsGrid pillars={c.pillars} />
+        </div>
 
-        <FaqSection items={FAQ_ITEMS[locale]} accentColor={ACCENT} accentGlow="rgba(232,160,32,0.05)" locale={locale} />
-      </div>
+      </section>
 
-      <ContactSection variant="about" locale={locale} />
+      {/* Section 3: FAQ */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center px-6 py-20">
+        <div className="max-w-4xl w-full">
+          <FaqSection items={FAQ_ITEMS[locale]} accentColor={ACCENT} accentGlow="rgba(232,160,32,0.05)" locale={locale} />
+        </div>
+      </section>
 
-      <SiteFooter locale={locale} />
+      {/* Section 4: Contact + Footer */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col">
+        <ContactSection variant="about" locale={locale} />
+        <SiteFooter locale={locale} />
+      </section>
     </main>
     </>
   );
