@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Renderer, Program, Mesh, Triangle } from "ogl";
 import "./Grainient.css";
 
 const hexToRgb = (hex: string): [number, number, number] => {
@@ -153,93 +152,122 @@ const Grainient = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    let cancelled = false;
+    let rafId = 0;
+    let ro: ResizeObserver | null = null;
+    let mountedCanvas: HTMLCanvasElement | null = null;
+    let idleHandle: number | ReturnType<typeof setTimeout> | null = null;
 
-    const isMobile = window.navigator.maxTouchPoints > 0;
-    const renderer = new Renderer({
-      webgl: 2,
-      alpha: true,
-      antialias: false,
-      dpr: isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2),
-    });
+    const init = async () => {
+      if (cancelled || !containerRef.current) return;
 
-    const gl = renderer.gl;
-    const canvas = gl.canvas as HTMLCanvasElement;
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
+      // Dynamic import keeps OGL out of the initial JS parse — defers ~60KB
+      const { Renderer, Program, Mesh, Triangle } = await import("ogl");
 
-    const container = containerRef.current;
-    container.appendChild(canvas);
+      if (cancelled || !containerRef.current) return;
 
-    const geometry = new Triangle(gl);
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: { value: new Float32Array([1, 1]) },
-        uTimeSpeed: { value: timeSpeed },
-        uColorBalance: { value: colorBalance },
-        uWarpStrength: { value: warpStrength },
-        uWarpFrequency: { value: warpFrequency },
-        uWarpSpeed: { value: warpSpeed },
-        uWarpAmplitude: { value: warpAmplitude },
-        uBlendAngle: { value: blendAngle },
-        uBlendSoftness: { value: blendSoftness },
-        uRotationAmount: { value: rotationAmount },
-        uNoiseScale: { value: noiseScale },
-        uGrainAmount: { value: grainAmount },
-        uGrainScale: { value: grainScale },
-        uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
-        uContrast: { value: contrast },
-        uGamma: { value: gamma },
-        uSaturation: { value: saturation },
-        uCenterOffset: { value: new Float32Array([centerX, centerY]) },
-        uZoom: { value: zoom },
-        uColor1: { value: new Float32Array(hexToRgb(color1)) },
-        uColor2: { value: new Float32Array(hexToRgb(color2)) },
-        uColor3: { value: new Float32Array(hexToRgb(color3)) },
-      },
-    });
+      const isMobile = window.navigator.maxTouchPoints > 0;
+      const renderer = new Renderer({
+        webgl: 2,
+        alpha: true,
+        antialias: false,
+        dpr: 1, // gradient background doesn't benefit from retina resolution
+      });
 
-    const mesh = new Mesh(gl, { geometry, program });
+      const gl = renderer.gl;
+      const canvas = gl.canvas as HTMLCanvasElement;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
+      mountedCanvas = canvas;
 
-    const setSize = () => {
-      const rect = container.getBoundingClientRect();
-      const width = Math.max(1, Math.floor(rect.width));
-      const height = Math.max(1, Math.floor(rect.height));
-      renderer.setSize(width, height);
-      const res = program.uniforms.iResolution.value as Float32Array;
-      res[0] = gl.drawingBufferWidth;
-      res[1] = gl.drawingBufferHeight;
+      const container = containerRef.current;
+      container.appendChild(canvas);
+
+      const geometry = new Triangle(gl);
+      const program = new Program(gl, {
+        vertex,
+        fragment,
+        uniforms: {
+          iTime: { value: 0 },
+          iResolution: { value: new Float32Array([1, 1]) },
+          uTimeSpeed: { value: timeSpeed },
+          uColorBalance: { value: colorBalance },
+          uWarpStrength: { value: warpStrength },
+          uWarpFrequency: { value: warpFrequency },
+          uWarpSpeed: { value: warpSpeed },
+          uWarpAmplitude: { value: warpAmplitude },
+          uBlendAngle: { value: blendAngle },
+          uBlendSoftness: { value: blendSoftness },
+          uRotationAmount: { value: rotationAmount },
+          uNoiseScale: { value: noiseScale },
+          uGrainAmount: { value: grainAmount },
+          uGrainScale: { value: grainScale },
+          uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
+          uContrast: { value: contrast },
+          uGamma: { value: gamma },
+          uSaturation: { value: saturation },
+          uCenterOffset: { value: new Float32Array([centerX, centerY]) },
+          uZoom: { value: zoom },
+          uColor1: { value: new Float32Array(hexToRgb(color1)) },
+          uColor2: { value: new Float32Array(hexToRgb(color2)) },
+          uColor3: { value: new Float32Array(hexToRgb(color3)) },
+        },
+      });
+
+      const mesh = new Mesh(gl, { geometry, program });
+
+      const setSize = () => {
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const width = Math.max(1, Math.floor(rect.width));
+        const height = Math.max(1, Math.floor(rect.height));
+        renderer.setSize(width, height);
+        const res = program.uniforms.iResolution.value as Float32Array;
+        res[0] = gl.drawingBufferWidth;
+        res[1] = gl.drawingBufferHeight;
+      };
+
+      ro = new ResizeObserver(setSize);
+      ro.observe(container);
+      setSize();
+
+      // 30fps desktop, 24fps mobile — imperceptible for a slow-moving gradient
+      const FPS_CAP = isMobile ? 24 : 30;
+      const FRAME_INTERVAL = 1000 / FPS_CAP;
+      let lastFrameTime = 0;
+      const t0 = performance.now();
+
+      const loop = (t: number) => {
+        rafId = requestAnimationFrame(loop);
+        if (t - lastFrameTime < FRAME_INTERVAL) return;
+        lastFrameTime = t;
+        (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
+        renderer.render({ scene: mesh });
+      };
+      rafId = requestAnimationFrame(loop);
     };
 
-    const ro = new ResizeObserver(setSize);
-    ro.observe(container);
-    setSize();
-
-    const FPS_CAP = isMobile ? 24 : 60;
-    const FRAME_INTERVAL = 1000 / FPS_CAP;
-    let raf = 0;
-    let lastFrameTime = 0;
-    const t0 = performance.now();
-    const loop = (t: number) => {
-      raf = requestAnimationFrame(loop);
-      if (t - lastFrameTime < FRAME_INTERVAL) return;
-      lastFrameTime = t;
-      (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
-      renderer.render({ scene: mesh });
-    };
-    raf = requestAnimationFrame(loop);
+    // Defer WebGL init until the browser is idle to avoid contributing to TBT
+    if ("requestIdleCallback" in window) {
+      idleHandle = window.requestIdleCallback(() => { init(); }, { timeout: 2000 });
+    } else {
+      idleHandle = setTimeout(init, 0);
+    }
 
     return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      try {
-        container.removeChild(canvas);
-      } catch {
-        // ignore
+      cancelled = true;
+      if (idleHandle !== null) {
+        if ("cancelIdleCallback" in window) {
+          window.cancelIdleCallback(idleHandle as number);
+        } else {
+          clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
+        }
+      }
+      cancelAnimationFrame(rafId);
+      if (ro) ro.disconnect();
+      if (mountedCanvas?.parentNode) {
+        try { mountedCanvas.parentNode.removeChild(mountedCanvas); } catch { /* ignore */ }
       }
     };
   }, [
