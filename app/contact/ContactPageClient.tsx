@@ -84,13 +84,12 @@ export default function ContactPageClient() {
   const variant: ContactVariant = from === "software" ? "software" : from === "agency" ? "agency" : "default";
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    document.title = locale === "pt" ? "BITCRAFT | Contato" : "BITCRAFT | Contact";
-  }, [locale]);
 
   const cfg = CONFIG[variant];
 
   return (
+    <>
+    <title>{locale === "pt" ? "BITCRAFT | Contato" : "BITCRAFT | Contact"}</title>
     <main className="relative min-h-[100dvh] flex flex-col" style={{ background: cfg.background }}>
       <div
         className="absolute inset-0 pointer-events-none"
@@ -136,5 +135,6 @@ export default function ContactPageClient() {
 
       <SiteFooter locale={locale} />
     </main>
+    </>
   );
 }
