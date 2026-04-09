@@ -98,6 +98,7 @@ const cardsContainerVariant = {
 
 function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
+  const tiltRafRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   return (
@@ -124,12 +125,16 @@ function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"
                 height: "100%",
               }}
               onMouseMove={(e) => {
+                if (tiltRafRef.current !== null) return;
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width - 0.5;
                 const y = (e.clientY - rect.top) / rect.height - 0.5;
-                setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                tiltRafRef.current = requestAnimationFrame(() => {
+                  setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                  tiltRafRef.current = null;
+                });
               }}
-              onMouseLeave={() => setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } }))}
+              onMouseLeave={() => { if (tiltRafRef.current !== null) { cancelAnimationFrame(tiltRafRef.current); tiltRafRef.current = null; } setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } })); }}
             >
               <BorderGlow
                 className="h-full backdrop-blur-md"

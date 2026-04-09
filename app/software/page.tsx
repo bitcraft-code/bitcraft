@@ -99,6 +99,7 @@ const cardsContainerVariant = {
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
+  const tiltRafRef = useRef<number | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const isGridInView = useInView(gridRef, { once: true, amount: 0.1 });
   useEffect(() => { setLocale(detectLocale()); }, []);
@@ -267,12 +268,16 @@ export default function SoftwarePage() {
                   height: "100%",
                 }}
                 onMouseMove={(e) => {
+                  if (tiltRafRef.current !== null) return;
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = (e.clientX - rect.left) / rect.width - 0.5;
                   const y = (e.clientY - rect.top) / rect.height - 0.5;
-                  setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                  tiltRafRef.current = requestAnimationFrame(() => {
+                    setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                    tiltRafRef.current = null;
+                  });
                 }}
-                onMouseLeave={() => setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } }))}
+                onMouseLeave={() => { if (tiltRafRef.current !== null) { cancelAnimationFrame(tiltRafRef.current); tiltRafRef.current = null; } setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } })); }}
               >
                 <BorderGlow
                   className="h-full backdrop-blur-md"
