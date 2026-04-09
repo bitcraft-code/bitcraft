@@ -85,6 +85,9 @@ const fadeUp = {
 export default function AgencyPage() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
+  useEffect(() => {
+    document.title = locale === "pt" ? "BITCRAFT Agency | Growth & Performance" : "BITCRAFT Agency | Growth & Performance";
+  }, [locale]);
 
   const c = COPY[locale];
 

@@ -115,6 +115,9 @@ const fadeUp = {
 export default function AboutPage() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
+  useEffect(() => {
+    document.title = locale === "pt" ? "BITCRAFT | Quem Somos" : "BITCRAFT | About Us";
+  }, [locale]);
 
   const c = COPY[locale];
 

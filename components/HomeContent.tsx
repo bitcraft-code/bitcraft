@@ -56,6 +56,9 @@ export default function HomeContent() {
   const copy = translations[locale];
 
   useEffect(() => { setLocale(detectLocale()); }, []);
+  useEffect(() => {
+    document.title = locale === "pt" ? "BITCRAFT | Código que Transforma" : "BITCRAFT | Code that Transforms";
+  }, [locale]);
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
   const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
