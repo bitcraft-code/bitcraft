@@ -128,9 +128,10 @@ function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] })
         return (
           <motion.div
             key={p.title}
-            custom={4 + i * 0.5}
+            custom={i * 1.5}
             initial="hidden"
-            animate="visible"
+            whileInView="visible"
+            viewport={{ once: true }}
             variants={fadeUp}
             style={{ perspective: "800px" }}
           >

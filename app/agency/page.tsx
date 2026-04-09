@@ -101,9 +101,10 @@ function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"
         return (
           <motion.div
             key={s.title}
-            custom={4 + i * 0.5}
+            custom={i * 1.5}
             initial="hidden"
-            animate="visible"
+            whileInView="visible"
+            viewport={{ once: true }}
             variants={fadeUp}
             style={{ perspective: "800px" }}
           >
