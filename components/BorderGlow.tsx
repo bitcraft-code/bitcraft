@@ -89,6 +89,7 @@ const BorderGlow: FC<BorderGlowProps> = ({
   fillOpacity = 0.5,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const pointerRafRef = useRef<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [cursorAngle, setCursorAngle] = useState(45);
   const [edgeProximity, setEdgeProximity] = useState(0);
@@ -123,12 +124,15 @@ const BorderGlow: FC<BorderGlowProps> = ({
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     const card = cardRef.current;
-    if (!card) return;
+    if (!card || pointerRafRef.current !== null) return;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    setEdgeProximity(getEdgeProximity(card, x, y));
-    setCursorAngle(getCursorAngle(card, x, y));
+    pointerRafRef.current = requestAnimationFrame(() => {
+      setEdgeProximity(getEdgeProximity(card, x, y));
+      setCursorAngle(getCursorAngle(card, x, y));
+      pointerRafRef.current = null;
+    });
   }, [getEdgeProximity, getCursorAngle]);
 
   useEffect(() => {
