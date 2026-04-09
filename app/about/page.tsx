@@ -8,6 +8,7 @@ import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
+import FaqSection from "../../components/FaqSection";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const ACCENT = "#e8a020";
@@ -87,6 +88,23 @@ const COPY: Record<Locale, {
       },
     ],
   },
+};
+
+const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
+  en: [
+    { q: "Are you fully remote?", a: "Yes. Our team operates remotely across multiple time zones. Clients get the same quality of collaboration regardless of geography — async-first with regular sync touchpoints." },
+    { q: "Do you work with international clients?", a: "Yes. We work with clients in Brazil, Portugal, the US, and beyond. Billing, contracts, and communication adapt to wherever you are." },
+    { q: "What's your engagement model?", a: "Project-based for defined builds, retainer for ongoing work. We recommend what makes more sense after understanding your situation — we don't push you toward the model that benefits us more." },
+    { q: "Can one client work with both Software and Agency?", a: "Absolutely — and that's where we're strongest. When engineering and growth are aligned from the start, the product is built to acquire, retain, and convert, not just to function." },
+    { q: "How do I get started?", a: "Use the contact form on this page or email us directly. We'll schedule a short call to understand your situation and tell you honestly whether and how we can help." },
+  ],
+  pt: [
+    { q: "Vocês são totalmente remotos?", a: "Sim. Nossa equipe opera remotamente em múltiplos fusos horários. Os clientes têm a mesma qualidade de colaboração independentemente da localização — async primeiro, com pontos de sincronização regulares." },
+    { q: "Vocês trabalham com clientes internacionais?", a: "Sim. Trabalhamos com clientes no Brasil, em Portugal, nos EUA e além. Faturamento, contratos e comunicação se adaptam a onde você está." },
+    { q: "Qual é o modelo de engajamento de vocês?", a: "Baseado em projeto para builds definidas, retainer para trabalho contínuo. Recomendamos o que faz mais sentido após entender sua situação — não te empurramos para o modelo que nos beneficia mais." },
+    { q: "Um cliente pode trabalhar com Software e Agency ao mesmo tempo?", a: "Com certeza — e é aí que somos mais fortes. Quando engenharia e crescimento estão alinhados desde o início, o produto é construído para adquirir, reter e converter, não apenas para funcionar." },
+    { q: "Como começo?", a: "Use o formulário de contato nesta página ou nos envie um email diretamente. Vamos agendar uma call rápida para entender sua situação e dizer honestamente se e como podemos ajudar." },
+  ],
 };
 
 const PILLAR_ICONS = [
@@ -359,6 +377,8 @@ export default function AboutPage() {
 
         {/* Pillars grid */}
         <PillarCardsGrid pillars={c.pillars} />
+
+        <FaqSection items={FAQ_ITEMS[locale]} accentColor={ACCENT} accentGlow="rgba(232,160,32,0.05)" locale={locale} />
       </div>
 
       <ContactSection variant="about" locale={locale} />

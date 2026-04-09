@@ -8,6 +8,7 @@ import SiteFooter from "../../components/SiteFooter";
 import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
+import FaqSection from "../../components/FaqSection";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 // ▼ Change this one value to swap the hero animation
@@ -60,6 +61,23 @@ const COPY: Record<Locale, {
       { title: "Decisions based on real data", description: "Dashboards, attribution and reports that show exactly what works and cut what wastes money." },
     ],
   },
+};
+
+const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
+  en: [
+    { q: "What channels do you work with?", a: "Meta Ads, Google Ads, LinkedIn, TikTok, and organic content (SEO and social). We recommend the right mix based on your audience and business model — not on what we prefer." },
+    { q: "How long before I see results?", a: "Paid media shows data within the first 2–4 weeks. Meaningful ROI optimization typically needs 60–90 days of learning. Organic channels compound over 3–6 months." },
+    { q: "Do you handle creative and copy, or just media buying?", a: "Both. Creative strategy, copy, and design are part of the service. We don't run ads with whatever you hand us — we build what converts." },
+    { q: "Is there a minimum ad spend?", a: "We typically work with clients investing at least $3,000/month in paid media. Below that, the margin for optimization is too thin to deliver meaningful returns." },
+    { q: "How do you report results?", a: "Weekly performance summaries and a live dashboard you can check anytime. No vanity metrics — we report what's connected to revenue." },
+  ],
+  pt: [
+    { q: "Com quais canais vocês trabalham?", a: "Meta Ads, Google Ads, LinkedIn, TikTok e conteúdo orgânico (SEO e redes sociais). Recomendamos o mix certo baseado no seu público e modelo de negócio — não no que nós preferimos." },
+    { q: "Quanto tempo até eu ver resultados?", a: "Mídia paga mostra dados nas primeiras 2 a 4 semanas. ROI significativo tipicamente precisa de 60 a 90 dias de aprendizado. Canais orgânicos compõem ao longo de 3 a 6 meses." },
+    { q: "Vocês cuidam do criativo e do copy, ou só da compra de mídia?", a: "Ambos. Estratégia de criativo, copy e design fazem parte do serviço. Não rodamos anúncios com o que você nos entregar — construímos o que converte." },
+    { q: "Existe um investimento mínimo em anúncios?", a: "Tipicamente trabalhamos com clientes que investem no mínimo R$15.000/mês em mídia paga. Abaixo disso, a margem para otimização é pequena demais para gerar retornos significativos." },
+    { q: "Como vocês reportam os resultados?", a: "Resumos semanais de performance e um dashboard ao vivo que você pode acessar a qualquer momento. Sem métricas de vaidade — reportamos o que está conectado à receita." },
+  ],
 };
 
 const SERVICE_ICONS = [
@@ -311,6 +329,8 @@ export default function AgencyPage() {
 
         {/* Services grid */}
         <ServiceCardsGrid services={c.services} />
+
+        <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" locale={locale} />
       </div>
 
       <ContactSection variant="agency" locale={locale} />
