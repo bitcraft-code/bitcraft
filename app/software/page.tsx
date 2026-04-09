@@ -286,7 +286,7 @@ export default function SoftwarePage() {
                   coneSpread={27}
                   fillOpacity={0}
                   animated
-                  animationDelay={i * 1000}
+                  animationDelay={i * 4000}
                 >
                   <div className="flex gap-4 items-start p-5 text-left" style={{ transformStyle: "preserve-3d" }}>
                     <div
