@@ -85,11 +85,9 @@ const fadeUp = {
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { setLocale(detectLocale()); }, []);
-  useEffect(() => {
-    document.title = locale === "pt" ? "BITCRAFT Software | Engenharia de Alta Performance" : "BITCRAFT Software | High Performance Engineering";
-  }, [locale]);
-
   return (
+    <>
+    <title>{locale === "pt" ? "BITCRAFT Software | Engenharia de Alta Performance" : "BITCRAFT Software | High Performance Engineering"}</title>
     <main className="relative flex flex-col overflow-x-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{
@@ -276,5 +274,6 @@ export default function SoftwarePage() {
 
       <SiteFooter locale={locale} />
     </main>
+    </>
   );
 }
