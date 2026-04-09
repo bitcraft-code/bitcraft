@@ -277,6 +277,7 @@ export default function SoftwarePage() {
                   glowIntensity={0.9}
                   coneSpread={22}
                   fillOpacity={0.35}
+                  animated
                 >
                   <div className="flex gap-4 items-start p-5 text-left" style={{ transformStyle: "preserve-3d" }}>
                     <div
