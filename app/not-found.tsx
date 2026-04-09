@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import FaultyTerminal from "../components/FaultyTerminal";
@@ -23,6 +23,144 @@ const COPY: Record<Locale, { title: string; subtitle: string; cta: string }> = {
     cta: "Voltar ao início →",
   },
 };
+
+const FONT_SIZE = "clamp(7rem, 25vw, 18rem)";
+
+const TEXT_BASE: React.CSSProperties = {
+  fontSize: FONT_SIZE,
+  fontWeight: 900,
+  lineHeight: 1,
+  letterSpacing: "-0.04em",
+  userSelect: "none",
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+};
+
+function Glitch404() {
+  const [glitch, setGlitch] = useState<{
+    sliceY: number;
+    sliceH: number;
+    offsetX: number;
+    flicker: boolean;
+  } | null>(null);
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    function scheduleNext() {
+      timeoutRef.current = setTimeout(() => {
+        const sliceY = 8 + Math.random() * 78;
+        const sliceH = 3 + Math.random() * 22;
+        const offsetX = (Math.random() > 0.5 ? 1 : -1) * (8 + Math.random() * 20);
+        const flicker = Math.random() > 0.5;
+
+        setGlitch({ sliceY, sliceH, offsetX, flicker });
+
+        // Hold duration
+        timeoutRef.current = setTimeout(() => {
+          setGlitch(null);
+
+          // Sometimes double-fire
+          if (Math.random() > 0.55) {
+            timeoutRef.current = setTimeout(() => {
+              const sy = 8 + Math.random() * 78;
+              const sh = 3 + Math.random() * 22;
+              const ox = (Math.random() > 0.5 ? 1 : -1) * (8 + Math.random() * 20);
+              setGlitch({ sliceY: sy, sliceH: sh, offsetX: ox, flicker: false });
+              timeoutRef.current = setTimeout(() => {
+                setGlitch(null);
+                scheduleNext();
+              }, 50 + Math.random() * 100);
+            }, 40 + Math.random() * 80);
+          } else {
+            scheduleNext();
+          }
+        }, 70 + Math.random() * 160);
+      }, 600 + Math.random() * 2400);
+    }
+
+    timeoutRef.current = setTimeout(scheduleNext, 300 + Math.random() * 800);
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+  }, []);
+
+  const gradStyle: React.CSSProperties = {
+    backgroundImage: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 60%, rgba(232,53,53,0.4) 100%)`,
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    color: "transparent",
+  };
+
+  const clipSlice = glitch
+    ? `inset(${glitch.sliceY}% 0 ${Math.max(0, 100 - glitch.sliceY - glitch.sliceH)}% 0)`
+    : "none";
+  const clipAbove = glitch ? `inset(0 0 ${Math.max(0, 100 - glitch.sliceY)}% 0)` : "none";
+  const clipBelow = glitch
+    ? `inset(${Math.min(100, glitch.sliceY + glitch.sliceH)}% 0 0 0)`
+    : "none";
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "inline-block",
+        fontSize: FONT_SIZE,
+        lineHeight: 1,
+        filter: `drop-shadow(0 0 60px rgba(232,53,53,0.3))`,
+        opacity: glitch?.flicker ? 0.7 : 1,
+      }}
+    >
+      {/* Base layer */}
+      <div style={{ ...TEXT_BASE, position: "relative", ...gradStyle }}>404</div>
+
+      {/* Sliced shifted layer */}
+      {glitch && (
+        <div
+          style={{
+            ...TEXT_BASE,
+            ...gradStyle,
+            clipPath: clipSlice,
+            transform: `translateX(${glitch.offsetX}px)`,
+            filter: `drop-shadow(${glitch.offsetX > 0 ? -3 : 3}px 0 0 rgba(0,200,255,0.7))`,
+          }}
+        >
+          404
+        </div>
+      )}
+
+      {/* Chromatic split — above slice, red channel */}
+      {glitch && (
+        <div
+          style={{
+            ...TEXT_BASE,
+            color: "rgba(255,20,20,0.55)",
+            clipPath: clipAbove,
+            transform: `translateX(${-glitch.offsetX * 0.25}px)`,
+            mixBlendMode: "screen",
+          }}
+        >
+          404
+        </div>
+      )}
+
+      {/* Chromatic split — below slice, cyan channel */}
+      {glitch && (
+        <div
+          style={{
+            ...TEXT_BASE,
+            color: "rgba(0,210,255,0.45)",
+            clipPath: clipBelow,
+            transform: `translateX(${glitch.offsetX * 0.25}px)`,
+            mixBlendMode: "screen",
+          }}
+        >
+          404
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function NotFound() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -59,7 +197,6 @@ export default function NotFound() {
           })}
         />
 
-        {/* Hero */}
         <section className="relative flex-1 flex items-center justify-center">
           <div className="absolute inset-0">
             <FaultyTerminal
@@ -83,18 +220,8 @@ export default function NotFound() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="font-black leading-none tracking-tighter"
-              style={{
-                fontSize: "clamp(7rem, 25vw, 18rem)",
-                backgroundImage: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_DARK} 60%, rgba(232,160,32,0.4) 100%)`,
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                textShadow: "none",
-                filter: `drop-shadow(0 0 60px rgba(232,160,32,0.25))`,
-              }}
             >
-              404
+              <Glitch404 />
             </motion.div>
 
             <motion.h1
@@ -111,7 +238,7 @@ export default function NotFound() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="text-sm sm:text-base max-w-sm leading-relaxed"
-              style={{ color: "rgba(255,240,210,0.72)" }}
+              style={{ color: "rgba(255,220,220,0.72)" }}
             >
               {c.subtitle}
             </motion.p>
@@ -126,8 +253,8 @@ export default function NotFound() {
                 className="inline-block px-8 py-3 rounded-full text-sm font-bold tracking-wide transition-transform hover:scale-105 active:scale-95"
                 style={{
                   background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_DARK})`,
-                  color: "#0d0900",
-                  boxShadow: `0 0 32px rgba(232,160,32,0.3)`,
+                  color: "#fff",
+                  boxShadow: `0 0 32px rgba(232,53,53,0.35)`,
                 }}
               >
                 {c.cta}
