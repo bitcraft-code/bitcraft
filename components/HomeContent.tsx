@@ -67,69 +67,10 @@ export default function HomeContent() {
   const sp = (hover: boolean, x: number, y: number) => ({ active: hover, pos: `${x}px ${y}px` });
 
   return (
-    <main className="relative min-h-[100dvh] flex flex-col select-none overflow-x-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        {/* CSS gradient fallback, sempre visível quando WebGL falha (mobile) */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ opacity: 1 }}
-          style={{
-            background: dark
-              ? `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.35) 0%, transparent 55%),
-                 radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,255,159,0.25) 0%, transparent 55%),
-                 radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,100,200,0.15) 0%, transparent 70%),
-                 #0d2d45`
-              : `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.30) 0%, transparent 55%),
-                 radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,204,136,0.20) 0%, transparent 55%),
-                 #e8f7ff`,
-            transition: "background 0.6s ease",
-          }}
-        />
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={dark ? "dark" : "light"}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Grainient
-              color1={t.grainient.color1}
-              color2={t.grainient.color2}
-              color3={t.grainient.color3}
-              timeSpeed={0.32}
-              colorBalance={0.0}
-              warpStrength={1.4}
-              warpFrequency={3.5}
-              warpSpeed={1.2}
-              warpAmplitude={55}
-              blendAngle={20}
-              blendSoftness={0.08}
-              rotationAmount={400}
-              noiseScale={2}
-              grainAmount={0.05}
-              grainScale={2}
-              grainAnimated={false}
-              contrast={t.grainient.contrast}
-              gamma={t.grainient.gamma}
-              saturation={t.grainient.saturation}
-              centerX={0}
-              centerY={0}
-              zoom={t.grainient.zoom}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{ background: t.overlay }}
-        transition={{ duration: 0.5 }}
-        style={{ background: t.overlay }}
-      />
-
+    <main
+      className="relative flex flex-col select-none overflow-x-hidden"
+      style={{ background: dark ? "#0d2d45" : "#e8f7ff", transition: "background 0.6s ease" }}
+    >
       {/* ── Header ── */}
       <SiteHeader
         activePath="/"
@@ -140,7 +81,68 @@ export default function HomeContent() {
       />
 
       {/* ── Hero ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[100dvh] px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
+      <section className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden">
+        {/* Grainient background — scoped to hero only */}
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              background: dark
+                ? `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.35) 0%, transparent 55%),
+                   radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,255,159,0.25) 0%, transparent 55%),
+                   radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,100,200,0.15) 0%, transparent 70%),
+                   #0d2d45`
+                : `radial-gradient(ellipse 90% 70% at 15% 25%, rgba(0,170,255,0.30) 0%, transparent 55%),
+                   radial-gradient(ellipse 70% 90% at 85% 75%, rgba(0,204,136,0.20) 0%, transparent 55%),
+                   #e8f7ff`,
+              transition: "background 0.6s ease",
+            }}
+          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={dark ? "dark" : "light"}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Grainient
+                color1={t.grainient.color1}
+                color2={t.grainient.color2}
+                color3={t.grainient.color3}
+                timeSpeed={0.32}
+                colorBalance={0.0}
+                warpStrength={1.4}
+                warpFrequency={3.5}
+                warpSpeed={1.2}
+                warpAmplitude={55}
+                blendAngle={20}
+                blendSoftness={0.08}
+                rotationAmount={400}
+                noiseScale={2}
+                grainAmount={0.05}
+                grainScale={2}
+                grainAnimated={false}
+                contrast={t.grainient.contrast}
+                gamma={t.grainient.gamma}
+                saturation={t.grainient.saturation}
+                centerX={0}
+                centerY={0}
+                zoom={t.grainient.zoom}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{ background: t.overlay }}
+          transition={{ duration: 0.5 }}
+          style={{ background: t.overlay }}
+        />
+
+        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -296,7 +298,8 @@ export default function HomeContent() {
             {copy.btnAgency}
           </motion.a>
         </motion.div>
-      </div>
+        </div>
+      </section>
 
       {/* ── Contact ── */}
       <ContactSection variant="home" locale={locale} dark={dark} />
