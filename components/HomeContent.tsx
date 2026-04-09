@@ -155,7 +155,7 @@ export default function HomeContent() {
         />
 
 
-        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-5 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 gap-6 sm:gap-10 md:gap-12">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-5 py-8 sm:px-6 sm:pb-24 sm:pt-8 gap-10 sm:gap-10 md:gap-12">
 
         {/* Badge */}
         <motion.div
@@ -192,7 +192,7 @@ export default function HomeContent() {
           animate="visible"
           variants={fadeUp}
           className="font-black leading-[1.1] tracking-tight flex items-baseline justify-center gap-x-2 sm:gap-x-3 max-w-full px-4"
-          style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(0.875rem, 5.5vw, 5rem)", whiteSpace: "nowrap" }}
+          style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(1.5rem, 7.5vw, 5rem)", whiteSpace: "nowrap" }}
         >
           <LayoutGroup id="hero-heading">
           <motion.span layout animate={{ color: t.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: t.heading, whiteSpace: "nowrap" }}>
