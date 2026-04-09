@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import FaultyTerminal from "../components/FaultyTerminal";
 import SiteHeader from "../components/SiteHeader";
 import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 
@@ -20,6 +19,14 @@ const NEON_KEYFRAMES = `
     text-shadow: 0 0 2px #ff4040, 0 0 6px rgba(255,60,60,0.4), 0 0 14px rgba(232,53,53,0.2), 0 0 30px rgba(232,53,53,0.1);
     opacity: 0.8;
   }
+}
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes dot-flicker {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.32; }
 }
 `;
 
@@ -212,23 +219,34 @@ export default function NotFound() {
           })}
         />
 
-        {/* Terminal covers full page */}
-        <div className="absolute inset-0">
-          <FaultyTerminal
-            tint={ACCENT}
-            mouseReact
-            curvature={0.1}
-            scanlineIntensity={1.2}
-            glitchAmount={2.0}
-            noiseAmp={0.8}
-            brightness={0.5}
-            pageLoadAnimation
+        {/* CSS terminal background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* dot grid */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(232,53,53,0.35) 1px, transparent 1px)",
+              backgroundSize: "18px 18px",
+              animation: "dot-flicker 3.5s ease-in-out infinite",
+            }}
+          />
+          {/* scanline sweep */}
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              height: "3px",
+              background: "linear-gradient(180deg, transparent 0%, rgba(232,53,53,0.18) 50%, transparent 100%)",
+              animation: "scanline 4s linear infinite",
+            }}
+          />
+          {/* vignette */}
+          <div
+            className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 100%)" }}
           />
         </div>
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%)" }}
-        />
 
         <section className="relative flex-1 flex items-center justify-center">
 
