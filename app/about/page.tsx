@@ -246,7 +246,7 @@ export default function AboutPage() {
             <span className="text-white">Bitcraft</span>
             <br />
             <span style={{
-              backgroundImage: `linear-gradient(92deg, ${ACCENT}, ${ACCENT_DARK})`,
+              backgroundImage: `linear-gradient(92deg, #ffd54f, #e86010)`,
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
               color: "transparent",
