@@ -217,12 +217,15 @@ export default function AboutPage() {
         <div className="absolute inset-0">
           <FaultyTerminal
             tint={ACCENT}
-            mouseReact
-            curvature={0.1}
-            scanlineIntensity={1.2}
-            glitchAmount={1.2}
-            noiseAmp={0.8}
+            scale={1.7}
+            digitSize={1.7}
+            timeScale={1.7}
+            noiseAmp={0.7}
             brightness={0.7}
+            scanlineIntensity={0.9}
+            curvature={0.5}
+            mouseReact
+            mouseStrength={1}
             pageLoadAnimation
           />
         </div>
