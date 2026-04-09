@@ -212,23 +212,25 @@ export default function NotFound() {
           })}
         />
 
-        <section className="relative flex-1 flex items-center justify-center">
-          <div className="absolute inset-0">
-            <FaultyTerminal
-              tint={ACCENT}
-              mouseReact
-              curvature={0.1}
-              scanlineIntensity={1.2}
-              glitchAmount={2.0}
-              noiseAmp={0.8}
-              brightness={0.5}
-              pageLoadAnimation
-            />
-          </div>
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%)" }}
+        {/* Terminal covers full page */}
+        <div className="absolute inset-0">
+          <FaultyTerminal
+            tint={ACCENT}
+            mouseReact
+            curvature={0.1}
+            scanlineIntensity={1.2}
+            glitchAmount={2.0}
+            noiseAmp={0.8}
+            brightness={0.5}
+            pageLoadAnimation
           />
+        </div>
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%)" }}
+        />
+
+        <section className="relative flex-1 flex items-center justify-center">
 
           <div className="relative z-10 flex flex-col items-center text-center px-6 gap-6">
             <motion.div
