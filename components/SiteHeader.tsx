@@ -185,10 +185,10 @@ export default function SiteHeader({
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
-            borderRadius: pillExpanded ? 25 : 9999,
           }}
-          transition={{ duration: 0.35, borderRadius: { type: "spring", stiffness: 260, damping: 28 } }}
+          transition={{ duration: 0.35 }}
           style={{
+            borderRadius: pillExpanded ? 25 : 9999,
             background: T.header.bg,
             border: T.header.border,
             boxShadow: T.header.shadow,
