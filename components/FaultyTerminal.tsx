@@ -421,10 +421,22 @@ export default function FaultyTerminal({
       };
     };
 
-    setup();
+    let idleHandle: number | ReturnType<typeof setTimeout> | null = null;
+    if ("requestIdleCallback" in window) {
+      idleHandle = window.requestIdleCallback(() => { setup(); }, { timeout: 3000 });
+    } else {
+      idleHandle = setTimeout(setup, 0);
+    }
 
     return () => {
       cancelled = true;
+      if (idleHandle !== null) {
+        if ("cancelIdleCallback" in window) {
+          window.cancelIdleCallback(idleHandle as number);
+        } else {
+          clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
+        }
+      }
       roCleanup?.();
       loadAnimationStartRef.current = 0;
       timeOffsetRef.current = Math.random() * 100;
