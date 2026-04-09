@@ -79,6 +79,18 @@ export default function ContactSection({ variant = "default", locale = "en", dar
         style={{ background: `linear-gradient(90deg, transparent, ${divider}, transparent)` }}
       />
 
+      {/* Grid lines — home variant */}
+      {variant === "home" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(${dark ? "rgba(255,255,255,0.05)" : "rgba(0,100,160,0.07)"} 1px, transparent 1px), linear-gradient(90deg, ${dark ? "rgba(255,255,255,0.05)" : "rgba(0,100,160,0.07)"} 1px, transparent 1px)`,
+            backgroundSize: "56px 56px",
+            maskImage: "radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%)",
+          }}
+        />
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
