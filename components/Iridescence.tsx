@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Program } from "ogl";
 
 const vertexShader = `
 attribute vec2 uv;
