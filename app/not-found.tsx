@@ -11,6 +11,19 @@ import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 const ACCENT = "#e83535";
 const ACCENT_DARK = "#b01e1e";
 
+const NEON_KEYFRAMES = `
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 6px #ff4040, 0 0 16px rgba(255,60,60,0.8), 0 0 40px rgba(232,53,53,0.5), 0 0 80px rgba(232,53,53,0.25);
+    opacity: 1;
+  }
+  50% {
+    text-shadow: 0 0 2px #ff4040, 0 0 6px rgba(255,60,60,0.4), 0 0 14px rgba(232,53,53,0.2), 0 0 30px rgba(232,53,53,0.1);
+    opacity: 0.8;
+  }
+}
+`;
+
 const COPY: Record<Locale, { title: string; subtitle: string; subtitleAccent: string; cta: string }> = {
   en: {
     title: "This page didn't ship.",
@@ -171,6 +184,7 @@ export default function NotFound() {
 
   return (
     <>
+      <style>{NEON_KEYFRAMES}</style>
       <title>BITCRAFT | 404</title>
       <main className="relative flex flex-col min-h-[100dvh] overflow-x-hidden">
         {/* Background */}
@@ -243,7 +257,7 @@ export default function NotFound() {
               style={{ color: "rgba(255,220,220,0.93)" }}
             >
               {c.subtitle}
-              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: "#ff6060", textShadow: `0 0 8px #ff4040, 0 0 20px rgba(255,60,60,0.9), 0 0 50px rgba(232,53,53,0.8), 0 0 100px rgba(232,53,53,0.5)` }}>
+              <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: "#ff6060", animation: "neon-pulse 2.4s ease-in-out infinite" }}>
                 {c.subtitleAccent}
               </span>
             </motion.p>
