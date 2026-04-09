@@ -38,7 +38,7 @@ const COPY: Record<Locale, { title: string; subtitle: string; subtitleAccent: st
   },
 };
 
-const FONT_SIZE = "clamp(7rem, 25vw, 18rem)";
+const FONT_SIZE = "clamp(5.5rem, 22vw, 18rem)";
 
 const TEXT_BASE: React.CSSProperties = {
   fontSize: FONT_SIZE,
@@ -283,8 +283,8 @@ export default function NotFound() {
           </div>
         </section>
 
-        <footer className="relative z-10 w-full px-6 pb-4 pt-2 shrink-0">
-          <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <footer className="relative z-20 w-full px-6 pb-4 pt-2 shrink-0">
+          <p className="text-center text-xs font-bold" style={{ color: "#ffffff", textShadow: "0 0 8px rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.9)" }}>
             © {new Date().getFullYear()} Bitcraft. All rights reserved.
           </p>
         </footer>
