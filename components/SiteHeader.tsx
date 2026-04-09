@@ -48,13 +48,13 @@ const mobileNavVariants = {
 };
 
 const mobileItemVariants = {
-  hidden: { opacity: 0, x: 20, filter: "blur(5px)" },
+  hidden: { opacity: 0, y: 6, filter: "blur(4px)" },
   visible: {
-    opacity: 1, x: 0, filter: "blur(0px)",
+    opacity: 1, y: 0, filter: "blur(0px)",
     transition: { type: "spring" as const, stiffness: 300, damping: 24 },
   },
   exit: {
-    opacity: 0, x: 12, filter: "blur(3px)",
+    opacity: 0, y: 3, filter: "blur(2px)",
     transition: { duration: 0.12, ease: "easeIn" as const },
   },
 };
@@ -212,7 +212,6 @@ export default function SiteHeader({
             boxShadow: T.header.shadow,
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
-            borderRadius: pillExpanded ? 25 : 9999,
           }}
           onMouseMove={(e) => {
             if (wasTouched() || headerRafRef.current !== null) return;
@@ -431,10 +430,10 @@ export default function SiteHeader({
               <motion.div
                 key="mobile-nav"
                 className="lg:hidden overflow-hidden"
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
-                transition={{ duration: 0.35, ease: easeOut }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: easeOut }}
               >
                 <div style={{ borderTop: `1px solid ${T.divider}`, margin: "0 12px" }} />
 
