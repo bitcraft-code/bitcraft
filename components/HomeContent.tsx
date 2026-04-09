@@ -67,6 +67,13 @@ export default function HomeContent() {
   };
   const sp = (hover: boolean, x: number, y: number) => ({ active: hover, pos: `${x}px ${y}px` });
 
+  const primaryHoverShadow = dark
+    ? "0 0 0 1.5px rgba(0,255,159,0.7), 0 0 28px rgba(0,255,159,0.35), 0 2px 20px rgba(255,255,255,0.10)"
+    : "0 0 0 1.5px rgba(0,130,90,0.6), 0 0 22px rgba(0,180,120,0.28), 0 2px 16px rgba(10,25,47,0.15)";
+  const primaryTint = dark
+    ? "linear-gradient(135deg, rgba(0,255,159,0.13) 0%, rgba(0,170,255,0.08) 100%)"
+    : "linear-gradient(135deg, rgba(0,170,255,0.10) 0%, rgba(0,255,159,0.07) 100%)";
+
   const pageTitle = locale === "pt" ? "BITCRAFT | Onde Código Encontra Crescimento" : "BITCRAFT | Where Code Meets Growth";
 
   return (
@@ -260,7 +267,7 @@ export default function HomeContent() {
             animate={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow }}
             transition={{ duration: 0.4 }}
             style={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow, transform: `translate(${(btnParallax["software"]?.tx ?? 0) * 2}px, ${(btnParallax["software"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, box-shadow 0.4s" }}
-            whileHover={{ scale: 1.04 }}
+            whileHover={{ scale: 1.04, boxShadow: primaryHoverShadow }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
               if (wasTouched()) return;
@@ -278,6 +285,7 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); const p = btnParallax["software"]; return (<>
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.35s ease", background: primaryTint }} />
             <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.20), transparent 70%)` }} />
             <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
             <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{copy.btnSoftware}</span>
