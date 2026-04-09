@@ -155,11 +155,12 @@ const Grainient = ({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const isMobile = window.navigator.maxTouchPoints > 0;
     const renderer = new Renderer({
       webgl: 2,
       alpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2),
+      dpr: isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2),
     });
 
     const gl = renderer.gl;
@@ -218,12 +219,17 @@ const Grainient = ({
     ro.observe(container);
     setSize();
 
+    const FPS_CAP = isMobile ? 24 : 60;
+    const FRAME_INTERVAL = 1000 / FPS_CAP;
     let raf = 0;
+    let lastFrameTime = 0;
     const t0 = performance.now();
     const loop = (t: number) => {
+      raf = requestAnimationFrame(loop);
+      if (t - lastFrameTime < FRAME_INTERVAL) return;
+      lastFrameTime = t;
       (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
       renderer.render({ scene: mesh });
-      raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
