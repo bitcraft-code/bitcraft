@@ -113,7 +113,7 @@ export default function SoftwarePage() {
             {t("software.heroSubtitle")}
           </motion.p>
           <motion.a
-            href="mailto:software@bitcraft.dev.br"
+            href="/contact"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -186,7 +186,7 @@ export default function SoftwarePage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            href="mailto:software@bitcraft.dev.br"
+            href="/contact"
             className="cta-ripple mt-2 px-7 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300"
             style={{
               background: "linear-gradient(135deg, var(--accent), #00b870)",
