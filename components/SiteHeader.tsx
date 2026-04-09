@@ -96,8 +96,8 @@ export default function SiteHeader({
     toggleBg: dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.55)",
     toggleBorder: dark ? "1px solid rgba(255,255,255,0.28)" : "1px solid rgba(0,170,255,0.28)",
     toggleColor: dark ? "#ffffff" : "#0a192f",
-    spotlightFill: dark ? "rgba(255,255,255,0.10)" : "rgba(0,170,255,0.10)",
-    spotlightBorder: dark ? "rgba(255,255,255,1)" : "rgba(0,110,255,1)",
+    spotlightFill: "rgba(255,255,255,0.10)",
+    spotlightBorder: "rgba(255,255,255,1)",
   };
 
   const pageAccent =
