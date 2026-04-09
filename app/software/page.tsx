@@ -8,6 +8,7 @@ import SiteFooter from "../../components/SiteFooter";
 import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
+import FaqSection from "../../components/FaqSection";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 // ▼ Change this one value to swap the hero animation
@@ -60,6 +61,23 @@ const COPY: Record<Locale, {
       { title: "Scale 10x without rewriting a thing", description: "Cloud-native, CI/CD and systems that scale with the business, not against it." },
     ],
   },
+};
+
+const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
+  en: [
+    { q: "How long does it take to go from idea to MVP?", a: "Typically 6 to 12 weeks for a focused MVP, depending on scope. We define the smallest valuable version upfront so you're in market fast, without wasted scope." },
+    { q: "Do you work with existing codebases?", a: "Yes. We do greenfield projects and take over legacy systems. We start with a codebase audit so there are no surprises on either side." },
+    { q: "How does AI integration work in practice?", a: "We don't bolt on AI as a feature. We identify where automation, agents, or models create real leverage in your product — then build and integrate them as first-class system components." },
+    { q: "What tech stack do you work with?", a: "Primarily Next.js, React, Node.js, and PostgreSQL — but we adapt to what makes sense. If you have existing infrastructure, we work with it. If you're starting fresh, we recommend what scales best for your use case." },
+    { q: "Do you offer post-launch support?", a: "Yes. We offer maintenance, monitoring, and iteration retainers. Most clients stay on for continued product development after the initial build." },
+  ],
+  pt: [
+    { q: "Quanto tempo leva para ir da ideia ao MVP?", a: "Geralmente de 6 a 12 semanas para um MVP focado, dependendo do escopo. Definimos a versão mínima valiosa desde o início para você entrar no mercado rápido, sem escopo desperdiçado." },
+    { q: "Vocês trabalham com bases de código existentes?", a: "Sim. Fazemos projetos do zero e assumimos sistemas legados. Começamos com uma auditoria da base de código para que não haja surpresas de nenhum lado." },
+    { q: "Como funciona a integração de IA na prática?", a: "Não adicionamos IA como feature. Identificamos onde automação, agentes ou modelos criam alavancagem real no seu produto — e os integramos como componentes de primeiro nível do sistema." },
+    { q: "Com qual stack vocês trabalham?", a: "Principalmente Next.js, React, Node.js e PostgreSQL — mas nos adaptamos ao que faz sentido. Se você tem infraestrutura existente, trabalhamos com ela. Se está começando do zero, recomendamos o que vai escalar melhor para o seu caso de uso." },
+    { q: "Vocês oferecem suporte pós-lançamento?", a: "Sim. Oferecemos retainers de manutenção, monitoramento e iteração contínua. A maioria dos clientes continua para desenvolvimento contínuo do produto após a build inicial." },
+  ],
 };
 
 const SERVICE_ICONS = [
@@ -313,6 +331,8 @@ export default function SoftwarePage() {
             );
           })}
         </motion.div>
+
+        <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00ff9f" accentGlow="rgba(0,255,159,0.05)" locale={locale} />
       </div>
 
       <ContactSection variant="software" locale={locale} />
