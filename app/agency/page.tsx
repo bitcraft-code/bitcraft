@@ -199,14 +199,14 @@ export default function AgencyPage() {
   return (
     <>
     <title>{"BITCRAFT Agency | Growth & Performance"}</title>
-    <main className="relative flex flex-col overflow-x-hidden">
+    <main className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden">
       {/* Background */}
-      <div className="absolute inset-0" style={{
+      <div className="fixed inset-0 -z-10" style={{
         background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,170,255,0.14) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0,170,255,0.08) 0%, transparent 60%), linear-gradient(180deg, #080f1e 0%, #0a192f 100%)",
       }} />
-      <div className="absolute inset-0 ambient-noise" />
+      <div className="fixed inset-0 -z-10 ambient-noise" />
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="fixed inset-0 -z-10 pointer-events-none"
         style={{
           backgroundImage:
             "linear-gradient(rgba(0,170,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0,170,255,0.07) 1px, transparent 1px)",
@@ -218,7 +218,7 @@ export default function AgencyPage() {
       <SiteHeader activePath="/agency" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
 
       {/* Iridescence hero section */}
-      <section className="relative w-full h-[100dvh] flex items-center justify-center">
+      <section className="relative w-full h-dvh snap-start flex items-center justify-center">
         <div className="absolute inset-0">
           <Iridescence color={[0.15, 0.45, 1]} speed={0.8} amplitude={0.12} mouseReact />
         </div>
@@ -260,9 +260,9 @@ export default function AgencyPage() {
         </div>
       </section>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20 max-w-4xl mx-auto w-full gap-14">
-        <div className="flex flex-col items-center gap-5">
+      {/* Section 2: Services */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center text-center px-6 py-20 gap-14">
+        <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
             initial="hidden"
@@ -328,14 +328,24 @@ export default function AgencyPage() {
         </div>
 
         {/* Services grid */}
-        <ServiceCardsGrid services={c.services} />
+        <div className="max-w-4xl w-full">
+          <ServiceCardsGrid services={c.services} />
+        </div>
 
-        <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" locale={locale} />
-      </div>
+      </section>
 
-      <ContactSection variant="agency" locale={locale} />
+      {/* Section 3: FAQ */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-center px-6 py-20">
+        <div className="max-w-4xl w-full">
+          <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" locale={locale} />
+        </div>
+      </section>
 
-      <SiteFooter locale={locale} />
+      {/* Section 4: Contact + Footer */}
+      <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col">
+        <ContactSection variant="agency" locale={locale} />
+        <SiteFooter locale={locale} />
+      </section>
     </main>
     </>
   );
