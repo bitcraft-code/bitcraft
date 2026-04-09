@@ -2,30 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Locale } from "@/lib/translations";
+import { useTranslation } from "react-i18next";
 
 export type ContactVariant = "default" | "software" | "agency" | "about" | "home";
-
-const COPY = {
-  en: {
-    name: "Name", email: "Email", message: "Message",
-    namePlaceholder: "Your name",
-    emailPlaceholder: "your@email.com",
-    messagePlaceholder: "Tell us about your project...",
-    submit: "Send message", sending: "Sending...",
-    success: "Message sent! We'll be in touch soon.",
-    error: "Something went wrong. Please try again.",
-  },
-  pt: {
-    name: "Nome", email: "Email", message: "Mensagem",
-    namePlaceholder: "O seu nome",
-    emailPlaceholder: "seu@email.com",
-    messagePlaceholder: "Fale-nos sobre o seu projeto...",
-    submit: "Enviar mensagem", sending: "A enviar...",
-    success: "Mensagem enviada! Entraremos em contacto em breve.",
-    error: "Algo correu mal. Por favor tente novamente.",
-  },
-};
 
 const THEMES = {
   default: {
@@ -114,16 +93,16 @@ const THEMES = {
   },
 };
 
-type Props = { variant?: ContactVariant; locale?: Locale; dark?: boolean };
+type Props = { variant?: ContactVariant; dark?: boolean };
 
-export default function ContactForm({ variant = "default", locale = "en", dark = true }: Props) {
+export default function ContactForm({ variant = "default", dark = true }: Props) {
+  const { t } = useTranslation();
   const [fields, setFields] = useState({ name: "", email: "", message: "" });
   const [focused, setFocused] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
-  const c = COPY[locale];
   const themeKey = variant === "home" ? (dark ? "home_dark" : "home_light") : variant;
-  const t = THEMES[themeKey as keyof typeof THEMES];
+  const theme = THEMES[themeKey as keyof typeof THEMES];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,10 +113,10 @@ export default function ContactForm({ variant = "default", locale = "en", dark =
   };
 
   const inputStyle = (field: string): React.CSSProperties => ({
-    background: t.inputBg,
-    border: `1px solid ${focused === field ? t.focusBorder : t.inputBorder}`,
-    boxShadow: focused === field ? t.focusShadow : "none",
-    color: t.inputColor,
+    background: theme.inputBg,
+    border: `1px solid ${focused === field ? theme.focusBorder : theme.inputBorder}`,
+    boxShadow: focused === field ? theme.focusShadow : "none",
+    color: theme.inputColor,
     borderRadius: "0.75rem",
     padding: "0.75rem 1rem",
     width: "100%",
@@ -157,20 +136,20 @@ export default function ContactForm({ variant = "default", locale = "en", dark =
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center gap-4 py-10 text-center"
           >
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={t.successColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={theme.successColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
-            <p style={{ color: "#ffffff", fontSize: "1rem", fontWeight: 600 }}>{c.success}</p>
+            <p style={{ color: "#ffffff", fontSize: "1rem", fontWeight: 600 }}>{t("form.success")}</p>
           </motion.div>
         ) : (
           <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit} className="flex flex-col gap-5">
             {[
-              { field: "name", label: c.name, type: "text", placeholder: c.namePlaceholder },
-              { field: "email", label: c.email, type: "email", placeholder: c.emailPlaceholder },
+              { field: "name", label: t("form.name"), type: "text", placeholder: t("form.namePlaceholder") },
+              { field: "email", label: t("form.email"), type: "email", placeholder: t("form.emailPlaceholder") },
             ].map(({ field, label, type, placeholder }) => (
               <div key={field} className="flex flex-col gap-1.5">
-                <label style={{ color: t.label, fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{label}</label>
+                <label style={{ color: theme.label, fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{label}</label>
                 <input
                   type={type}
                   required
@@ -185,10 +164,10 @@ export default function ContactForm({ variant = "default", locale = "en", dark =
             ))}
 
             <div className="flex flex-col gap-1.5">
-              <label style={{ color: t.label, fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{c.message}</label>
+              <label style={{ color: theme.label, fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{t("form.message")}</label>
               <textarea
                 required
-                placeholder={c.messagePlaceholder}
+                placeholder={t("form.messagePlaceholder")}
                 rows={4}
                 value={fields.message}
                 onChange={e => setFields(f => ({ ...f, message: e.target.value }))}
@@ -202,9 +181,9 @@ export default function ContactForm({ variant = "default", locale = "en", dark =
               type="submit"
               disabled={status === "sending"}
               style={{
-                background: t.btnBg,
-                color: t.btnColor,
-                boxShadow: t.btnShadow,
+                background: theme.btnBg,
+                color: theme.btnColor,
+                boxShadow: theme.btnShadow,
                 border: "none",
                 borderRadius: "999px",
                 padding: "0.8rem 2rem",
@@ -218,11 +197,11 @@ export default function ContactForm({ variant = "default", locale = "en", dark =
               whileHover={status !== "sending" ? { scale: 1.02 } : {}}
               whileTap={status !== "sending" ? { scale: 0.97 } : {}}
             >
-              {status === "sending" ? c.sending : c.submit}
+              {status === "sending" ? t("form.sending") : t("form.submit")}
             </motion.button>
 
             {status === "error" && (
-              <p style={{ color: "#ff6b6b", fontSize: "0.8rem", textAlign: "center" }}>{c.error}</p>
+              <p style={{ color: "#ff6b6b", fontSize: "0.8rem", textAlign: "center" }}>{t("form.error")}</p>
             )}
           </motion.form>
         )}

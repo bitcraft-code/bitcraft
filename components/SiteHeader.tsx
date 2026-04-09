@@ -1,14 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import type { Locale } from "../lib/translations";
-
-const NAV_LABELS: Record<Locale, { home: string; software: string; agency: string; about: string; contact: string }> = {
-  en: { home: "Home", software: "Explore Software", agency: "Meet the Agency", about: "About Us", contact: "Contact" },
-  pt: { home: "Início", software: "Explore Software", agency: "Conheça a Agency", about: "Quem Somos", contact: "Contato" },
-};
+import { useTranslation } from "react-i18next";
 
 function scrollToSection(selector: string) {
   requestAnimationFrame(() => {
@@ -40,21 +35,19 @@ function MoonIcon() {
 
 type Props = {
   dark?: boolean;
-  locale?: Locale;
   activePath?: string;
   entranceDelay?: number;
   onToggleDark?: () => void;
-  onToggleLocale?: () => void;
 };
 
 export default function SiteHeader({
   dark = true,
-  locale = "en",
   activePath,
   entranceDelay = 0,
   onToggleDark,
-  onToggleLocale,
 }: Props) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as "en" | "pt";
   const [headerMouse, setHeaderMouse] = useState({ x: 0, y: 0, hover: false });
   const [navSpotlight, setNavSpotlight] = useState<{ idx: number | null; x: number; y: number }>({ idx: null, x: 0, y: 0 });
   const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
@@ -108,18 +101,18 @@ export default function SiteHeader({
     "#00ff9f"; // home
 
   const navItems = [
-    { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
-    { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
-    { label: NAV_LABELS[locale].about,    href: "/about",    activeColor: "#e8a020" },
-    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
+    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
+    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
+    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
+    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
   const mobileNavItems = [
-    { label: NAV_LABELS[locale].home,     href: "/",         activeColor: "#00ff9f" },
-    { label: NAV_LABELS[locale].software, href: "/software", activeColor: "#00ff9f" },
-    { label: NAV_LABELS[locale].agency,   href: "/agency",   activeColor: "#00aaff" },
-    { label: NAV_LABELS[locale].about,    href: "/about",    activeColor: "#e8a020" },
-    { label: NAV_LABELS[locale].contact,  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
+    { label: t("nav.home"),     href: "/",         activeColor: "#00ff9f" },
+    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
+    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
+    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
+    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, alwaysAccent: false },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -260,9 +253,9 @@ export default function SiteHeader({
                 ))}
               </nav>
 
-              {onToggleLocale && (
+              {(
                 <motion.button
-                  onClick={onToggleLocale}
+                  onClick={() => i18n.changeLanguage(locale === "en" ? "pt" : "en")}
                   className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-colors duration-200"
                   animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
                   transition={{ duration: 0.4 }}
@@ -394,16 +387,16 @@ export default function SiteHeader({
                     </a>
                   ))}
                 </nav>
-                {onToggleLocale && (
+                {(
                   <div className="px-3 pb-3">
                     <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
                     <button
-                      onClick={() => { onToggleLocale(); setMobileOpen(false); }}
+                      onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
                       className="w-full flex items-center justify-end gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                       style={{ color: T.navText }}
                     >
                       <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
-                      <span>{locale === "en" ? "English" : "Português"}</span>
+                      <span>{t("nav.languageLabel")}</span>
                     </button>
                   </div>
                 )}

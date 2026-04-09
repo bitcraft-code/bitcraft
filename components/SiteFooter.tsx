@@ -1,31 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Locale } from "../lib/translations";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   dark?: boolean;
-  locale?: Locale;
 };
 
-const LABELS = {
-  en: {
-    copyright: `© ${new Date().getFullYear()} Bitcraft. All rights reserved.`,
-    privacy: "Privacy Policy",
-    cookies: "Cookie Policy",
-    settings: "Cookie Settings",
-  },
-  pt: {
-    copyright: `© ${new Date().getFullYear()} Bitcraft. Todos os direitos reservados.`,
-    privacy: "Política de Privacidade",
-    cookies: "Política de Cookies",
-    settings: "Preferências de Cookies",
-  },
-};
-
-export default function SiteFooter({ dark = true, locale = "en" }: Props) {
+export default function SiteFooter({ dark = true }: Props) {
+  const { t } = useTranslation();
   const subtitleColor = dark ? "rgba(255,255,255,0.55)" : "rgba(10,25,47,0.55)";
-  const l = LABELS[locale];
+  const year = new Date().getFullYear();
 
   return (
     <footer className="relative z-10 w-full px-4 pb-4 pt-2 sm:px-6 sm:pb-6">
@@ -35,14 +20,14 @@ export default function SiteFooter({ dark = true, locale = "en" }: Props) {
           animate={{ color: subtitleColor }}
           transition={{ duration: 0.4 }}
         >
-          {l.copyright}
+          {t("footer.copyright", { year })}
         </motion.span>
 
         <nav className="flex items-center flex-wrap justify-center gap-x-5 gap-y-1">
           {[
-            { label: l.privacy, href: "#" },
-            { label: l.cookies, href: "#" },
-            { label: l.settings, href: "#" },
+            { label: t("footer.privacy"), href: "#" },
+            { label: t("footer.cookies"), href: "#" },
+            { label: t("footer.settings"), href: "#" },
           ].map((item) => (
             <motion.a
               key={item.label}

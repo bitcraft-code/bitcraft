@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Manrope, Space_Grotesk, Caveat } from "next/font/google";
 import PageTransition from "@/components/PageTransition";
+import I18nProvider from "@/components/I18nProvider";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -26,6 +27,21 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: "BITCRAFT",
   description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+  metadataBase: new URL("https://bitcraft.dev.br"),
+  openGraph: {
+    title: "BITCRAFT",
+    description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+    siteName: "BITCRAFT",
+    url: "https://bitcraft.dev.br",
+    locale: "pt_BR",
+    alternateLocale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BITCRAFT",
+    description: "BITCRAFT: fábrica de software, IA e agência de marketing.",
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -38,7 +54,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${manrope.variable} ${spaceGrotesk.variable} ${caveat.variable} antialiased`}>
-        <PageTransition>{children}</PageTransition>
+        <I18nProvider>
+          <PageTransition>{children}</PageTransition>
+        </I18nProvider>
       </body>
     </html>
   );

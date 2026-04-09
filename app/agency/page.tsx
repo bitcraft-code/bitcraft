@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Iridescence from "../../components/Iridescence";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -9,76 +10,9 @@ import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import FaqSection from "../../components/FaqSection";
-import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 // ▼ Change this one value to swap the hero animation
 const HERO_ANIMATION: HeroAnimation = "split"; // "decrypt" | "split" | "type"
-
-const TYPING_TEXTS: Record<Locale, string[]> = {
-  en: [
-    "Turn [[attention|accent,bold]] into [[revenue|accent,bold]].",
-    "Your [[brand|accent,bold]] in every [[feed|accent,bold]].",
-    "Lower [[CAC|accent,bold]]. [[Higher|accent,bold]] revenue.",
-  ],
-  pt: [
-    "Transforme [[atenção|accent,bold]] em [[receita|accent,bold]].",
-    "Sua [[marca|accent,bold]] em todos os [[feeds|accent,bold]].",
-    "[[CAC|accent,bold]] menor. Receita [[maior|accent,bold]].",
-  ],
-};
-
-const COPY: Record<Locale, {
-  badge: string;
-  heroSubtitle: string;
-  heroCta: string;
-  subtitle: string;
-  cta: string;
-  services: { title: string; description: string }[];
-}> = {
-  pt: {
-    badge: "Growth & Performance",
-    heroSubtitle: "Enquanto você lê isso, o seu concorrente está capturando os clientes que deveriam ser seus.",
-    heroCta: "Quero crescer agora →",
-    subtitle: "Pare de apostar em achismos. A Bitcraft Agency constrói um motor de aquisição baseado em dados que trabalha enquanto você dorme.",
-    cta: "Quero crescer agora →",
-    services: [
-      { title: "Esmague seu CAC", description: "Funis, mídia paga e otimização de conversão que transformam cada real investido em múltiplos de retorno." },
-      { title: "Domine o mercado com sua marca", description: "Posicionamento, identidade e tom que ficam na memória e fazem o cliente escolher você sem precisar comparar preço." },
-      { title: "Construa autoridade que vende", description: "Conteúdo e comunidade que atraem, educam e convertem. Sem precisar perseguir cliente nenhum." },
-      { title: "Decisões baseadas em dados reais", description: "Dashboards, atribuição e relatórios que mostram exatamente o que funciona e cortam o que desperdiça dinheiro." },
-    ],
-  },
-  en: {
-    badge: "Growth & Performance",
-    heroSubtitle: "While you read this, your competitor is capturing the customers that should be yours.",
-    heroCta: "I want to grow now →",
-    subtitle: "Stop betting on guesswork. Bitcraft Agency builds a data-driven acquisition engine that works while you sleep.",
-    cta: "I want to grow now →",
-    services: [
-      { title: "Crush your CAC", description: "Funnels, paid media and conversion optimization that turn every dollar invested into multiples of return." },
-      { title: "Dominate your market with your brand", description: "Positioning, identity and tone that stick in memory, making customers choose you without comparing prices." },
-      { title: "Build authority that sells", description: "Content and community that attract, educate and convert. Without chasing a single customer." },
-      { title: "Decisions based on real data", description: "Dashboards, attribution and reports that show exactly what works and cut what wastes money." },
-    ],
-  },
-};
-
-const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
-  en: [
-    { q: "What channels do you work with?", a: "Meta Ads, Google Ads, LinkedIn, TikTok, and organic content (SEO and social). We recommend the right mix based on your audience and business model — not on what we prefer." },
-    { q: "How long before I see results?", a: "Paid media shows data within the first 2–4 weeks. Meaningful ROI optimization typically needs 60–90 days of learning. Organic channels compound over 3–6 months." },
-    { q: "Do you handle creative and copy, or just media buying?", a: "Both. Creative strategy, copy, and design are part of the service. We don't run ads with whatever you hand us — we build what converts." },
-    { q: "Is there a minimum ad spend?", a: "We typically work with clients investing at least $3,000/month in paid media. Below that, the margin for optimization is too thin to deliver meaningful returns." },
-    { q: "How do you report results?", a: "Weekly performance summaries and a live dashboard you can check anytime. No vanity metrics — we report what's connected to revenue." },
-  ],
-  pt: [
-    { q: "Com quais canais vocês trabalham?", a: "Meta Ads, Google Ads, LinkedIn, TikTok e conteúdo orgânico (SEO e redes sociais). Recomendamos o mix certo baseado no seu público e modelo de negócio — não no que nós preferimos." },
-    { q: "Quanto tempo até eu ver resultados?", a: "Mídia paga mostra dados nas primeiras 2 a 4 semanas. ROI significativo tipicamente precisa de 60 a 90 dias de aprendizado. Canais orgânicos compõem ao longo de 3 a 6 meses." },
-    { q: "Vocês cuidam do criativo e do copy, ou só da compra de mídia?", a: "Ambos. Estratégia de criativo, copy e design fazem parte do serviço. Não rodamos anúncios com o que você nos entregar — construímos o que converte." },
-    { q: "Existe um investimento mínimo em anúncios?", a: "Tipicamente trabalhamos com clientes que investem no mínimo R$15.000/mês em mídia paga. Abaixo disso, a margem para otimização é pequena demais para gerar retornos significativos." },
-    { q: "Como vocês reportam os resultados?", a: "Resumos semanais de performance e um dashboard ao vivo que você pode acessar a qualquer momento. Sem métricas de vaidade — reportamos o que está conectado à receita." },
-  ],
-};
 
 const SERVICE_ICONS = [
   <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -192,13 +126,14 @@ function ServiceCardsGrid({ services }: { services: typeof COPY["en"]["services"
 }
 
 export default function AgencyPage() {
-  const [locale, setLocale] = useState<Locale>("en");
-  useEffect(() => { setLocale(detectLocale()); }, []);
-  const c = COPY[locale];
+  const { t } = useTranslation();
+  const heroTexts = t("agency.heroTexts", { returnObjects: true }) as string[];
+  const services = t("agency.services", { returnObjects: true }) as { title: string; description: string }[];
+  const faqItems = t("agency.faqItems", { returnObjects: true }) as { q: string; a: string }[];
 
   return (
     <>
-    <title>{"BITCRAFT Agency | Growth & Performance"}</title>
+    <title>{t("agency.pageTitle")}</title>
     <main className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden">
       {/* Background */}
       <div className="fixed inset-0 -z-10" style={{
@@ -215,7 +150,7 @@ export default function AgencyPage() {
         }}
       />
 
-      <SiteHeader activePath="/agency" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
+      <SiteHeader activePath="/agency" />
 
       {/* Iridescence hero section */}
       <section className="relative w-full h-dvh snap-start flex items-center justify-center">
@@ -227,7 +162,7 @@ export default function AgencyPage() {
           <div className="w-full max-w-3xl h-[5rem] sm:h-[7.5rem] md:h-[9rem] flex items-center justify-center overflow-visible">
             <HeroCycle
               animation={HERO_ANIMATION}
-              phrases={TYPING_TEXTS[locale]}
+              phrases={heroTexts}
               accentColor="#00aaff"
               accentFont="var(--font-caveat)"
               displayDuration={3200}
@@ -241,7 +176,7 @@ export default function AgencyPage() {
             className="text-base sm:text-lg max-w-lg leading-relaxed font-medium"
             style={{ color: "rgba(224,240,255,0.92)", textShadow: "0 0 32px rgba(0,170,255,0.3)" }}
           >
-            {c.heroSubtitle}
+            {t("agency.heroSubtitle")}
           </motion.p>
           <motion.a
             href="mailto:agency@bitcraft.dev.br"
@@ -257,7 +192,7 @@ export default function AgencyPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            {c.heroCta}
+            {t("agency.heroCta")}
           </motion.a>
         </div>
       </section>
@@ -278,7 +213,7 @@ export default function AgencyPage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            {c.badge}
+            {t("agency.badge")}
           </motion.div>
 
           <motion.h2
@@ -307,7 +242,7 @@ export default function AgencyPage() {
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.88)" }}
           >
-            {c.subtitle}
+            {t("agency.subtitle")}
           </motion.p>
 
           <motion.a
@@ -325,13 +260,13 @@ export default function AgencyPage() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {c.cta}
+            {t("agency.cta")}
           </motion.a>
         </div>
 
         {/* Services grid */}
         <div className="max-w-4xl w-full">
-          <ServiceCardsGrid services={c.services} />
+          <ServiceCardsGrid services={services} />
         </div>
 
       </section>
@@ -339,16 +274,16 @@ export default function AgencyPage() {
       {/* Section 3: FAQ */}
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start px-6 pt-28 sm:pt-32 pb-20">
         <div className="max-w-4xl w-full">
-          <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" locale={locale} />
+          <FaqSection items={faqItems} accentColor="#00aaff" accentGlow="rgba(0,170,255,0.05)" />
         </div>
       </section>
 
       {/* Section 4: Contact + Footer */}
       <section className="relative z-10 snap-start h-dvh w-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="agency" locale={locale} />
+          <ContactSection variant="agency" />
         </div>
-        <SiteFooter locale={locale} />
+        <SiteFooter  />
       </section>
     </main>
     </>

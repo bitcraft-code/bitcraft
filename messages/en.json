@@ -1,0 +1,241 @@
+{
+  "nav": {
+    "home": "Home",
+    "software": "Explore Software",
+    "agency": "Meet the Agency",
+    "about": "About Us",
+    "contact": "Contact",
+    "languageLabel": "English"
+  },
+  "footer": {
+    "copyright": "© {{year}} Bitcraft. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "settings": "Cookie Settings"
+  },
+  "contact": {
+    "badge": "Contact",
+    "headings": {
+      "default": "Let's build something great",
+      "software": "Ready to ship?",
+      "agency": "Ready to grow?",
+      "about": "Let's talk.",
+      "home": "Let's build something great"
+    },
+    "subheadings": {
+      "default": "Tell us about your project and we'll get back to you within 24 hours.",
+      "software": "Tell us about your product. Let's turn your idea into a growth machine.",
+      "agency": "Tell us about your business. Let's build your acquisition engine.",
+      "about": "Tell us what you're building. We'll tell you how we can help.",
+      "home": "Tell us about your project and we'll get back to you within 24 hours."
+    }
+  },
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "your@email.com",
+    "messagePlaceholder": "Tell us about your project...",
+    "submit": "Send message",
+    "sending": "Sending...",
+    "success": "Message sent! We'll be in touch soon.",
+    "error": "Something went wrong. Please try again."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Straight answers to the questions we get most."
+  },
+  "home": {
+    "pageTitle": "BITCRAFT | Where Code Meets Growth",
+    "badge": "Where Code Meets Growth",
+    "headingStatic": "Ideas that",
+    "rotatingTexts": ["convert,", "scale,", "dominate,", "sell!"],
+    "subtitle": "Most companies build. Few companies grow. Bitcraft does both! Engineering that ships and marketing that converts.",
+    "btnSoftware": "Build my product →",
+    "btnAgency": "Grow my business →"
+  },
+  "software": {
+    "pageTitle": "BITCRAFT Software | High Performance Engineering",
+    "badge": "High Performance Engineering",
+    "heroTexts": [
+      "Your next product will [[dominate|accent,bold]] the market.",
+      "AI that [[works|accent,bold]] while you [[sleep|accent,bold]].",
+      "From [[zero|accent,bold]] to scalable in [[record time|accent,bold]]."
+    ],
+    "heroSubtitle": "Every week without the right system is revenue your competitor is pocketing.",
+    "heroCta": "Unlock my product →",
+    "subtitle": "Stop funding code that doesn't sell. Bitcraft turns ideas into growth machines, from MVP to scalable product, with AI baked in from day one.",
+    "cta": "Unlock my product →",
+    "services": [
+      {
+        "title": "Ship faster, break less",
+        "description": "Squads focused on results, not meetings. Architecture that handles growth before it arrives."
+      },
+      {
+        "title": "Automate what's eating your time",
+        "description": "Agents and models that kill repetitive tasks and turn data into decisions, while you focus on what only you can do."
+      },
+      {
+        "title": "Interfaces that convert on the first visit",
+        "description": "UX that drives users to the right action, no friction, no excuses not to buy."
+      },
+      {
+        "title": "Scale 10x without rewriting a thing",
+        "description": "Cloud-native, CI/CD and systems that scale with the business, not against it."
+      }
+    ],
+    "faqItems": [
+      {
+        "q": "How long does it take to go from idea to MVP?",
+        "a": "Typically 6 to 12 weeks for a focused MVP, depending on scope. We define the smallest valuable version upfront so you're in market fast, without wasted scope."
+      },
+      {
+        "q": "Do you work with existing codebases?",
+        "a": "Yes. We do greenfield projects and take over legacy systems. We start with a codebase audit so there are no surprises on either side."
+      },
+      {
+        "q": "How does AI integration work in practice?",
+        "a": "We don't bolt on AI as a feature. We identify where automation, agents, or models create real leverage in your product — then build and integrate them as first-class system components."
+      },
+      {
+        "q": "What tech stack do you work with?",
+        "a": "Primarily Next.js, React, Node.js, and PostgreSQL — but we adapt to what makes sense. If you have existing infrastructure, we work with it. If you're starting fresh, we recommend what scales best for your use case."
+      },
+      {
+        "q": "Do you offer post-launch support?",
+        "a": "Yes. We offer maintenance, monitoring, and iteration retainers. Most clients stay on for continued product development after the initial build."
+      }
+    ]
+  },
+  "agency": {
+    "pageTitle": "BITCRAFT Agency | Growth & Performance",
+    "badge": "Growth & Performance",
+    "heroTexts": [
+      "Turn [[attention|accent,bold]] into [[revenue|accent,bold]].",
+      "Your [[brand|accent,bold]] in every [[feed|accent,bold]].",
+      "Lower [[CAC|accent,bold]]. [[Higher|accent,bold]] revenue."
+    ],
+    "heroSubtitle": "While you read this, your competitor is capturing the customers that should be yours.",
+    "heroCta": "I want to grow now →",
+    "subtitle": "Stop betting on guesswork. Bitcraft Agency builds a data-driven acquisition engine that works while you sleep.",
+    "cta": "I want to grow now →",
+    "services": [
+      {
+        "title": "Crush your CAC",
+        "description": "Funnels, paid media and conversion optimization that turn every dollar invested into multiples of return."
+      },
+      {
+        "title": "Dominate your market with your brand",
+        "description": "Positioning, identity and tone that stick in memory, making customers choose you without comparing prices."
+      },
+      {
+        "title": "Build authority that sells",
+        "description": "Content and community that attract, educate and convert. Without chasing a single customer."
+      },
+      {
+        "title": "Decisions based on real data",
+        "description": "Dashboards, attribution and reports that show exactly what works and cut what wastes money."
+      }
+    ],
+    "faqItems": [
+      {
+        "q": "What channels do you work with?",
+        "a": "Meta Ads, Google Ads, LinkedIn, TikTok, and organic content (SEO and social). We recommend the right mix based on your audience and business model — not on what we prefer."
+      },
+      {
+        "q": "How long before I see results?",
+        "a": "Paid media shows data within the first 2–4 weeks. Meaningful ROI optimization typically needs 60–90 days of learning. Organic channels compound over 3–6 months."
+      },
+      {
+        "q": "Do you handle creative and copy, or just media buying?",
+        "a": "Both. Creative strategy, copy, and design are part of the service. We don't run ads with whatever you hand us — we build what converts."
+      },
+      {
+        "q": "Is there a minimum ad spend?",
+        "a": "We typically work with clients investing at least $3,000/month in paid media. Below that, the margin for optimization is too thin to deliver meaningful returns."
+      },
+      {
+        "q": "How do you report results?",
+        "a": "Weekly performance summaries and a live dashboard you can check anytime. No vanity metrics — we report what's connected to revenue."
+      }
+    ]
+  },
+  "notFound": {
+    "title": "This page didn't ship.",
+    "subtitle": "Some things don't make it to production.",
+    "subtitleAccent": "Your idea should!",
+    "cta": "Let's build it →"
+  },
+  "contactPage": {
+    "pageTitle": "BITCRAFT | Contact",
+    "headings": {
+      "default": "Let's build something great",
+      "software": "Ready to ship?",
+      "agency": "Ready to grow?",
+      "about": "Let's work together",
+      "home": "Let's build something great"
+    },
+    "subheadings": {
+      "default": "Tell us about your project and we'll get back to you within 24 hours.",
+      "software": "Tell us about your product. Let's turn your idea into a growth machine.",
+      "agency": "Tell us about your business. Let's build your acquisition engine.",
+      "about": "Tell us about your project and we'll get back to you within 24 hours.",
+      "home": "Tell us about your project and we'll get back to you within 24 hours."
+    }
+  },
+  "about": {
+    "pageTitle": "BITCRAFT | About Us",
+    "badge": "Who We Are",
+    "heroTexts": [
+      "We build what [[matters|accent,bold]].",
+      "Code and strategy in [[one|accent,bold]] team.",
+      "From [[idea|accent,bold]] to [[market|accent,bold]] without detours."
+    ],
+    "heroSubtitle": "Two disciplines. One team. Zero excuses.",
+    "heroCta": "Let's talk →",
+    "title": "Built different.",
+    "subtitle": "Bitcraft was born from a simple frustration: great ideas stuck between agencies that can't code and developers who don't understand business. We are engineers who think about growth and strategists who understand code — in the same room, on the same team.",
+    "cta": "Let's talk →",
+    "pillars": [
+      {
+        "title": "Results above all",
+        "description": "We don't sell hours. We sell results. Every decision — technical or strategic — is measured against one metric: does it move the business forward?"
+      },
+      {
+        "title": "Engineering with purpose",
+        "description": "Clean code is not enough. We build systems that scale, architectures that don't break under success, and products that users actually want to use."
+      },
+      {
+        "title": "Growth as a product",
+        "description": "Marketing isn't a department. It's a layer of the product. We design acquisition, retention, and monetization from the first line of code."
+      },
+      {
+        "title": "Team, not vendor",
+        "description": "We don't deliver and disappear. We embed ourselves in your business, challenge your assumptions, and share the obsession with your growth."
+      }
+    ],
+    "faqItems": [
+      {
+        "q": "Are you fully remote?",
+        "a": "Yes. Our team operates remotely across multiple time zones. Clients get the same quality of collaboration regardless of geography — async-first with regular sync touchpoints."
+      },
+      {
+        "q": "Do you work with international clients?",
+        "a": "Yes. We work with clients in Brazil, Portugal, the US, and beyond. Billing, contracts, and communication adapt to wherever you are."
+      },
+      {
+        "q": "What's your engagement model?",
+        "a": "Project-based for defined builds, retainer for ongoing work. We recommend what makes more sense after understanding your situation — we don't push you toward the model that benefits us more."
+      },
+      {
+        "q": "Can one client work with both Software and Agency?",
+        "a": "Absolutely — and that's where we're strongest. When engineering and growth are aligned from the start, the product is built to acquire, retain, and convert, not just to function."
+      },
+      {
+        "q": "How do I get started?",
+        "a": "Use the contact form on this page or email us directly. We'll schedule a short call to understand your situation and tell you honestly whether and how we can help."
+      }
+    ]
+  }
+}

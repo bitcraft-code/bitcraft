@@ -1,42 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import ContactForm, { type ContactVariant } from "./ContactForm";
-import type { Locale } from "@/lib/translations";
-
-const HEADINGS: Record<Locale, Record<ContactVariant, string>> = {
-  en: {
-    default: "Let's build something great",
-    software: "Ready to ship?",
-    agency: "Ready to grow?",
-    about: "Let's talk.",
-    home: "Let's build something great",
-  },
-  pt: {
-    default: "Vamos construir algo incrível",
-    software: "Pronto para lançar?",
-    agency: "Pronto para crescer?",
-    about: "Vamos conversar.",
-    home: "Vamos construir algo incrível",
-  },
-};
-
-const SUBHEADINGS: Record<Locale, Record<ContactVariant, string>> = {
-  en: {
-    default: "Tell us about your project and we'll get back to you within 24 hours.",
-    software: "Tell us about your product. Let's turn your idea into a growth machine.",
-    agency: "Tell us about your business. Let's build your acquisition engine.",
-    about: "Tell us what you're building. We'll tell you how we can help.",
-    home: "Tell us about your project and we'll get back to you within 24 hours.",
-  },
-  pt: {
-    default: "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
-    software: "Fale-nos sobre o seu produto. Vamos transformar a sua ideia numa máquina de crescimento.",
-    agency: "Fale-nos sobre o seu negócio. Vamos construir o seu motor de aquisição.",
-    about: "Fale-nos o que está construindo. A gente diz como podemos ajudar.",
-    home: "Fale-nos sobre o seu projeto e responderemos em 24 horas.",
-  },
-};
 
 const ACCENT: Record<ContactVariant, string | ((dark: boolean) => string)> = {
   default: "#00ff9f",
@@ -55,9 +21,10 @@ const DIVIDER: Record<ContactVariant, string | ((dark: boolean) => string)> = {
 };
 
 
-type Props = { variant?: ContactVariant; locale?: Locale; dark?: boolean };
+type Props = { variant?: ContactVariant; dark?: boolean };
 
-export default function ContactSection({ variant = "default", locale = "en", dark = true }: Props) {
+export default function ContactSection({ variant = "default", dark = true }: Props) {
+  const { t } = useTranslation();
   const accentValue = ACCENT[variant];
   const dividerValue = DIVIDER[variant];
   const accent = typeof accentValue === "function" ? accentValue(dark) : accentValue;
@@ -112,14 +79,14 @@ export default function ContactSection({ variant = "default", locale = "en", dar
         <div className="flex items-center justify-center gap-2 mb-4">
           <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accent }} />
           <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: accent }}>
-            Contact
+            {t("contact.badge")}
           </span>
         </div>
         <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-3" style={{ color: headingColor }}>
-          {HEADINGS[locale][variant]}
+          {t(`contact.headings.${variant}`)}
         </h2>
         <p className="text-base leading-relaxed" style={{ color: subtitleColor }}>
-          {SUBHEADINGS[locale][variant]}
+          {t(`contact.subheadings.${variant}`)}
         </p>
       </motion.div>
 
@@ -130,7 +97,7 @@ export default function ContactSection({ variant = "default", locale = "en", dar
         transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         className="w-full max-w-lg"
       >
-        <ContactForm variant={variant} locale={locale} dark={dark} />
+        <ContactForm variant={variant} dark={dark} />
       </motion.div>
     </section>
   );

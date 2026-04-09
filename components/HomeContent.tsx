@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Grainient from "../components/Grainient";
 import RotatingText from "../components/RotatingText";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import ContactSection from "../components/ContactSection";
-import { translations, detectLocale, saveLocale, type Locale } from "../lib/translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -47,8 +47,9 @@ const LIGHT = {
 
 
 export default function HomeContent() {
+  const { t: translate, i18n } = useTranslation();
+  const locale = i18n.language;
   const [dark, setDark] = useState(true);
-  const [locale, setLocale] = useState<Locale>("en");
   const [heroSpotlight, setHeroSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
   const [pillSpotlight, setPillSpotlight] = useState({ hover: false, x: 0, y: 0 });
   const [btnParallax, setBtnParallax] = useState<Record<string, { tx: number; ty: number }>>({});
@@ -56,10 +57,8 @@ export default function HomeContent() {
   const heroRafRef = useRef<number | null>(null);
   const pillRafRef = useRef<number | null>(null);
   const btnRafRef = useRef<number | null>(null);
-  const t = dark ? DARK : LIGHT;
-  const copy = translations[locale];
-
-  useEffect(() => { setLocale(detectLocale()); }, []);
+  const theme = dark ? DARK : LIGHT;
+  const rotatingTexts = translate("home.rotatingTexts", { returnObjects: true }) as string[];
 
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
   const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
@@ -77,7 +76,7 @@ export default function HomeContent() {
     ? "linear-gradient(135deg, rgba(0,255,159,0.13) 0%, rgba(0,170,255,0.08) 100%)"
     : "linear-gradient(135deg, rgba(0,170,255,0.10) 0%, rgba(0,255,159,0.07) 100%)";
 
-  const pageTitle = locale === "pt" ? "BITCRAFT | Onde Código Encontra Crescimento" : "BITCRAFT | Where Code Meets Growth";
+  const pageTitle = translate("home.pageTitle");
 
   return (
     <>
@@ -90,9 +89,7 @@ export default function HomeContent() {
       <SiteHeader
         activePath="/"
         dark={dark}
-        locale={locale}
         onToggleDark={() => setDark((d) => !d)}
-        onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })}
       />
 
       {/* ── Hero ── */}
@@ -123,9 +120,9 @@ export default function HomeContent() {
               transition={{ duration: 0.6 }}
             >
               <Grainient
-                color1={t.grainient.color1}
-                color2={t.grainient.color2}
-                color3={t.grainient.color3}
+                color1={theme.grainient.color1}
+                color2={theme.grainient.color2}
+                color3={theme.grainient.color3}
                 timeSpeed={0.32}
                 colorBalance={0.0}
                 warpStrength={1.4}
@@ -139,12 +136,12 @@ export default function HomeContent() {
                 grainAmount={0.05}
                 grainScale={2}
                 grainAnimated={false}
-                contrast={t.grainient.contrast}
-                gamma={t.grainient.gamma}
-                saturation={t.grainient.saturation}
+                contrast={theme.grainient.contrast}
+                gamma={theme.grainient.gamma}
+                saturation={theme.grainient.saturation}
                 centerX={0}
                 centerY={0}
-                zoom={t.grainient.zoom}
+                zoom={theme.grainient.zoom}
               />
             </motion.div>
           </AnimatePresence>
@@ -152,9 +149,9 @@ export default function HomeContent() {
 
         <motion.div
           className="absolute inset-0 pointer-events-none"
-          animate={{ background: t.overlay }}
+          animate={{ background: theme.overlay }}
           transition={{ duration: 0.5 }}
-          style={{ background: t.overlay }}
+          style={{ background: theme.overlay }}
         />
 
 
@@ -170,12 +167,12 @@ export default function HomeContent() {
           style={{ fontFamily: "var(--font-manrope)", fontSize: "clamp(1.5rem, 7.5vw, 5rem)", whiteSpace: "nowrap" }}
         >
           <LayoutGroup id="hero-heading">
-          <motion.span layout animate={{ color: t.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: t.heading, whiteSpace: "nowrap" }}>
-            {copy.headingStatic}
+          <motion.span layout animate={{ color: theme.heading }} transition={{ duration: 0.4, layout: { type: "spring", damping: 30, stiffness: 150 } }} style={{ color: theme.heading, whiteSpace: "nowrap" }}>
+            {translate("home.headingStatic")}
           </motion.span>
           <RotatingText
             key={locale}
-            texts={copy.rotatingTexts}
+            texts={rotatingTexts}
             mainClassName={`px-3 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.13] text-white border border-white/[0.22]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
               if (wasTouched() || pillRafRef.current !== null) return;
@@ -227,7 +224,7 @@ export default function HomeContent() {
               <motion.span
                 animate={{ color: dark ? "rgba(255,255,255,0.82)" : "rgba(10,25,47,0.75)" }}
                 transition={{ duration: 0.4 }}
-              >{copy.subtitle}</motion.span>
+              >{translate("home.subtitle")}</motion.span>
             </motion.span>
           </AnimatePresence>
         </motion.p>
@@ -239,13 +236,13 @@ export default function HomeContent() {
           animate="visible"
           variants={fadeUp}
           className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mt-6 sm:mt-10"
-          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
-          whileInView={{ background: t.badge.bg, border: t.badge.border, color: t.badge.color }}
+          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", background: theme.badge.bg, border: theme.badge.border, color: theme.badge.color }}
+          whileInView={{ background: theme.badge.bg, border: theme.badge.border, color: theme.badge.color }}
           viewport={{ once: true }}
         >
           <span className="relative flex shrink-0 w-2 h-2">
-            <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
-            <motion.span className="relative inline-flex w-2 h-2 rounded-full" animate={{ background: t.badge.dot }} transition={{ duration: 0.4 }} />
+            <motion.span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" animate={{ background: theme.badge.dot }} transition={{ duration: 0.4 }} />
+            <motion.span className="relative inline-flex w-2 h-2 rounded-full" animate={{ background: theme.badge.dot }} transition={{ duration: 0.4 }} />
           </span>
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -255,7 +252,7 @@ export default function HomeContent() {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
             >
-              {copy.badge}
+              {translate("home.badge")}
             </motion.span>
           </AnimatePresence>
         </motion.div>
@@ -271,9 +268,9 @@ export default function HomeContent() {
           <motion.a
             href="/software"
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center overflow-hidden"
-            animate={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow }}
+            animate={{ background: theme.btnPrimary.bg, color: theme.btnPrimary.color, boxShadow: theme.btnPrimary.shadow }}
             transition={{ duration: 0.4 }}
-            style={{ background: t.btnPrimary.bg, color: t.btnPrimary.color, boxShadow: t.btnPrimary.shadow, transform: `translate(${(btnParallax["software"]?.tx ?? 0) * 2}px, ${(btnParallax["software"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, box-shadow 0.4s" }}
+            style={{ background: theme.btnPrimary.bg, color: theme.btnPrimary.color, boxShadow: theme.btnPrimary.shadow, transform: `translate(${(btnParallax["software"]?.tx ?? 0) * 2}px, ${(btnParallax["software"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, box-shadow 0.4s" }}
             whileHover={{ scale: 1.04, boxShadow: primaryHoverShadow }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
@@ -298,16 +295,16 @@ export default function HomeContent() {
             <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.35s ease", background: primaryTint }} />
             <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.20), transparent 70%)` }} />
             <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
-            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{copy.btnSoftware}</span>
+            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{translate("home.btnSoftware")}</span>
             </>); })()}
           </motion.a>
 
           <motion.a
             href="/agency"
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-medium text-center"
-            animate={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color }}
+            animate={{ background: theme.btnSecondary.bg, border: theme.btnSecondary.border, color: theme.btnSecondary.color }}
             transition={{ duration: 0.4 }}
-            style={{ background: t.btnSecondary.bg, border: t.btnSecondary.border, color: t.btnSecondary.color, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", transform: `translate(${(btnParallax["agency"]?.tx ?? 0) * 2}px, ${(btnParallax["agency"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, border 0.4s" }}
+            style={{ background: theme.btnSecondary.bg, border: theme.btnSecondary.border, color: theme.btnSecondary.color, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", transform: `translate(${(btnParallax["agency"]?.tx ?? 0) * 2}px, ${(btnParallax["agency"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, border 0.4s" }}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
@@ -331,7 +328,7 @@ export default function HomeContent() {
             {(() => { const s = sp(heroSpotlight.id === "agency", heroSpotlight.x, heroSpotlight.y); const p = btnParallax["agency"]; return (<>
             <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.10), transparent 70%)` }} />
             <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
-            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{copy.btnAgency}</span>
+            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{translate("home.btnAgency")}</span>
             </>); })()}
           </motion.a>
         </motion.div>
@@ -341,9 +338,9 @@ export default function HomeContent() {
       {/* ── Contact + Footer ── */}
       <section className="relative snap-start h-dvh flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="home" locale={locale} dark={dark} />
+          <ContactSection variant="home" dark={dark} />
         </div>
-        <SiteFooter dark={dark} locale={locale} />
+        <SiteFooter dark={dark} />
       </section>
     </main>
     </>

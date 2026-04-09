@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import LetterGlitch from "../../components/LetterGlitch";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -9,76 +10,9 @@ import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import FaqSection from "../../components/FaqSection";
-import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 // ▼ Change this one value to swap the hero animation
 const HERO_ANIMATION: HeroAnimation = "decrypt"; // "decrypt" | "split" | "type"
-
-const TYPING_TEXTS: Record<Locale, string[]> = {
-  en: [
-    "Your next product will [[dominate|accent,bold]] the market.",
-    "AI that [[works|accent,bold]] while you [[sleep|accent,bold]].",
-    "From [[zero|accent,bold]] to scalable in [[record time|accent,bold]].",
-  ],
-  pt: [
-    "Seu próximo produto vai [[dominar|accent,bold]] o mercado.",
-    "IA que [[trabalha|accent,bold]] enquanto você [[dorme|accent,bold]].",
-    "Do [[zero|accent,bold]] ao escalável em [[tempo recorde|accent,bold]].",
-  ],
-};
-
-const COPY: Record<Locale, {
-  badge: string;
-  heroSubtitle: string;
-  heroCta: string;
-  subtitle: string;
-  cta: string;
-  services: { title: string; description: string }[];
-}> = {
-  pt: {
-    badge: "Engenharia de Alta Performance",
-    heroSubtitle: "Cada semana sem o sistema certo é receita que o seu concorrente está embolsando.",
-    heroCta: "Destrave meu produto →",
-    subtitle: "Pare de financiar código que não vende. A Bitcraft transforma ideias em máquinas de crescimento, do MVP ao produto escalável, com IA integrada desde o primeiro dia.",
-    cta: "Destrave meu produto →",
-    services: [
-      { title: "Entregue mais rápido, quebre menos", description: "Squads focados em resultado, não em reuniões. Arquitetura que aguenta o crescimento antes de ele chegar." },
-      { title: "Automatize o que devora seu tempo", description: "Agentes e modelos que eliminam tarefas repetitivas e transformam dados em decisões, enquanto você foca no que só você pode fazer." },
-      { title: "Interfaces que convertem na primeira visita", description: "UX que guia o usuário até a ação certa, sem fricção, sem desculpa para não comprar." },
-      { title: "Cresça 10x sem reescrever nada", description: "Cloud-native, CI/CD e sistemas que escalam com o negócio, não contra ele." },
-    ],
-  },
-  en: {
-    badge: "High Performance Engineering",
-    heroSubtitle: "Every week without the right system is revenue your competitor is pocketing.",
-    heroCta: "Unlock my product →",
-    subtitle: "Stop funding code that doesn't sell. Bitcraft turns ideas into growth machines, from MVP to scalable product, with AI baked in from day one.",
-    cta: "Unlock my product →",
-    services: [
-      { title: "Ship faster, break less", description: "Squads focused on results, not meetings. Architecture that handles growth before it arrives." },
-      { title: "Automate what's eating your time", description: "Agents and models that kill repetitive tasks and turn data into decisions, while you focus on what only you can do." },
-      { title: "Interfaces that convert on the first visit", description: "UX that drives users to the right action, no friction, no excuses not to buy." },
-      { title: "Scale 10x without rewriting a thing", description: "Cloud-native, CI/CD and systems that scale with the business, not against it." },
-    ],
-  },
-};
-
-const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
-  en: [
-    { q: "How long does it take to go from idea to MVP?", a: "Typically 6 to 12 weeks for a focused MVP, depending on scope. We define the smallest valuable version upfront so you're in market fast, without wasted scope." },
-    { q: "Do you work with existing codebases?", a: "Yes. We do greenfield projects and take over legacy systems. We start with a codebase audit so there are no surprises on either side." },
-    { q: "How does AI integration work in practice?", a: "We don't bolt on AI as a feature. We identify where automation, agents, or models create real leverage in your product — then build and integrate them as first-class system components." },
-    { q: "What tech stack do you work with?", a: "Primarily Next.js, React, Node.js, and PostgreSQL — but we adapt to what makes sense. If you have existing infrastructure, we work with it. If you're starting fresh, we recommend what scales best for your use case." },
-    { q: "Do you offer post-launch support?", a: "Yes. We offer maintenance, monitoring, and iteration retainers. Most clients stay on for continued product development after the initial build." },
-  ],
-  pt: [
-    { q: "Quanto tempo leva para ir da ideia ao MVP?", a: "Geralmente de 6 a 12 semanas para um MVP focado, dependendo do escopo. Definimos a versão mínima valiosa desde o início para você entrar no mercado rápido, sem escopo desperdiçado." },
-    { q: "Vocês trabalham com bases de código existentes?", a: "Sim. Fazemos projetos do zero e assumimos sistemas legados. Começamos com uma auditoria da base de código para que não haja surpresas de nenhum lado." },
-    { q: "Como funciona a integração de IA na prática?", a: "Não adicionamos IA como feature. Identificamos onde automação, agentes ou modelos criam alavancagem real no seu produto — e os integramos como componentes de primeiro nível do sistema." },
-    { q: "Com qual stack vocês trabalham?", a: "Principalmente Next.js, React, Node.js e PostgreSQL — mas nos adaptamos ao que faz sentido. Se você tem infraestrutura existente, trabalhamos com ela. Se está começando do zero, recomendamos o que vai escalar melhor para o seu caso de uso." },
-    { q: "Vocês oferecem suporte pós-lançamento?", a: "Sim. Oferecemos retainers de manutenção, monitoramento e iteração contínua. A maioria dos clientes continua para desenvolvimento contínuo do produto após a build inicial." },
-  ],
-};
 
 const SERVICE_ICONS = [
   <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -115,15 +49,17 @@ const cardsContainerVariant = {
 };
 
 export default function SoftwarePage() {
-  const [locale, setLocale] = useState<Locale>("en");
+  const { t } = useTranslation();
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   const tiltRafRef = useRef<number | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const isGridInView = useInView(gridRef, { once: true, amount: 0.1 });
-  useEffect(() => { setLocale(detectLocale()); }, []);
+  const heroTexts = t("software.heroTexts", { returnObjects: true }) as string[];
+  const services = t("software.services", { returnObjects: true }) as { title: string; description: string }[];
+  const faqItems = t("software.faqItems", { returnObjects: true }) as { q: string; a: string }[];
   return (
     <>
-    <title>{locale === "pt" ? "BITCRAFT Software | Engenharia de Alta Performance" : "BITCRAFT Software | High Performance Engineering"}</title>
+    <title>{t("software.pageTitle")}</title>
     <main className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden">
       {/* Background */}
       <div className="fixed inset-0 -z-10" style={{
@@ -140,7 +76,7 @@ export default function SoftwarePage() {
         }}
       />
 
-      <SiteHeader activePath="/software" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
+      <SiteHeader activePath="/software" />
 
       {/* LetterGlitch hero section */}
       <section className="relative w-full h-dvh snap-start flex items-center justify-center">
@@ -159,7 +95,7 @@ export default function SoftwarePage() {
           <div className="w-full max-w-3xl h-[6rem] sm:h-[7.5rem] md:h-[9rem] flex items-center justify-center overflow-visible">
             <HeroCycle
               animation={HERO_ANIMATION}
-              phrases={TYPING_TEXTS[locale]}
+              phrases={heroTexts}
               accentColor="#00ff9f"
               accentFont="var(--font-caveat)"
               speed={90}
@@ -174,7 +110,7 @@ export default function SoftwarePage() {
             className="text-base sm:text-lg max-w-lg leading-relaxed font-medium"
             style={{ color: "rgba(224,247,250,0.92)", textShadow: "0 0 32px rgba(0,255,159,0.25)" }}
           >
-            {COPY[locale].heroSubtitle}
+            {t("software.heroSubtitle")}
           </motion.p>
           <motion.a
             href="mailto:software@bitcraft.dev.br"
@@ -190,7 +126,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            {COPY[locale].heroCta}
+            {t("software.heroCta")}
           </motion.a>
         </div>
       </section>
@@ -213,7 +149,7 @@ export default function SoftwarePage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            {COPY[locale].badge}
+            {t("software.badge")}
           </motion.div>
 
           <motion.h2
@@ -242,7 +178,7 @@ export default function SoftwarePage() {
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.88)" }}
           >
-            {COPY[locale].subtitle}
+            {t("software.subtitle")}
           </motion.p>
 
           <motion.a
@@ -260,7 +196,7 @@ export default function SoftwarePage() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {COPY[locale].cta}
+            {t("software.cta")}
           </motion.a>
         </div>
 
@@ -272,7 +208,7 @@ export default function SoftwarePage() {
           variants={cardsContainerVariant}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-4xl"
         >
-          {COPY[locale].services.map((s, i) => {
+          {services.map((s, i) => {
             const tilt = cardTilt[i] ?? { rx: 0, ry: 0 };
             return (
             <motion.div
@@ -339,16 +275,16 @@ export default function SoftwarePage() {
       {/* Section 3: FAQ */}
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start px-6 pt-28 sm:pt-32 pb-20">
         <div className="max-w-4xl w-full">
-          <FaqSection items={FAQ_ITEMS[locale]} accentColor="#00ff9f" accentGlow="rgba(0,255,159,0.05)" locale={locale} />
+          <FaqSection items={faqItems} accentColor="#00ff9f" accentGlow="rgba(0,255,159,0.05)" />
         </div>
       </section>
 
       {/* Section 4: Contact + Footer */}
       <section className="relative z-10 snap-start h-dvh w-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="software" locale={locale} />
+          <ContactSection variant="software" />
         </div>
-        <SiteFooter locale={locale} />
+        <SiteFooter />
       </section>
     </main>
     </>

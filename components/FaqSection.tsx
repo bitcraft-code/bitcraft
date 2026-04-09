@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import type { Locale } from "../lib/translations";
+import { useTranslation } from "react-i18next";
 
 export type FaqItem = { q: string; a: string };
 
@@ -10,18 +10,6 @@ type Props = {
   items: FaqItem[];
   accentColor: string;
   accentGlow: string;
-  locale: Locale;
-};
-
-const LABELS: Record<Locale, { title: string; subtitle: string }> = {
-  en: {
-    title: "Frequently Asked Questions",
-    subtitle: "Straight answers to the questions we get most.",
-  },
-  pt: {
-    title: "Perguntas Frequentes",
-    subtitle: "Respostas diretas para as perguntas que mais recebemos.",
-  },
 };
 
 const fadeUp = {
@@ -33,11 +21,11 @@ const fadeUp = {
   }),
 };
 
-export default function FaqSection({ items, accentColor, accentGlow, locale }: Props) {
+export default function FaqSection({ items, accentColor, accentGlow }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  const l = LABELS[locale];
 
   return (
     <div ref={ref} className="w-full flex flex-col items-center gap-8">
@@ -49,7 +37,7 @@ export default function FaqSection({ items, accentColor, accentGlow, locale }: P
           variants={fadeUp}
           className="text-3xl sm:text-4xl font-black tracking-tight text-white"
         >
-          {l.title}
+          {t("faq.title")}
         </motion.h2>
         <motion.p
           custom={1}
@@ -59,7 +47,7 @@ export default function FaqSection({ items, accentColor, accentGlow, locale }: P
           className="text-sm sm:text-base max-w-md"
           style={{ color: "rgba(255,255,255,0.50)" }}
         >
-          {l.subtitle}
+          {t("faq.subtitle")}
         </motion.p>
       </div>
 

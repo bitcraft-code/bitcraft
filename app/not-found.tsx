@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import SiteHeader from "../components/SiteHeader";
-import { detectLocale, saveLocale, type Locale } from "../lib/translations";
 
 const ACCENT = "#e83535";
 const ACCENT_DARK = "#b01e1e";
@@ -30,20 +30,6 @@ const NEON_KEYFRAMES = `
 }
 `;
 
-const COPY: Record<Locale, { title: string; subtitle: string; subtitleAccent: string; cta: string }> = {
-  en: {
-    title: "This page didn't ship.",
-    subtitle: "Some things don't make it to production.",
-    subtitleAccent: "Your idea should!",
-    cta: "Let's build it →",
-  },
-  pt: {
-    title: "Esta página não foi entregue.",
-    subtitle: "Nem tudo vai para produção.",
-    subtitleAccent: "A sua ideia deveria!",
-    cta: "Vamos construir →",
-  },
-};
 
 const FONT_SIZE = "clamp(5.5rem, 22vw, 18rem)";
 
@@ -184,9 +170,7 @@ function Glitch404() {
 }
 
 export default function NotFound() {
-  const [locale, setLocale] = useState<Locale>("en");
-  useEffect(() => { setLocale(detectLocale()); }, []);
-  const c = COPY[locale];
+  const { t } = useTranslation();
 
   return (
     <>
@@ -209,15 +193,7 @@ export default function NotFound() {
           }}
         />
 
-        <SiteHeader
-          activePath="/"
-          locale={locale}
-          onToggleLocale={() => setLocale((l) => {
-            const next = l === "en" ? "pt" : "en";
-            saveLocale(next);
-            return next;
-          })}
-        />
+        <SiteHeader activePath="/" />
 
         {/* CSS terminal background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -265,7 +241,7 @@ export default function NotFound() {
               transition={{ duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
               className="text-xl sm:text-2xl font-bold text-white"
             >
-              {c.title}
+              {t("notFound.title")}
             </motion.h1>
 
             <motion.p
@@ -275,9 +251,9 @@ export default function NotFound() {
               className="text-base sm:text-xl max-w-sm leading-relaxed"
               style={{ color: "rgba(255,220,220,0.93)" }}
             >
-              {c.subtitle}
+              {t("notFound.subtitle")}
               <span className="block" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.5em", color: "#ff6060", animation: "neon-pulse 2.4s ease-in-out infinite" }}>
-                {c.subtitleAccent}
+                {t("notFound.subtitleAccent")}
               </span>
             </motion.p>
 
@@ -296,7 +272,7 @@ export default function NotFound() {
                   boxShadow: `0 0 32px rgba(232,53,53,0.35)`,
                 }}
               >
-                {c.cta}
+                {t("notFound.cta")}
               </Link>
             </motion.div>
           </div>
@@ -304,7 +280,7 @@ export default function NotFound() {
 
         <footer className="relative z-20 w-full px-6 pb-4 pt-2 shrink-0">
           <p className="text-center text-xs font-bold" style={{ color: "#ffffff", textShadow: "0 0 8px rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.9)" }}>
-            © {new Date().getFullYear()} Bitcraft. All rights reserved.
+            {t("footer.copyright", { year: new Date().getFullYear() })}
           </p>
         </footer>
       </main>

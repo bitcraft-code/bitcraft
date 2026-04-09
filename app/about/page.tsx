@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import FaultyTerminal from "../../components/FaultyTerminal";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -9,103 +10,9 @@ import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
 import FaqSection from "../../components/FaqSection";
-import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const ACCENT = "#e8a020";
 const ACCENT_DARK = "#c4871a";
-
-const TYPING_TEXTS: Record<Locale, string[]> = {
-  en: [
-    "We build what [[matters|accent,bold]].",
-    "Code and strategy in [[one|accent,bold]] team.",
-    "From [[idea|accent,bold]] to [[market|accent,bold]] without detours.",
-  ],
-  pt: [
-    "Construímos o que [[importa|accent,bold]].",
-    "Código e estratégia em [[uma só|accent,bold]] equipe.",
-    "Da [[ideia|accent,bold]] ao [[mercado|accent,bold]] sem rodeios.",
-  ],
-};
-
-const COPY: Record<Locale, {
-  badge: string;
-  heroSubtitle: string;
-  heroCta: string;
-  title: string;
-  subtitle: string;
-  cta: string;
-  pillars: { title: string; description: string }[];
-}> = {
-  en: {
-    badge: "Who We Are",
-    heroSubtitle: "Two disciplines. One team. Zero excuses.",
-    heroCta: "Let's talk →",
-    title: "Built different.",
-    subtitle: "Bitcraft was born from a simple frustration: great ideas stuck between agencies that can't code and developers who don't understand business. We are engineers who think about growth and strategists who understand code — in the same room, on the same team.",
-    cta: "Let's talk →",
-    pillars: [
-      {
-        title: "Results above all",
-        description: "We don't sell hours. We sell results. Every decision — technical or strategic — is measured against one metric: does it move the business forward?",
-      },
-      {
-        title: "Engineering with purpose",
-        description: "Clean code is not enough. We build systems that scale, architectures that don't break under success, and products that users actually want to use.",
-      },
-      {
-        title: "Growth as a product",
-        description: "Marketing isn't a department. It's a layer of the product. We design acquisition, retention, and monetization from the first line of code.",
-      },
-      {
-        title: "Team, not vendor",
-        description: "We don't deliver and disappear. We embed ourselves in your business, challenge your assumptions, and share the obsession with your growth.",
-      },
-    ],
-  },
-  pt: {
-    badge: "Quem Somos",
-    heroSubtitle: "Duas disciplinas. Uma equipe. Zero desculpas.",
-    heroCta: "Vamos conversar →",
-    title: "Construídos diferente.",
-    subtitle: "A Bitcraft nasceu de uma frustração simples: boas ideias presas entre agências que não sabem codar e devs que não entendem de negócio. Somos engenheiros que pensam em crescimento e estrategistas que entendem de código — na mesma sala, na mesma equipe.",
-    cta: "Vamos conversar →",
-    pillars: [
-      {
-        title: "Resultado acima de tudo",
-        description: "Não vendemos horas. Vendemos resultado. Cada decisão — técnica ou estratégica — é medida contra uma métrica: isso move o negócio para frente?",
-      },
-      {
-        title: "Engenharia com propósito",
-        description: "Código limpo não é suficiente. Construímos sistemas que escalam, arquiteturas que não quebram sob o sucesso, e produtos que as pessoas realmente querem usar.",
-      },
-      {
-        title: "Crescimento como produto",
-        description: "Marketing não é um departamento. É uma camada do produto. Projetamos aquisição, retenção e monetização desde a primeira linha de código.",
-      },
-      {
-        title: "Equipe, não fornecedor",
-        description: "Não entregamos e desaparecemos. Nos incorporamos ao seu negócio, questionamos seus pressupostos e compartilhamos a obsessão pelo seu crescimento.",
-      },
-    ],
-  },
-};
-
-const FAQ_ITEMS: Record<Locale, { q: string; a: string }[]> = {
-  en: [
-    { q: "Are you fully remote?", a: "Yes. Our team operates remotely across multiple time zones. Clients get the same quality of collaboration regardless of geography — async-first with regular sync touchpoints." },
-    { q: "Do you work with international clients?", a: "Yes. We work with clients in Brazil, Portugal, the US, and beyond. Billing, contracts, and communication adapt to wherever you are." },
-    { q: "What's your engagement model?", a: "Project-based for defined builds, retainer for ongoing work. We recommend what makes more sense after understanding your situation — we don't push you toward the model that benefits us more." },
-    { q: "Can one client work with both Software and Agency?", a: "Absolutely — and that's where we're strongest. When engineering and growth are aligned from the start, the product is built to acquire, retain, and convert, not just to function." },
-    { q: "How do I get started?", a: "Use the contact form on this page or email us directly. We'll schedule a short call to understand your situation and tell you honestly whether and how we can help." },
-  ],
-  pt: [
-    { q: "Vocês são totalmente remotos?", a: "Sim. Nossa equipe opera remotamente em múltiplos fusos horários. Os clientes têm a mesma qualidade de colaboração independentemente da localização — async primeiro, com pontos de sincronização regulares." },
-    { q: "Vocês trabalham com clientes internacionais?", a: "Sim. Trabalhamos com clientes no Brasil, em Portugal, nos EUA e além. Faturamento, contratos e comunicação se adaptam a onde você está." },
-    { q: "Qual é o modelo de engajamento de vocês?", a: "Baseado em projeto para builds definidas, retainer para trabalho contínuo. Recomendamos o que faz mais sentido após entender sua situação — não te empurramos para o modelo que nos beneficia mais." },
-    { q: "Um cliente pode trabalhar com Software e Agency ao mesmo tempo?", a: "Com certeza — e é aí que somos mais fortes. Quando engenharia e crescimento estão alinhados desde o início, o produto é construído para adquirir, reter e converter, não apenas para funcionar." },
-    { q: "Como começo?", a: "Use o formulário de contato nesta página ou nos envie um email diretamente. Vamos agendar uma call rápida para entender sua situação e dizer honestamente se e como podemos ajudar." },
-  ],
-};
 
 const PILLAR_ICONS = [
   <svg key="0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -219,13 +126,14 @@ function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] })
 }
 
 export default function AboutPage() {
-  const [locale, setLocale] = useState<Locale>("en");
-  useEffect(() => { setLocale(detectLocale()); }, []);
-  const c = COPY[locale];
+  const { t } = useTranslation();
+  const heroTexts = t("about.heroTexts", { returnObjects: true }) as string[];
+  const pillars = t("about.pillars", { returnObjects: true }) as { title: string; description: string }[];
+  const faqItems = t("about.faqItems", { returnObjects: true }) as { q: string; a: string }[];
 
   return (
     <>
-    <title>{locale === "pt" ? "BITCRAFT | Quem Somos" : "BITCRAFT | About Us"}</title>
+    <title>{t("about.pageTitle")}</title>
     <main className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden">
       {/* Background */}
       <div className="fixed inset-0 -z-10" style={{
@@ -243,7 +151,7 @@ export default function AboutPage() {
         }}
       />
 
-      <SiteHeader activePath="/about" locale={locale} onToggleLocale={() => setLocale((l) => { const next = l === "en" ? "pt" : "en"; saveLocale(next); return next; })} />
+      <SiteHeader activePath="/about" />
 
       {/* Hero */}
       <section className="relative w-full h-dvh snap-start flex items-center justify-center">
@@ -267,7 +175,7 @@ export default function AboutPage() {
           <div className="w-full max-w-3xl h-[5rem] sm:h-[7.5rem] md:h-[9rem] flex items-center justify-center overflow-visible">
             <TextType
               as="h1"
-              text={TYPING_TEXTS[locale]}
+              text={heroTexts}
               typingSpeed={55}
               deletingSpeed={30}
               pauseDuration={2500}
@@ -288,7 +196,7 @@ export default function AboutPage() {
             className="text-base sm:text-lg max-w-lg leading-relaxed font-medium"
             style={{ color: "rgba(255,240,210,0.92)", textShadow: `0 0 32px rgba(232,160,32,0.3)` }}
           >
-            {c.heroSubtitle}
+            {t("about.heroSubtitle")}
           </motion.p>
           <motion.a
             href="#contact"
@@ -304,7 +212,7 @@ export default function AboutPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            {c.heroCta}
+            {t("about.heroCta")}
           </motion.a>
         </div>
       </section>
@@ -325,7 +233,7 @@ export default function AboutPage() {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-            {c.badge}
+            {t("about.badge")}
           </motion.div>
 
           <motion.h2
@@ -343,7 +251,7 @@ export default function AboutPage() {
               WebkitBackgroundClip: "text",
               color: "transparent",
             }}>
-              {c.title}
+              {t("about.title")}
             </span>
           </motion.h2>
 
@@ -355,7 +263,7 @@ export default function AboutPage() {
             className="text-base sm:text-lg max-w-2xl leading-relaxed"
             style={{ color: "rgba(255,240,210,0.95)" }}
           >
-            {c.subtitle}
+            {t("about.subtitle")}
           </motion.p>
 
           <motion.a
@@ -373,13 +281,13 @@ export default function AboutPage() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            {c.cta}
+            {t("about.cta")}
           </motion.a>
         </div>
 
         {/* Pillars grid */}
         <div className="max-w-4xl w-full">
-          <PillarCardsGrid pillars={c.pillars} />
+          <PillarCardsGrid pillars={pillars} />
         </div>
 
       </section>
@@ -387,16 +295,16 @@ export default function AboutPage() {
       {/* Section 3: FAQ */}
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start px-6 pt-28 sm:pt-32 pb-20">
         <div className="max-w-4xl w-full">
-          <FaqSection items={FAQ_ITEMS[locale]} accentColor={ACCENT} accentGlow="rgba(232,160,32,0.05)" locale={locale} />
+          <FaqSection items={faqItems} accentColor={ACCENT} accentGlow="rgba(232,160,32,0.05)" />
         </div>
       </section>
 
       {/* Section 4: Contact + Footer */}
       <section className="relative z-10 snap-start h-dvh w-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="about" locale={locale} />
+          <ContactSection variant="about" />
         </div>
-        <SiteFooter locale={locale} />
+        <SiteFooter />
       </section>
     </main>
     </>
