@@ -272,8 +272,8 @@ export default function HomeContent() {
             onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
           >
             {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,170,255,0.25)" : "rgba(255,255,255,0.35)"}, transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, ${dark ? "rgba(0,150,255,1)" : "rgba(255,255,255,0.9)"}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.20), transparent 70%)` }} />
+            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
             </>); })()}
             {copy.btnSoftware}
           </motion.a>
