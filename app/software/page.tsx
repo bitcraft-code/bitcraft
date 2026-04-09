@@ -85,6 +85,7 @@ const fadeUp = {
 
 export default function SoftwarePage() {
   const [locale, setLocale] = useState<Locale>("en");
+  const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   useEffect(() => { setLocale(detectLocale()); }, []);
   return (
     <>
@@ -240,42 +241,62 @@ export default function SoftwarePage() {
           variants={fadeUp}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >
-          {COPY[locale].services.map((s, i) => (
+          {COPY[locale].services.map((s, i) => {
+            const tilt = cardTilt[i] ?? { rx: 0, ry: 0 };
+            return (
             <motion.div
               key={s.title}
               custom={4 + i * 0.5}
               initial="hidden"
               animate="visible"
               variants={fadeUp}
+              style={{ perspective: "800px" }}
             >
-              <BorderGlow
-                className="h-full backdrop-blur-md"
-                colors={["#00ff9f", "#00cc7a", "#00aaff"]}
-                glowColor="153 100 60"
-                backgroundColor="rgba(7,22,14,0.72)"
-                borderRadius={12}
-                glowRadius={36}
-                glowIntensity={0.9}
-                coneSpread={22}
-                fillOpacity={0.35}
+              <div
+                style={{
+                  transform: `rotateX(${tilt.ry}deg) rotateY(${tilt.rx}deg)`,
+                  transition: "transform 0.18s ease-out",
+                  transformStyle: "preserve-3d",
+                  height: "100%",
+                }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - rect.left) / rect.width - 0.5;
+                  const y = (e.clientY - rect.top) / rect.height - 0.5;
+                  setCardTilt(p => ({ ...p, [i]: { rx: x * 14, ry: -y * 14 } }));
+                }}
+                onMouseLeave={() => setCardTilt(p => ({ ...p, [i]: { rx: 0, ry: 0 } }))}
               >
-                <div className="flex gap-4 items-start p-5 text-left">
-                  <div
-                    className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                    style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)" }}
-                  >
-                    {SERVICE_ICONS[i]}
+                <BorderGlow
+                  className="h-full backdrop-blur-md"
+                  colors={["#00ff9f", "#00cc7a", "#00aaff"]}
+                  glowColor="153 100 60"
+                  backgroundColor="rgba(7,22,14,0.72)"
+                  borderRadius={12}
+                  glowRadius={36}
+                  glowIntensity={0.9}
+                  coneSpread={22}
+                  fillOpacity={0.35}
+                >
+                  <div className="flex gap-4 items-start p-5 text-left" style={{ transformStyle: "preserve-3d" }}>
+                    <div
+                      className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+                      style={{ background: "rgba(0,255,159,0.08)", color: "var(--accent)", transform: "translateZ(28px)" }}
+                    >
+                      {SERVICE_ICONS[i]}
+                    </div>
+                    <div style={{ transformStyle: "preserve-3d" }}>
+                      <h3 className="font-semibold text-white text-sm mb-1" style={{ transform: "translateZ(20px)" }}>{s.title}</h3>
+                      <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)", transform: "translateZ(10px)" }}>
+                        {s.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                    <p className="text-xs leading-relaxed" style={{ color: "rgba(224,247,250,0.72)" }}>
-                      {s.description}
-                    </p>
-                  </div>
-                </div>
-              </BorderGlow>
+                </BorderGlow>
+              </div>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
 
