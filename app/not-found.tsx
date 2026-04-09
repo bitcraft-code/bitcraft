@@ -13,14 +13,14 @@ const ACCENT_DARK = "#b01e1e";
 
 const COPY: Record<Locale, { title: string; subtitle: string; cta: string }> = {
   en: {
-    title: "Lost in the code.",
-    subtitle: "This page doesn't exist — but your next project can.",
-    cta: "Back to home →",
+    title: "This page didn't ship.",
+    subtitle: "Some things don't make it to production. Your idea should.",
+    cta: "Let's build it →",
   },
   pt: {
-    title: "Perdido no código.",
-    subtitle: "Esta página não existe — mas o seu próximo projeto pode.",
-    cta: "Voltar ao início →",
+    title: "Esta página não foi entregue.",
+    subtitle: "Nem tudo vai para produção. A sua ideia deveria.",
+    cta: "Vamos construir →",
   },
 };
 
