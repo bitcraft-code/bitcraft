@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${manrope.variable} ${spaceGrotesk.variable} ${caveat.variable} antialiased`}>
         <PageTransition>{children}</PageTransition>
       </body>
