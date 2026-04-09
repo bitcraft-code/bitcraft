@@ -48,7 +48,7 @@ const cardsContainerVariant = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-function PillarCardsGrid({ pillars }: { pillars: typeof COPY["en"]["pillars"] }) {
+function PillarCardsGrid({ pillars }: { pillars: { title: string; description: string }[] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   const tiltRafRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
