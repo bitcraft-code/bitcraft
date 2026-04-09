@@ -7,6 +7,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import TextType from "../../components/TextType";
 import ContactSection from "../../components/ContactSection";
+import BorderGlow from "../../components/BorderGlow";
 import { detectLocale, saveLocale, type Locale } from "../../lib/translations";
 
 const ACCENT = "#e8a020";
@@ -114,6 +115,7 @@ const fadeUp = {
 
 export default function AboutPage() {
   const [locale, setLocale] = useState<Locale>("en");
+  const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   useEffect(() => { setLocale(detectLocale()); }, []);
   const c = COPY[locale];
 
@@ -273,34 +275,64 @@ export default function AboutPage() {
           variants={fadeUp}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
         >
-          {c.pillars.map((p, i) => (
+          {c.pillars.map((p, i) => {
+            const tilt = cardTilt[i] ?? { rx: 0, ry: 0 };
+            return (
             <motion.div
               key={p.title}
               custom={4 + i * 0.5}
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="flex gap-4 items-start rounded-xl p-5 text-left"
-              style={{
-                background: "rgba(20,14,4,0.65)",
-                border: "1px solid rgba(232,160,32,0.18)",
-                backdropFilter: "blur(12px)",
-              }}
+              style={{ perspective: "800px" }}
             >
               <div
-                className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(232,160,32,0.08)", color: ACCENT }}
+                style={{
+                  transform: `rotateX(${tilt.ry}deg) rotateY(${tilt.rx}deg)`,
+                  transition: "transform 0.18s ease-out",
+                  transformStyle: "preserve-3d",
+                  height: "100%",
+                }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - rect.left) / rect.width - 0.5;
+                  const y = (e.clientY - rect.top) / rect.height - 0.5;
+                  setCardTilt(prev => ({ ...prev, [i]: { rx: x * 14, ry: -y * 14 } }));
+                }}
+                onMouseLeave={() => setCardTilt(prev => ({ ...prev, [i]: { rx: 0, ry: 0 } }))}
               >
-                {PILLAR_ICONS[i]}
-              </div>
-              <div>
-                <h3 className="font-semibold text-white text-sm mb-1">{p.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(255,240,210,0.72)" }}>
-                  {p.description}
-                </p>
+                <BorderGlow
+                  className="h-full backdrop-blur-md"
+                  colors={["#e8a020", "#c4871a", "#f0c040"]}
+                  glowColor="38 90 52"
+                  backgroundColor="rgba(20,14,4,0.72)"
+                  borderRadius={12}
+                  edgeSensitivity={0}
+                  glowRadius={80}
+                  glowIntensity={3}
+                  coneSpread={27}
+                  fillOpacity={0}
+                  animated
+                >
+                  <div className="flex gap-4 items-start p-5 text-left" style={{ transformStyle: "preserve-3d" }}>
+                    <div
+                      className="mt-0.5 shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+                      style={{ background: "rgba(232,160,32,0.08)", color: ACCENT, transform: "translateZ(28px)" }}
+                    >
+                      {PILLAR_ICONS[i]}
+                    </div>
+                    <div style={{ transformStyle: "preserve-3d" }}>
+                      <h3 className="font-semibold text-white text-base mb-1" style={{ transform: "translateZ(20px)" }}>{p.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: "rgba(255,240,210,0.72)", transform: "translateZ(10px)" }}>
+                        {p.description}
+                      </p>
+                    </div>
+                  </div>
+                </BorderGlow>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
 
