@@ -40,24 +40,6 @@ type Props = {
   onToggleDark?: () => void;
 };
 
-// Mobile stagger variants — defined outside to avoid recreation on each render
-const mobileNavVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.08 } },
-  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 as const } },
-};
-
-const mobileItemVariants = {
-  hidden: { opacity: 0, y: 6, filter: "blur(4px)" },
-  visible: {
-    opacity: 1, y: 0, filter: "blur(0px)",
-    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
-  },
-  exit: {
-    opacity: 0, y: 3, filter: "blur(2px)",
-    transition: { duration: 0.12, ease: "easeIn" as const },
-  },
-};
 
 export default function SiteHeader({
   dark = true,
@@ -157,11 +139,11 @@ export default function SiteHeader({
   ];
 
   const mobileNavItems = [
-    { label: t("nav.home"),     href: "/",         activeColor: "#00ff9f",  isCta: false },
-    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f",  isCta: false },
-    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff",  isCta: false },
-    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020",  isCta: false },
-    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent, isCta: true  },
+    { label: t("nav.home"),     href: "/",         activeColor: "#00ff9f" },
+    { label: t("nav.software"), href: "/software", activeColor: "#00ff9f" },
+    { label: t("nav.agency"),   href: "/agency",   activeColor: "#00aaff" },
+    { label: t("nav.about"),    href: "/about",    activeColor: "#e8a020" },
+    { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent },
   ];
 
   const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
@@ -424,7 +406,7 @@ export default function SiteHeader({
             </div>
           </motion.div>
 
-          {/* ── Mobile expandable nav ─────────────────────────────── */}
+          {/* Mobile expandable nav — inside the pill */}
           <AnimatePresence initial={false}>
             {mobileOpen && (
               <motion.div
@@ -436,53 +418,31 @@ export default function SiteHeader({
                 transition={{ duration: 0.3, ease: easeOut }}
               >
                 <div style={{ borderTop: `1px solid ${T.divider}`, margin: "0 12px" }} />
-
-                {/* Staggered nav items */}
-                <motion.nav
-                  className="flex flex-col p-3 gap-1 pt-2"
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={mobileNavVariants}
-                >
-                  {mobileNavItems.map((item) => {
-                    const isActive = activePath === item.href;
-                    return (
-                      <motion.a
-                        key={item.href + item.label}
-                        variants={mobileItemVariants}
-                        whileTap={{ scale: 0.97 }}
-                        href={item.href.startsWith("#") ? undefined : item.href}
-                        onClick={(e) => {
-                          if (item.href.startsWith("#")) {
-                            e.preventDefault();
-                            setMobileOpen(false);
-                            setTimeout(() => scrollToSection(item.href), 320);
-                          } else {
-                            setMobileOpen(false);
-                          }
-                        }}
-                        className="flex items-center justify-end px-4 py-3 rounded-2xl text-base font-bold cursor-pointer"
-                        style={{
-                          color: item.isCta ? T.ctaText : (isActive ? item.activeColor : T.navText),
-                          background: item.isCta ? T.ctaBg : "transparent",
-                          border: item.isCta ? T.ctaBorder : "1px solid transparent",
-                        }}
-                      >
-                        {item.label}
-                      </motion.a>
-                    );
-                  })}
-                </motion.nav>
-
-                {/* Language toggle in mobile */}
-                <motion.div
-                  className="px-3 pb-3"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
-                  transition={{ delay: 0.38, duration: 0.22, ease: "easeOut" }}
-                >
+                <nav className="flex flex-col p-3 gap-1 pt-2">
+                  {mobileNavItems.map((item) => (
+                    <a
+                      key={item.href + item.label}
+                      href={item.href.startsWith("#") ? undefined : item.href}
+                      onClick={(e) => {
+                        if (item.href.startsWith("#")) {
+                          e.preventDefault();
+                          setMobileOpen(false);
+                          setTimeout(() => scrollToSection(item.href), 320);
+                        } else {
+                          setMobileOpen(false);
+                        }
+                      }}
+                      className="flex items-center justify-end px-4 py-3 rounded-xl text-base font-bold transition-colors duration-150 cursor-pointer"
+                      style={{
+                        color: activePath === item.href ? item.activeColor : T.navText,
+                        background: "transparent",
+                      }}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </nav>
+                <div className="px-3 pb-3">
                   <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
                   <button
                     onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
@@ -492,7 +452,7 @@ export default function SiteHeader({
                     <span className="text-xs font-bold tracking-widest opacity-60">{locale === "en" ? "EN" : "PT"}</span>
                     <span>{t("nav.languageLabel")}</span>
                   </button>
-                </motion.div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
