@@ -161,7 +161,7 @@ export default function SoftwarePage() {
           >
             <span className="text-white">Bitcraft </span>
             <span style={{
-              backgroundImage: "linear-gradient(92deg, #00ff9f, #00d47a)",
+              backgroundImage: "linear-gradient(92deg, #00ff9f, #aaffd4)",
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
               color: "transparent",
