@@ -15,9 +15,10 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "pt"],
     detection: {
-      order: ["localStorage", "navigator"],
+      order: ["cookie", "localStorage", "navigator"],
+      lookupCookie: "bitcraft_locale",
       lookupLocalStorage: "bitcraft_locale",
-      caches: ["localStorage"],
+      caches: ["cookie", "localStorage"],
     },
     interpolation: {
       escapeValue: false,

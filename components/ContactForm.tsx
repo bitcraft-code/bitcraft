@@ -97,7 +97,7 @@ type Props = { variant?: ContactVariant; dark?: boolean };
 
 export default function ContactForm({ variant = "default", dark = true }: Props) {
   const { t } = useTranslation();
-  const [fields, setFields] = useState({ name: "", email: "", message: "" });
+  const [fields, setFields] = useState({ name: "", email: "", message: "", _honey: "" });
   const [focused, setFocused] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
@@ -112,7 +112,7 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({ name: fields.name, email: fields.email, message: fields.message, _honey: fields._honey }),
       });
 
       if (!response.ok) {
@@ -120,7 +120,7 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
       }
 
       setStatus("success");
-      setFields({ name: "", email: "", message: "" });
+      setFields({ name: "", email: "", message: "", _honey: "" });
     } catch (error) {
       console.error("Contact form error:", error);
       setStatus("error");
@@ -160,6 +160,16 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
           </motion.div>
         ) : (
           <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <input
+              type="text"
+              name="_honey"
+              value={fields._honey}
+              onChange={(e) => setFields((prev) => ({ ...prev, _honey: e.target.value }))}
+              tabIndex={-1}
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+              autoComplete="off"
+            />
             {[
               { field: "name", label: t("form.name"), type: "text", placeholder: t("form.namePlaceholder") },
               { field: "email", label: t("form.email"), type: "email", placeholder: t("form.emailPlaceholder") },

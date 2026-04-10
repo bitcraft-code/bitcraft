@@ -57,7 +57,8 @@ export default function SiteHeader({
   const [pillExpanded, setPillExpanded] = useState(false);
   const lastTouchAt = useRef(0);
   const headerRafRef = useRef<number | null>(null);
-  const ctrlRafRef = useRef<number | null>(null);
+  const langRafRef = useRef<number | null>(null);
+  const themeRafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -325,7 +326,11 @@ export default function SiteHeader({
 
               {/* Language toggle */}
               <motion.button
-                onClick={() => i18n.changeLanguage(locale === "en" ? "pt" : "en")}
+                onClick={() => {
+                  const newLocale = locale === "en" ? "pt" : "en";
+                  void i18n.changeLanguage(newLocale);
+                  document.cookie = `bitcraft_locale=${newLocale};path=/;max-age=31536000;samesite=lax`;
+                }}
                 className="relative h-7 px-2.5 sm:h-8 sm:px-3 rounded-full flex items-center justify-center text-xs font-bold tracking-widest"
                 animate={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor }}
                 transition={{ duration: 0.4 }}
@@ -334,16 +339,16 @@ export default function SiteHeader({
                 aria-label="Toggle language"
                 style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
                 onMouseMove={(e) => {
-                  if (wasTouched() || ctrlRafRef.current !== null) return;
+                  if (wasTouched() || langRafRef.current !== null) return;
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = e.clientX - rect.left;
                   const y = e.clientY - rect.top;
-                  ctrlRafRef.current = requestAnimationFrame(() => {
+                  langRafRef.current = requestAnimationFrame(() => {
                     setCtrlSpotlight({ id: "locale", x, y });
-                    ctrlRafRef.current = null;
+                    langRafRef.current = null;
                   });
                 }}
-                onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
+                onMouseLeave={() => { if (!wasTouched()) { if (langRafRef.current !== null) { cancelAnimationFrame(langRafRef.current); langRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
                 onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
                 onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                 onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
@@ -367,16 +372,16 @@ export default function SiteHeader({
                   aria-label="Toggle theme"
                   style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                   onMouseMove={(e) => {
-                    if (wasTouched() || ctrlRafRef.current !== null) return;
+                    if (wasTouched() || themeRafRef.current !== null) return;
                     const rect = e.currentTarget.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    ctrlRafRef.current = requestAnimationFrame(() => {
+                    themeRafRef.current = requestAnimationFrame(() => {
                       setCtrlSpotlight({ id: "theme", x, y });
-                      ctrlRafRef.current = null;
+                      themeRafRef.current = null;
                     });
                   }}
-                  onMouseLeave={() => { if (!wasTouched()) { if (ctrlRafRef.current !== null) { cancelAnimationFrame(ctrlRafRef.current); ctrlRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
+                  onMouseLeave={() => { if (!wasTouched()) { if (themeRafRef.current !== null) { cancelAnimationFrame(themeRafRef.current); themeRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
                   onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
                   onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
                   onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
@@ -445,7 +450,12 @@ export default function SiteHeader({
                 <div className="px-3 pb-3">
                   <div style={{ height: "1px", background: T.divider, marginBottom: "8px" }} />
                   <button
-                    onClick={() => { i18n.changeLanguage(locale === "en" ? "pt" : "en"); setMobileOpen(false); }}
+                    onClick={() => {
+                      const newLocale = locale === "en" ? "pt" : "en";
+                      void i18n.changeLanguage(newLocale);
+                      document.cookie = `bitcraft_locale=${newLocale};path=/;max-age=31536000;samesite=lax`;
+                      setMobileOpen(false);
+                    }}
                     className="w-full flex items-center justify-end gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                     style={{ color: T.navText }}
                   >

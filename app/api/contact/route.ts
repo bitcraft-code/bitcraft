@@ -3,16 +3,41 @@ import { NextRequest, NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = rateLimitMap.get(ip) ?? [];
+  const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
+  return recent.length > RATE_LIMIT_MAX;
+}
+
 type ContactRequest = {
   name: string;
   email: string;
   message: string;
+  _honey?: string;
 };
 
 async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const body: ContactRequest = await request.json();
-    const { name, email, message } = body;
+    const { name, email, message, _honey } = body;
+
+    if (_honey) {
+      return NextResponse.json({ success: true }, { status: 200 });
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -27,6 +52,10 @@ async function POST(request: NextRequest): Promise<NextResponse> {
         { error: "Invalid email format" },
         { status: 400 }
       );
+    }
+
+    if (name.length > 200 || email.length > 254 || message.length > 5000) {
+      return NextResponse.json({ error: "Input too long" }, { status: 400 });
     }
 
     const template = getEmailTemplate(name, email, message);

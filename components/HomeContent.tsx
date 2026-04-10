@@ -76,11 +76,8 @@ export default function HomeContent() {
     ? "linear-gradient(135deg, rgba(0,255,159,0.13) 0%, rgba(0,170,255,0.08) 100%)"
     : "linear-gradient(135deg, rgba(0,170,255,0.10) 0%, rgba(0,255,159,0.07) 100%)";
 
-  const pageTitle = translate("home.pageTitle");
-
   return (
     <>
-    <title>{pageTitle}</title>
     <main
       className="relative h-dvh overflow-y-scroll scroll-smooth snap-y snap-mandatory overflow-x-hidden select-none"
       style={{ background: dark ? "#071a14" : "#edfaf4", transition: "background 0.6s ease" }}
