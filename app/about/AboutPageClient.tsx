@@ -3,13 +3,15 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import FaultyTerminal from "../../components/FaultyTerminal";
+import dynamic from "next/dynamic";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import TextType from "../../components/TextType";
-import ContactSection from "../../components/ContactSection";
 import BorderGlow from "../../components/BorderGlow";
-import FaqSection from "../../components/FaqSection";
+
+const FaultyTerminal = dynamic(() => import("../../components/FaultyTerminal"), { ssr: false });
+const TextType = dynamic(() => import("../../components/TextType"), { ssr: false });
+const FaqSection = dynamic(() => import("../../components/FaqSection"), { ssr: false });
+const ContactSection = dynamic(() => import("../../components/ContactSection"), { ssr: false });
 
 const ACCENT = "#e8a020";
 const ACCENT_DARK = "#c4871a";

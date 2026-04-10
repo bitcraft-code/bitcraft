@@ -74,6 +74,8 @@ export default function HeroSoftwareCycle({
   const phrasesRef = useRef(phrases);
   phrasesRef.current = phrases;
 
+  const containerRef = useRef<HTMLHeadingElement>(null);
+
   useEffect(() => {
     let alive = true;
     let intervalId: ReturnType<typeof setInterval> | null = null;
@@ -139,17 +141,31 @@ export default function HeroSoftwareCycle({
       }, 50);
     }
 
-    runPhrase(0);
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) {
+          runPhrase(0);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
 
     return () => {
       alive = false;
       cleanup();
+      observer.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <h1
+      ref={containerRef}
       className={className}
       style={{
         opacity: visible ? 1 : 0,

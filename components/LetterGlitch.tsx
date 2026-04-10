@@ -156,7 +156,14 @@ const LetterGlitch = ({
     if (!canvas) return;
     context.current = canvas.getContext("2d");
     resizeCanvas();
-    animate();
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
+        () => { animationRef.current = requestAnimationFrame(animate); },
+        { timeout: 1500 }
+      );
+    } else {
+      animationRef.current = requestAnimationFrame(animate);
+    }
 
     let resizeTimeout: ReturnType<typeof setTimeout>;
     const handleResize = () => {

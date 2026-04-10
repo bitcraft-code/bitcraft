@@ -3,13 +3,16 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import dynamic from "next/dynamic";
 import Iridescence from "../../components/Iridescence";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
-import ContactSection from "../../components/ContactSection";
+import { type HeroAnimation } from "../../components/HeroCycle";
 import BorderGlow from "../../components/BorderGlow";
-import FaqSection from "../../components/FaqSection";
+
+const HeroCycle = dynamic(() => import("../../components/HeroCycle"), { ssr: false });
+const FaqSection = dynamic(() => import("../../components/FaqSection"), { ssr: false });
+const ContactSection = dynamic(() => import("../../components/ContactSection"), { ssr: false });
 
 // ▼ Change this one value to swap the hero animation
 const HERO_ANIMATION: HeroAnimation = "split"; // "decrypt" | "split" | "type"
