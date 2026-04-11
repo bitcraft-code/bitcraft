@@ -27,8 +27,14 @@ interface Dot {
 }
 
 interface Props {
-  accentRgb?: string; // e.g. "0, 170, 255"
+  accentRgb?: string;  // e.g. "0, 255, 159"
+  accentRgb2?: string; // if set, dots interpolate horizontally from accentRgb to accentRgb2
   tasks?: string[];
+}
+
+function parseRgb(rgb: string): [number, number, number] {
+  const parts = rgb.split(",").map((s) => parseInt(s.trim(), 10));
+  return [parts[0], parts[1], parts[2]];
 }
 
 function buildSphere(n: number): Dot[] {
@@ -92,7 +98,7 @@ function drawRings(
   }
 }
 
-export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT_TASKS }: Props) {
+export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tasks = DEFAULT_TASKS }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
   const lastFrameRef = useRef<number>(0);
@@ -127,6 +133,19 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
     const CX = SIZE / 2;
     const CY = SIZE / 2;
     const dots = buildSphere(N_DOTS);
+
+    // Pre-parse for gradient interpolation — avoids string parsing per dot per frame
+    const c1 = parseRgb(accentRgb);
+    const c2 = accentRgb2 ? parseRgb(accentRgb2) : null;
+
+    function dotColor(px: number): string {
+      if (!c2) return accentRgb;
+      const t = Math.max(0, Math.min(1, px / SIZE));
+      const r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+      const g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+      const b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+      return `${r}, ${g}, ${b}`;
+    }
 
     const draw = (time: number) => {
       rafRef.current = requestAnimationFrame(draw);
@@ -180,25 +199,26 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
 
       for (const pt of projected) {
         if (pt.alpha < 0.02) continue;
+        const color = dotColor(pt.px);
         if (pt.glow > 0.08) {
           ctx.beginPath();
           ctx.arc(pt.px, pt.py, pt.size * 3.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${accentRgb}, ${pt.glow * 0.11})`;
+          ctx.fillStyle = `rgba(${color}, ${pt.glow * 0.11})`;
           ctx.fill();
         }
         ctx.beginPath();
         ctx.arc(pt.px, pt.py, pt.size, 0, Math.PI * 2);
         ctx.fillStyle =
           pt.glow > 0.22
-            ? `rgba(${accentRgb}, ${pt.alpha})`
-            : `rgba(${accentRgb}, ${pt.alpha * 0.75})`;
+            ? `rgba(${color}, ${pt.alpha})`
+            : `rgba(${color}, ${pt.alpha * 0.75})`;
         ctx.fill();
       }
     };
 
     rafRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [accentRgb, pulses]);
+  }, [accentRgb, accentRgb2, pulses]);
 
   useEffect(() => {
     const id = setInterval(() => {
