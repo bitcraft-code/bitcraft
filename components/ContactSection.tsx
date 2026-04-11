@@ -48,7 +48,7 @@ export default function ContactSection({ variant = "default", dark = true }: Pro
   return (
     <section
       id="contact"
-      className="relative z-10 w-full flex flex-col items-center justify-center px-5 sm:px-6 py-28 gap-10 min-h-[100dvh]"
+      className="relative z-10 w-full flex-1 min-h-0 overflow-y-auto"
       style={sectionStyle}
     >
       {/* Top divider */}
@@ -69,36 +69,39 @@ export default function ContactSection({ variant = "default", dark = true }: Pro
         />
       )}
 
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-        className="text-center max-w-lg"
-      >
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accent }} />
-          <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: accent }}>
-            {t("contact.badge")}
-          </span>
-        </div>
-        <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-3" style={{ color: headingColor }}>
-          {t(`contact.headings.${variant}`)}
-        </h2>
-        <p className="text-base leading-relaxed" style={{ color: subtitleColor }}>
-          {t(`contact.subheadings.${variant}`)}
-        </p>
-      </motion.div>
+      {/* Inner wrapper: centers content when it fits, scrolls from top when it doesn't */}
+      <div className="min-h-full flex flex-col items-center justify-center px-5 sm:px-6 py-16 sm:py-24 gap-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          className="text-center max-w-lg"
+        >
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accent }} />
+            <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: accent }}>
+              {t("contact.badge")}
+            </span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-black leading-tight mb-3" style={{ color: headingColor }}>
+            {t(`contact.headings.${variant}`)}
+          </h2>
+          <p className="text-base leading-relaxed" style={{ color: subtitleColor }}>
+            {t(`contact.subheadings.${variant}`)}
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-        className="w-full max-w-lg"
-      >
-        <ContactForm variant={variant} dark={dark} />
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          className="w-full max-w-lg"
+        >
+          <ContactForm variant={variant} dark={dark} />
+        </motion.div>
+      </div>
     </section>
   );
 }

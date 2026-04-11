@@ -96,11 +96,11 @@
       },
       {
         "q": "How does AI integration work in practice?",
-        "a": "We don't bolt on AI as a feature. We identify where automation, agents, or models create real leverage in your product — then build and integrate them as first-class system components."
+        "a": "We don't bolt on AI as a feature. We identify where automation, agents, or models create real leverage in your product, then build and integrate them as first-class system components."
       },
       {
         "q": "What tech stack do you work with?",
-        "a": "Primarily Next.js, React, Node.js, and PostgreSQL — but we adapt to what makes sense. If you have existing infrastructure, we work with it. If you're starting fresh, we recommend what scales best for your use case."
+        "a": "Primarily Next.js, React, Node.js, and PostgreSQL, but we adapt to what makes sense. If you have existing infrastructure, we work with it. If you're starting fresh, we recommend what scales best for your use case."
       },
       {
         "q": "Do you offer post-launch support?",
@@ -141,15 +141,15 @@
     "faqItems": [
       {
         "q": "What channels do you work with?",
-        "a": "Meta Ads, Google Ads, LinkedIn, TikTok, and organic content (SEO and social). We recommend the right mix based on your audience and business model — not on what we prefer."
+        "a": "Meta Ads, Google Ads, LinkedIn, TikTok, and organic content (SEO and social). We recommend the right mix based on your audience and business model, not on what we prefer."
       },
       {
         "q": "How long before I see results?",
-        "a": "Paid media shows data within the first 2–4 weeks. Meaningful ROI optimization typically needs 60–90 days of learning. Organic channels compound over 3–6 months."
+        "a": "Paid media shows data within the first 2 to 4 weeks. Meaningful ROI optimization typically needs 60 to 90 days of learning. Organic channels compound over 3 to 6 months."
       },
       {
         "q": "Do you handle creative and copy, or just media buying?",
-        "a": "Both. Creative strategy, copy, and design are part of the service. We don't run ads with whatever you hand us — we build what converts."
+        "a": "Both. Creative strategy, copy, and design are part of the service. We don't run ads with whatever you hand us. We build what converts."
       },
       {
         "q": "Is there a minimum ad spend?",
@@ -157,7 +157,7 @@
       },
       {
         "q": "How do you report results?",
-        "a": "Weekly performance summaries and a live dashboard you can check anytime. No vanity metrics — we report what's connected to revenue."
+        "a": "Weekly performance summaries and a live dashboard you can check anytime. No vanity metrics: we report what's connected to revenue."
       }
     ]
   },
@@ -195,12 +195,12 @@
     "heroSubtitle": "Two disciplines. One team. Zero excuses.",
     "heroCta": "Let's talk →",
     "title": "Built different.",
-    "subtitle": "Bitcraft was born from a simple frustration: great ideas stuck between agencies that can't code and developers who don't understand business. We are engineers who think about growth and strategists who understand code — in the same room, on the same team.",
+    "subtitle": "Bitcraft was born from a simple frustration: great ideas stuck between agencies that can't code and developers who don't understand business. We are engineers who think about growth and strategists who understand code, in the same room, on the same team.",
     "cta": "Let's talk →",
     "pillars": [
       {
         "title": "Results above all",
-        "description": "We don't sell hours. We sell results. Every decision — technical or strategic — is measured against one metric: does it move the business forward?"
+        "description": "We don't sell hours. We sell results. Every decision, technical or strategic, is measured against one metric: does it move the business forward?"
       },
       {
         "title": "Engineering with purpose",
@@ -218,7 +218,7 @@
     "faqItems": [
       {
         "q": "Are you fully remote?",
-        "a": "Yes. Our team operates remotely across multiple time zones. Clients get the same quality of collaboration regardless of geography — async-first with regular sync touchpoints."
+        "a": "Yes. Our team operates remotely across multiple time zones. Clients get the same quality of collaboration regardless of geography, async-first with regular sync touchpoints."
       },
       {
         "q": "Do you work with international clients?",
@@ -226,11 +226,11 @@
       },
       {
         "q": "What's your engagement model?",
-        "a": "Project-based for defined builds, retainer for ongoing work. We recommend what makes more sense after understanding your situation — we don't push you toward the model that benefits us more."
+        "a": "Project-based for defined builds, retainer for ongoing work. We recommend what makes more sense after understanding your situation. We don't push you toward the model that benefits us more."
       },
       {
         "q": "Can one client work with both Software and Agency?",
-        "a": "Absolutely — and that's where we're strongest. When engineering and growth are aligned from the start, the product is built to acquire, retain, and convert, not just to function."
+        "a": "Absolutely, and that's where we're strongest. When engineering and growth are aligned from the start, the product is built to acquire, retain, and convert, not just to function."
       },
       {
         "q": "How do I get started?",

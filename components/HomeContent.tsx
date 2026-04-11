@@ -334,9 +334,7 @@ export default function HomeContent() {
 
       {/* ── Contact + Footer ── */}
       <section className="relative snap-start h-dvh flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="home" dark={dark} />
-        </div>
+        <ContactSection variant="home" dark={dark} />
         <SiteFooter dark={dark} />
       </section>
     </main>

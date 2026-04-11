@@ -282,9 +282,7 @@ export default function AgencyPageClient() {
 
       {/* Section 4: Contact + Footer */}
       <section className="relative z-10 snap-start h-dvh w-full flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
-          <ContactSection variant="agency" />
-        </div>
+        <ContactSection variant="agency" />
         <SiteFooter  />
       </section>
     </main>

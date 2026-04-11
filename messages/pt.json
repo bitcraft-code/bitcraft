@@ -96,11 +96,11 @@
       },
       {
         "q": "Como funciona a integração de IA na prática?",
-        "a": "Não adicionamos IA como feature. Identificamos onde automação, agentes ou modelos criam alavancagem real no seu produto — e os integramos como componentes de primeiro nível do sistema."
+        "a": "Não adicionamos IA como feature. Identificamos onde automação, agentes ou modelos criam alavancagem real no seu produto, e os integramos como componentes de primeiro nível do sistema."
       },
       {
         "q": "Com qual stack vocês trabalham?",
-        "a": "Principalmente Next.js, React, Node.js e PostgreSQL — mas nos adaptamos ao que faz sentido. Se você tem infraestrutura existente, trabalhamos com ela. Se está começando do zero, recomendamos o que vai escalar melhor para o seu caso de uso."
+        "a": "Principalmente Next.js, React, Node.js e PostgreSQL, mas nos adaptamos ao que faz sentido. Se você tem infraestrutura existente, trabalhamos com ela. Se está começando do zero, recomendamos o que vai escalar melhor para o seu caso de uso."
       },
       {
         "q": "Vocês oferecem suporte pós-lançamento?",
@@ -141,7 +141,7 @@
     "faqItems": [
       {
         "q": "Com quais canais vocês trabalham?",
-        "a": "Meta Ads, Google Ads, LinkedIn, TikTok e conteúdo orgânico (SEO e redes sociais). Recomendamos o mix certo baseado no seu público e modelo de negócio — não no que nós preferimos."
+        "a": "Meta Ads, Google Ads, LinkedIn, TikTok e conteúdo orgânico (SEO e redes sociais). Recomendamos o mix certo baseado no seu público e modelo de negócio, não no que nós preferimos."
       },
       {
         "q": "Quanto tempo até eu ver resultados?",
@@ -149,7 +149,7 @@
       },
       {
         "q": "Vocês cuidam do criativo e do copy, ou só da compra de mídia?",
-        "a": "Ambos. Estratégia de criativo, copy e design fazem parte do serviço. Não rodamos anúncios com o que você nos entregar — construímos o que converte."
+        "a": "Ambos. Estratégia de criativo, copy e design fazem parte do serviço. Não rodamos anúncios com o que você nos entregar. Construímos o que converte."
       },
       {
         "q": "Existe um investimento mínimo em anúncios?",
@@ -157,7 +157,7 @@
       },
       {
         "q": "Como vocês reportam os resultados?",
-        "a": "Resumos semanais de performance e um dashboard ao vivo que você pode acessar a qualquer momento. Sem métricas de vaidade — reportamos o que está conectado à receita."
+        "a": "Resumos semanais de performance e um dashboard ao vivo que você pode acessar a qualquer momento. Sem métricas de vaidade: reportamos o que está conectado à receita."
       }
     ]
   },
@@ -195,12 +195,12 @@
     "heroSubtitle": "Duas disciplinas. Uma equipe. Zero desculpas.",
     "heroCta": "Vamos conversar →",
     "title": "Construídos diferente.",
-    "subtitle": "A Bitcraft nasceu de uma frustração simples: boas ideias presas entre agências que não sabem codar e devs que não entendem de negócio. Somos engenheiros que pensam em crescimento e estrategistas que entendem de código — na mesma sala, na mesma equipe.",
+    "subtitle": "A Bitcraft nasceu de uma frustração simples: boas ideias presas entre agências que não sabem codar e devs que não entendem de negócio. Somos engenheiros que pensam em crescimento e estrategistas que entendem de código, na mesma sala, na mesma equipe.",
     "cta": "Vamos conversar →",
     "pillars": [
       {
         "title": "Resultado acima de tudo",
-        "description": "Não vendemos horas. Vendemos resultado. Cada decisão — técnica ou estratégica — é medida contra uma métrica: isso move o negócio para frente?"
+        "description": "Não vendemos horas. Vendemos resultado. Cada decisão, técnica ou estratégica, é medida contra uma métrica: isso move o negócio para frente?"
       },
       {
         "title": "Engenharia com propósito",
@@ -218,7 +218,7 @@
     "faqItems": [
       {
         "q": "Vocês são totalmente remotos?",
-        "a": "Sim. Nossa equipe opera remotamente em múltiplos fusos horários. Os clientes têm a mesma qualidade de colaboração independentemente da localização — async primeiro, com pontos de sincronização regulares."
+        "a": "Sim. Nossa equipe opera remotamente em múltiplos fusos horários. Os clientes têm a mesma qualidade de colaboração independentemente da localização, async-first com pontos de sincronização regulares."
       },
       {
         "q": "Vocês trabalham com clientes internacionais?",
@@ -226,11 +226,11 @@
       },
       {
         "q": "Qual é o modelo de engajamento de vocês?",
-        "a": "Baseado em projeto para builds definidas, retainer para trabalho contínuo. Recomendamos o que faz mais sentido após entender sua situação — não te empurramos para o modelo que nos beneficia mais."
+        "a": "Baseado em projeto para builds definidas, retainer para trabalho contínuo. Recomendamos o que faz mais sentido após entender sua situação. Não te empurramos para o modelo que nos beneficia mais."
       },
       {
         "q": "Um cliente pode trabalhar com Software e Agency ao mesmo tempo?",
-        "a": "Com certeza — e é aí que somos mais fortes. Quando engenharia e crescimento estão alinhados desde o início, o produto é construído para adquirir, reter e converter, não apenas para funcionar."
+        "a": "Com certeza, e é aí que somos mais fortes. Quando engenharia e crescimento estão alinhados desde o início, o produto é construído para adquirir, reter e converter, não apenas para funcionar."
       },
       {
         "q": "Como começo?",
