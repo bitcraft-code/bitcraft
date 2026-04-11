@@ -45,8 +45,6 @@ const PATH_TO_KEY: Record<string, string> = {
   "/contact": "contact",
 };
 
-let seenPath: string | null = null;
-
 function getRemainingMs(): number {
   if (typeof window === "undefined") return 0;
   const v = sessionStorage.getItem(SESSION_KEY);
@@ -66,6 +64,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const [orbAccent, setOrbAccent] = useState("0, 170, 255");
   const [orbAccent2, setOrbAccent2] = useState<string | undefined>(undefined);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const seenPathRef = useRef<string | null>(null);
 
   const pageKey = PATH_TO_KEY[pathname] ?? "home";
   const tasks = t(`transition.${pageKey}`, { returnObjects: true }) as string[];
@@ -93,7 +92,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   // useLayoutEffect fires before the browser paints, preventing a one-frame
   // flash of the new page before the overlay covers the screen.
   useLayoutEffect(() => {
-    if (seenPath !== null && seenPath !== pathname) {
+    if (seenPathRef.current !== null && seenPathRef.current !== pathname) {
       const destBg = PAGE_COLORS[pathname] ?? "#071a14";
       const destAccent = PAGE_ACCENTS[pathname] ?? "0, 170, 255";
       const destAccent2 = PAGE_ACCENTS2[pathname];
@@ -120,7 +119,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
         setPageVisible(true);
       }, ORB_HOLD_MS);
     }
-    seenPath = pathname;
+    seenPathRef.current = pathname;
   }, [pathname]);
 
   useEffect(() => () => clearTimeout(timerRef.current), []);

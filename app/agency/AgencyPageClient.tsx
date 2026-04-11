@@ -9,6 +9,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import { type HeroAnimation } from "../../components/HeroCycle";
 import BorderGlow from "../../components/BorderGlow";
+import { fadeUp, cardVariant, cardsContainerVariant } from "../../lib/motion-variants";
 
 const HeroCycle = dynamic(() => import("../../components/HeroCycle"), { ssr: false });
 const FaqSection = dynamic(() => import("../../components/FaqSection"), { ssr: false });
@@ -32,24 +33,6 @@ const SERVICE_ICONS = [
   </svg>,
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  }),
-};
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 48, scale: 0.94 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
-};
-
-const cardsContainerVariant = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
 
 function ServiceCardsGrid({ services }: { services: { title: string; description: string }[] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
@@ -133,15 +116,17 @@ function StatCounter({ value, suffix, isActive }: { value: number; suffix: strin
   useEffect(() => {
     if (!isActive) return;
     let startTime: number | null = null;
+    let rafId: number;
     const duration = 1400;
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(eased * value));
-      if (progress < 1) requestAnimationFrame(step);
+      if (progress < 1) rafId = requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
   }, [isActive, value]);
   return <>{count}{suffix}</>;
 }
