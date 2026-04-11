@@ -11,13 +11,16 @@ const DEFAULT_TASKS = [
   "Synthesizing output...",
 ];
 
-const N_DOTS = 320;
-const RADIUS = 110;
-const FOV = 280;
-const SIZE = 320;
+const N_PULSES = 3;
 const FPS_CAP = 30;
 const FRAME_MS = 1000 / FPS_CAP;
-const N_PULSES = 3;
+
+// Responsive canvas parameters — resolved at runtime inside the draw effect
+const BREAKPOINT = 768;
+const CONFIG = {
+  desktop: { size: 520, dots: 750, radius: 178, fov: 455 },
+  mobile:  { size: 320, dots: 320, radius: 110, fov: 280 },
+} as const;
 
 interface Dot {
   x: number;
@@ -67,6 +70,7 @@ function drawRings(
   rotY: number,
   t: number,
   accentRgb: string,
+  fov: number,
 ): void {
   const rings = [
     { tiltX: 0.4, speed: 0.7, phase: 0 },
@@ -84,7 +88,7 @@ function drawRings(
       const rz = Math.sin(a) * Math.sin(cfg.tiltX) * r;
       const xr = rx * Math.cos(rotY) + rz * Math.sin(rotY);
       const zr = -rx * Math.sin(rotY) + rz * Math.cos(rotY);
-      const p = FOV / (FOV + zr * 0.4);
+      const p = fov / (fov + zr * 0.4);
       if (first) {
         ctx.moveTo(cx + xr * p, cy + ry * p);
         first = false;
@@ -125,9 +129,14 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const cfg = window.innerWidth >= BREAKPOINT ? CONFIG.desktop : CONFIG.mobile;
+    const { size: SIZE, dots: N_DOTS, radius: RADIUS, fov: FOV } = cfg;
+
     const dpr = Math.min(window.devicePixelRatio ?? 1, 2);
     canvas.width = SIZE * dpr;
     canvas.height = SIZE * dpr;
+    canvas.style.width = `${SIZE}px`;
+    canvas.style.height = `${SIZE}px`;
     ctx.scale(dpr, dpr);
 
     const CX = SIZE / 2;
@@ -158,7 +167,7 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
       const rotY = t * 0.42;
       const rotX = Math.sin(t * 0.18) * 0.25;
 
-      drawRings(ctx, CX, CY, RADIUS, rotY, t, accentRgb);
+      drawRings(ctx, CX, CY, RADIUS, rotY, t, accentRgb, FOV);
 
       const projected = dots
         .map((d) => {
@@ -237,7 +246,6 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        style={{ width: SIZE, height: SIZE }}
       />
       <p
         className="text-xs font-mono tracking-widest uppercase"
