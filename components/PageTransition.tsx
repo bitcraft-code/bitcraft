@@ -24,13 +24,18 @@ const PAGE_COLORS: Record<string, string> = {
   "/contact": "#0a192f",
 };
 
-// Accent color (RGB triple) matching each page's visual language
+// Primary accent color (RGB triple) per page
 const PAGE_ACCENTS: Record<string, string> = {
   "/": "0, 255, 159",
   "/software": "0, 255, 159",
   "/agency": "0, 170, 255",
   "/about": "232, 160, 32",
   "/contact": "0, 170, 255",
+};
+
+// Optional second accent for gradient-colored orb dots (home = green → blue)
+const PAGE_ACCENTS2: Record<string, string> = {
+  "/": "0, 170, 255",
 };
 
 // Maps pathname to translation key for per-page loading tasks
@@ -68,6 +73,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const [orbVisible, setOrbVisible] = useState(false);
   const [orbColor, setOrbColor] = useState("#071a14");
   const [orbAccent, setOrbAccent] = useState("0, 170, 255");
+  const [orbAccent2, setOrbAccent2] = useState<string | undefined>(undefined);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Destination page tasks (locale-aware, reactive to i18n changes)
@@ -100,6 +106,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
       sessionStorage.setItem(SESSION_ACCENT_KEY, destAccent);
       setOrbColor(destBg);
       setOrbAccent(destAccent);
+      setOrbAccent2(PAGE_ACCENTS2[pathname]);
 
       const deadline = Date.now() + ORB_HOLD_MS;
       sessionStorage.setItem(SESSION_KEY, String(deadline));
@@ -147,7 +154,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
           pointerEvents: "none",
         }}
       >
-        {orbVisible && <ThinkingOrb accentRgb={orbAccent} tasks={safeTasks} />}
+        {orbVisible && <ThinkingOrb accentRgb={orbAccent} accentRgb2={orbAccent2} tasks={safeTasks} />}
       </div>
     </>
   );
