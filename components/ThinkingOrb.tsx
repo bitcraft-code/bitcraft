@@ -11,12 +11,13 @@ const DEFAULT_TASKS = [
   "Synthesizing output...",
 ];
 
-const N_DOTS = 160;
-const RADIUS = 100;
-const FOV = 260;
-const SIZE = 260;
+const N_DOTS = 320;
+const RADIUS = 110;
+const FOV = 280;
+const SIZE = 320;
 const FPS_CAP = 30;
 const FRAME_MS = 1000 / FPS_CAP;
+const N_PULSES = 3;
 
 interface Dot {
   x: number;
@@ -98,8 +99,16 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
   const [taskIdx, setTaskIdx] = useState(0);
   const [textVisible, setTextVisible] = useState(true);
 
-  // Random sweep axis chosen once per mount — persists for the overlay duration
-  const pulseAxis = useMemo<[number, number, number]>(() => randomUnitVector(), []);
+  // Multiple independent pulse sweeps, each on a random axis with a random speed/phase
+  const pulses = useMemo(
+    () =>
+      Array.from({ length: N_PULSES }, () => ({
+        axis: randomUnitVector(),
+        speed: 0.38 + Math.random() * 0.42,
+        phase: Math.random() * Math.PI * 2,
+      })),
+    [],
+  );
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -118,7 +127,6 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
     const CX = SIZE / 2;
     const CY = SIZE / 2;
     const dots = buildSphere(N_DOTS);
-    const [nx, ny, nz] = pulseAxis;
 
     const draw = (time: number) => {
       rafRef.current = requestAnimationFrame(draw);
@@ -130,8 +138,6 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
 
       const rotY = t * 0.42;
       const rotX = Math.sin(t * 0.18) * 0.25;
-      // Pulse sweeps -1 → 1 along the random axis
-      const pulse = ((t * 0.55) % 2) - 1;
 
       drawRings(ctx, CX, CY, RADIUS, rotY, t, accentRgb);
 
@@ -144,25 +150,28 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
           const y2 = d.y * Math.cos(rotX) - z1 * Math.sin(rotX);
           const z2 = d.y * Math.sin(rotX) + z1 * Math.cos(rotX);
 
-          // Perspective scale — larger range for stronger depth
           const p = FOV / (FOV + z2 * RADIUS * 0.55);
           const px = CX + x1 * RADIUS * p;
           const py = CY + y2 * RADIUS * p;
 
-          // Depth: 0 = back, 1 = front — maps to bigger size + alpha difference
+          // Depth: 0 = back, 1 = front
           const depth = (z2 + 1) / 2;
 
-          // Project dot onto random pulse axis (world-space coords before projection)
-          const axisDot = d.x * nx + d.y * ny + d.z * nz;
-          const pulseDist = Math.abs(axisDot - pulse);
-          const glow = Math.max(0, 1 - pulseDist * 4.8);
+          // Accumulate glow from all independent pulse sweeps
+          let rawGlow = 0;
+          for (const pulse of pulses) {
+            const [nx, ny, nz] = pulse.axis;
+            const pos = (((t * pulse.speed + pulse.phase) % 2) + 2) % 2 - 1;
+            const axisDot = d.x * nx + d.y * ny + d.z * nz;
+            rawGlow += Math.max(0, 1 - Math.abs(axisDot - pos) * 5.5);
+          }
+          const glow = Math.min(1, rawGlow);
 
           const flicker = 0.88 + 0.12 * Math.sin(t * 3.1 + d.phase);
 
-          // Stronger depth: back dots are dim and tiny, front dots are bright and large
           const depthAlpha = 0.15 + depth * 0.75;
           const alpha = depthAlpha * flicker + glow * 0.9;
-          const depthSize = 0.6 + depth * 1.8; // 0.6 at back, 2.4 at front
+          const depthSize = 0.6 + depth * 1.8;
           const size = p * depthSize * (1 + glow * 1.6);
 
           return { px, py, alpha, size, glow, z: z2, depth };
@@ -189,7 +198,7 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT
 
     rafRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [accentRgb, pulseAxis]);
+  }, [accentRgb, pulses]);
 
   useEffect(() => {
     const id = setInterval(() => {
