@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const ThinkingOrb = dynamic(() => import("./ThinkingOrb"), { ssr: false });
@@ -89,8 +89,10 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // On navigation: hide page, show orb, reveal page when orb dismisses
-  useEffect(() => {
+  // On navigation: hide page, show orb, reveal page when orb dismisses.
+  // useLayoutEffect fires before the browser paints, preventing a one-frame
+  // flash of the new page before the overlay covers the screen.
+  useLayoutEffect(() => {
     if (seenPath !== null && seenPath !== pathname) {
       const destBg = PAGE_COLORS[pathname] ?? "#071a14";
       const destAccent = PAGE_ACCENTS[pathname] ?? "0, 170, 255";

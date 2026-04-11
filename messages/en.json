@@ -120,6 +120,11 @@
     "heroCta": "I want to grow now →",
     "subtitle": "Stop betting on guesswork. Bitcraft Agency builds a data-driven acquisition engine that works while you sleep.",
     "cta": "I want to grow now →",
+    "stats": [
+      { "value": 4, "suffix": "+", "label": "active channels" },
+      { "value": 60, "suffix": "", "label": "days to meaningful ROI" },
+      { "value": 3, "suffix": "k+", "label": "USD min ad investment" }
+    ],
     "services": [
       {
         "title": "Crush your CAC",

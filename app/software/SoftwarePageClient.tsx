@@ -54,6 +54,8 @@ export default function SoftwarePageClient() {
   const { t } = useTranslation();
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
   const tiltRafRef = useRef<number | null>(null);
+  const introRef = useRef<HTMLDivElement>(null);
+  const isIntroInView = useInView(introRef, { once: true, amount: 0.3 });
   const gridRef = useRef<HTMLDivElement>(null);
   const isGridInView = useInView(gridRef, { once: true, amount: 0.1 });
   const heroTexts = t("software.heroTexts", { returnObjects: true }) as string[];
@@ -136,11 +138,11 @@ export default function SoftwarePageClient() {
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start text-center px-6 pt-28 sm:pt-32 pb-20 gap-14">
 
         {/* Intro */}
-        <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
+        <div ref={introRef} className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase"
             style={{
@@ -156,7 +158,7 @@ export default function SoftwarePageClient() {
           <motion.h2
             custom={1}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-tight"
           >
@@ -174,7 +176,7 @@ export default function SoftwarePageClient() {
           <motion.p
             custom={2}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.88)" }}
@@ -185,7 +187,7 @@ export default function SoftwarePageClient() {
           <motion.a
             custom={3}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             href="#contact"
             className="cta-ripple mt-2 px-7 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300"

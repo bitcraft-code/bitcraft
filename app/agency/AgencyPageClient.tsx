@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
@@ -128,11 +128,34 @@ function ServiceCardsGrid({ services }: { services: { title: string; description
   );
 }
 
+function StatCounter({ value, suffix, isActive }: { value: number; suffix: string; isActive: boolean }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!isActive) return;
+    let startTime: number | null = null;
+    const duration = 1400;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * value));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [isActive, value]);
+  return <>{count}{suffix}</>;
+}
+
 export default function AgencyPageClient() {
   const { t } = useTranslation();
   const heroTexts = t("agency.heroTexts", { returnObjects: true }) as string[];
   const services = t("agency.services", { returnObjects: true }) as { title: string; description: string }[];
   const faqItems = t("agency.faqItems", { returnObjects: true }) as { q: string; a: string }[];
+  const stats = t("agency.stats", { returnObjects: true }) as { value: number; suffix: string; label: string }[];
+  const introRef = useRef<HTMLDivElement>(null);
+  const isIntroInView = useInView(introRef, { once: true, amount: 0.3 });
+  const statsRef = useRef<HTMLDivElement>(null);
+  const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 });
 
   return (
     <>
@@ -201,11 +224,11 @@ export default function AgencyPageClient() {
 
       {/* Section 2: Services */}
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start text-center px-6 pt-28 sm:pt-32 pb-20 gap-14">
-        <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
+        <div ref={introRef} className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase"
             style={{
@@ -221,7 +244,7 @@ export default function AgencyPageClient() {
           <motion.h2
             custom={1}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-tight"
           >
@@ -239,7 +262,7 @@ export default function AgencyPageClient() {
           <motion.p
             custom={2}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="text-base sm:text-lg max-w-xl leading-relaxed"
             style={{ color: "rgba(224,247,250,0.88)" }}
@@ -250,7 +273,7 @@ export default function AgencyPageClient() {
           <motion.a
             custom={3}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             href="#contact"
             className="cta-ripple mt-2 px-7 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300"
@@ -265,6 +288,36 @@ export default function AgencyPageClient() {
             {t("agency.cta")}
           </motion.a>
         </div>
+
+        {/* Stats strip */}
+        {Array.isArray(stats) && stats.length > 0 && (
+          <div ref={statsRef} className="flex flex-wrap justify-center gap-8 sm:gap-16 max-w-4xl w-full">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isStatsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ delay: i * 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col items-center gap-1"
+              >
+                <span
+                  className="text-4xl sm:text-5xl font-black tabular-nums"
+                  style={{
+                    backgroundImage: "linear-gradient(92deg, #00aaff, #00d4ff)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  <StatCounter value={stat.value} suffix={stat.suffix} isActive={isStatsInView} />
+                </span>
+                <span className="text-xs font-medium tracking-wide uppercase" style={{ color: "rgba(224,247,250,0.55)" }}>
+                  {stat.label}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         {/* Services grid */}
         <div className="max-w-4xl w-full">
