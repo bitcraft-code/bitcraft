@@ -133,7 +133,10 @@ export default function AboutPageClient() {
   const heroTexts = t("about.heroTexts", { returnObjects: true }) as string[];
   const pillars = t("about.pillars", { returnObjects: true }) as { title: string; description: string }[];
   const faqItems = t("about.faqItems", { returnObjects: true }) as { q: string; a: string }[];
+  const subtitleWords = t("about.subtitle").split(" ");
   const [isMobile, setIsMobile] = useState(false);
+  const introRef = useRef<HTMLDivElement>(null);
+  const isIntroInView = useInView(introRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
     setIsMobile(window.matchMedia("(max-width: 768px)").matches);
@@ -228,11 +231,11 @@ export default function AboutPageClient() {
 
       {/* Section 2: Pillars */}
       <section className="relative z-10 snap-start min-h-dvh w-full flex flex-col items-center justify-start text-center px-6 pt-28 sm:pt-32 pb-20 gap-14">
-        <div className="flex flex-col items-center gap-5 max-w-4xl w-full">
+        <div ref={introRef} className="flex flex-col items-center gap-5 max-w-4xl w-full">
           <motion.div
             custom={0}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase"
             style={{
@@ -248,7 +251,7 @@ export default function AboutPageClient() {
           <motion.h2
             custom={1}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-tight"
           >
@@ -264,21 +267,24 @@ export default function AboutPageClient() {
             </span>
           </motion.h2>
 
-          <motion.p
-            custom={2}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="text-base sm:text-lg max-w-2xl leading-relaxed"
-            style={{ color: "rgba(255,240,210,0.95)" }}
-          >
-            {t("about.subtitle")}
-          </motion.p>
+          <p className="text-base sm:text-lg max-w-2xl leading-relaxed" style={{ color: "rgba(255,240,210,0.95)" }}>
+            {subtitleWords.map((word, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 6 }}
+                animate={isIntroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                transition={{ delay: 0.2 + i * 0.035, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                style={{ display: "inline-block", marginRight: "0.28em" }}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </p>
 
           <motion.a
             custom={3}
             initial="hidden"
-            animate="visible"
+            animate={isIntroInView ? "visible" : "hidden"}
             variants={fadeUp}
             href="#contact"
             className="cta-ripple mt-2 px-7 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300"

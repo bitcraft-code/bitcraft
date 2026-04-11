@@ -120,6 +120,11 @@
     "heroCta": "Quero crescer agora →",
     "subtitle": "Pare de apostar em achismos. A Bitcraft Agency constrói um motor de aquisição baseado em dados que trabalha enquanto você dorme.",
     "cta": "Quero crescer agora →",
+    "stats": [
+      { "value": 4, "suffix": "+", "label": "canais ativos" },
+      { "value": 60, "suffix": "", "label": "dias para ROI real" },
+      { "value": 15, "suffix": "k+", "label": "R$ de investimento mínimo" }
+    ],
     "services": [
       {
         "title": "Esmague seu CAC",
