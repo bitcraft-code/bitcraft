@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const TASKS = [
+const DEFAULT_TASKS = [
   "Analyzing context...",
   "Searching vector space...",
   "Optimizing response...",
@@ -14,7 +14,7 @@ const TASKS = [
 const N_DOTS = 160;
 const RADIUS = 100;
 const FOV = 260;
-const SIZE = 260; // logical canvas size
+const SIZE = 260;
 const FPS_CAP = 30;
 const FRAME_MS = 1000 / FPS_CAP;
 
@@ -23,6 +23,11 @@ interface Dot {
   y: number;
   z: number;
   phase: number;
+}
+
+interface Props {
+  accentRgb?: string; // e.g. "0, 170, 255"
+  tasks?: string[];
 }
 
 function buildSphere(n: number): Dot[] {
@@ -39,6 +44,14 @@ function buildSphere(n: number): Dot[] {
   });
 }
 
+function randomUnitVector(): [number, number, number] {
+  // Uniform random direction on the sphere
+  const u = Math.random() * 2 - 1;
+  const theta = Math.random() * Math.PI * 2;
+  const r = Math.sqrt(1 - u * u);
+  return [r * Math.cos(theta), r * Math.sin(theta), u];
+}
+
 function drawRings(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -46,6 +59,7 @@ function drawRings(
   r: number,
   rotY: number,
   t: number,
+  accentRgb: string,
 ): void {
   const rings = [
     { tiltX: 0.4, speed: 0.7, phase: 0 },
@@ -64,21 +78,28 @@ function drawRings(
       const xr = rx * Math.cos(rotY) + rz * Math.sin(rotY);
       const zr = -rx * Math.sin(rotY) + rz * Math.cos(rotY);
       const p = FOV / (FOV + zr * 0.4);
-      if (first) { ctx.moveTo(cx + xr * p, cy + ry * p); first = false; }
-      else ctx.lineTo(cx + xr * p, cy + ry * p);
+      if (first) {
+        ctx.moveTo(cx + xr * p, cy + ry * p);
+        first = false;
+      } else {
+        ctx.lineTo(cx + xr * p, cy + ry * p);
+      }
     }
-    ctx.strokeStyle = "rgba(0, 140, 255, 0.09)";
+    ctx.strokeStyle = `rgba(${accentRgb}, 0.09)`;
     ctx.lineWidth = 0.75;
     ctx.stroke();
   }
 }
 
-export default function ThinkingOrb() {
+export default function ThinkingOrb({ accentRgb = "0, 170, 255", tasks = DEFAULT_TASKS }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
   const lastFrameRef = useRef<number>(0);
   const [taskIdx, setTaskIdx] = useState(0);
   const [textVisible, setTextVisible] = useState(true);
+
+  // Random sweep axis chosen once per mount — persists for the overlay duration
+  const pulseAxis = useMemo<[number, number, number]>(() => randomUnitVector(), []);
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -97,6 +118,7 @@ export default function ThinkingOrb() {
     const CX = SIZE / 2;
     const CY = SIZE / 2;
     const dots = buildSphere(N_DOTS);
+    const [nx, ny, nz] = pulseAxis;
 
     const draw = (time: number) => {
       rafRef.current = requestAnimationFrame(draw);
@@ -108,9 +130,10 @@ export default function ThinkingOrb() {
 
       const rotY = t * 0.42;
       const rotX = Math.sin(t * 0.18) * 0.25;
-      const pulse = ((t * 0.55) % 2) - 1; // sweeps -1 → 1
+      // Pulse sweeps -1 → 1 along the random axis
+      const pulse = ((t * 0.55) % 2) - 1;
 
-      drawRings(ctx, CX, CY, RADIUS, rotY, t);
+      drawRings(ctx, CX, CY, RADIUS, rotY, t, accentRgb);
 
       const projected = dots
         .map((d) => {
@@ -121,18 +144,28 @@ export default function ThinkingOrb() {
           const y2 = d.y * Math.cos(rotX) - z1 * Math.sin(rotX);
           const z2 = d.y * Math.sin(rotX) + z1 * Math.cos(rotX);
 
-          const p = FOV / (FOV + z2 * RADIUS * 0.38);
+          // Perspective scale — larger range for stronger depth
+          const p = FOV / (FOV + z2 * RADIUS * 0.55);
           const px = CX + x1 * RADIUS * p;
           const py = CY + y2 * RADIUS * p;
 
+          // Depth: 0 = back, 1 = front — maps to bigger size + alpha difference
           const depth = (z2 + 1) / 2;
-          const pulseDist = Math.abs(d.y - pulse);
-          const glow = Math.max(0, 1 - pulseDist * 4.8);
-          const flicker = 0.88 + 0.12 * Math.sin(t * 3.1 + d.phase);
-          const alpha = depth * 0.65 * flicker + glow * 0.9;
-          const size = p * 2.1 * (1 + glow * 1.6);
 
-          return { px, py, alpha, size, glow, z: z2 };
+          // Project dot onto random pulse axis (world-space coords before projection)
+          const axisDot = d.x * nx + d.y * ny + d.z * nz;
+          const pulseDist = Math.abs(axisDot - pulse);
+          const glow = Math.max(0, 1 - pulseDist * 4.8);
+
+          const flicker = 0.88 + 0.12 * Math.sin(t * 3.1 + d.phase);
+
+          // Stronger depth: back dots are dim and tiny, front dots are bright and large
+          const depthAlpha = 0.15 + depth * 0.75;
+          const alpha = depthAlpha * flicker + glow * 0.9;
+          const depthSize = 0.6 + depth * 1.8; // 0.6 at back, 2.4 at front
+          const size = p * depthSize * (1 + glow * 1.6);
+
+          return { px, py, alpha, size, glow, z: z2, depth };
         })
         .sort((a, b) => a.z - b.z);
 
@@ -141,34 +174,34 @@ export default function ThinkingOrb() {
         if (pt.glow > 0.08) {
           ctx.beginPath();
           ctx.arc(pt.px, pt.py, pt.size * 3.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 200, 255, ${pt.glow * 0.11})`;
+          ctx.fillStyle = `rgba(${accentRgb}, ${pt.glow * 0.11})`;
           ctx.fill();
         }
         ctx.beginPath();
         ctx.arc(pt.px, pt.py, pt.size, 0, Math.PI * 2);
         ctx.fillStyle =
           pt.glow > 0.22
-            ? `rgba(120, 230, 255, ${pt.alpha})`
-            : `rgba(0, 170, 255, ${pt.alpha})`;
+            ? `rgba(${accentRgb}, ${pt.alpha})`
+            : `rgba(${accentRgb}, ${pt.alpha * 0.75})`;
         ctx.fill();
       }
     };
 
     rafRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafRef.current);
-  }, []);
+  }, [accentRgb, pulseAxis]);
 
   useEffect(() => {
     const id = setInterval(() => {
       setTextVisible(false);
       const swap = window.setTimeout(() => {
-        setTaskIdx((i) => (i + 1) % TASKS.length);
+        setTaskIdx((i) => (i + 1) % tasks.length);
         setTextVisible(true);
       }, 320);
       return () => window.clearTimeout(swap);
     }, 2000);
     return () => clearInterval(id);
-  }, []);
+  }, [tasks]);
 
   return (
     <div className="flex flex-col items-center gap-6 select-none">
@@ -180,13 +213,13 @@ export default function ThinkingOrb() {
       <p
         className="text-xs font-mono tracking-widest uppercase"
         style={{
-          color: "rgba(0, 170, 255, 0.65)",
+          color: `rgba(${accentRgb}, 0.65)`,
           opacity: textVisible ? 1 : 0,
           transition: "opacity 0.32s ease",
           letterSpacing: "0.18em",
         }}
       >
-        {TASKS[taskIdx]}
+        {tasks[taskIdx]}
       </p>
     </div>
   );
