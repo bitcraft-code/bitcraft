@@ -8,6 +8,7 @@ import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import HeroCycle, { type HeroAnimation } from "../../components/HeroCycle";
 import BorderGlow from "../../components/BorderGlow";
+import { fadeUp, cardVariant, cardsContainerVariant } from "../../lib/motion-variants";
 
 const LetterGlitch = dynamic(() => import("@/components/LetterGlitch"), { ssr: false });
 const FaqSection = dynamic(() => import("@/components/FaqSection"), { ssr: false });
@@ -31,24 +32,6 @@ const SERVICE_ICONS = [
   </svg>,
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  }),
-};
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 48, scale: 0.94 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
-};
-
-const cardsContainerVariant = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
 
 export default function SoftwarePageClient() {
   const { t } = useTranslation();

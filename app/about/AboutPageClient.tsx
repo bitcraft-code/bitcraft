@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import BorderGlow from "../../components/BorderGlow";
+import { fadeUp, cardVariant, cardsContainerVariant } from "../../lib/motion-variants";
 
 const FaultyTerminal = dynamic(() => import("../../components/FaultyTerminal"), { ssr: false });
 const TextType = dynamic(() => import("../../components/TextType"), { ssr: false });
@@ -32,24 +33,6 @@ const PILLAR_ICONS = [
   </svg>,
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  }),
-};
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 48, scale: 0.94 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
-};
-
-const cardsContainerVariant = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
 
 function PillarCardsGrid({ pillars }: { pillars: { title: string; description: string }[] }) {
   const [cardTilt, setCardTilt] = useState<Record<number, { rx: number; ry: number }>>({});
@@ -133,7 +116,7 @@ export default function AboutPageClient() {
   const heroTexts = t("about.heroTexts", { returnObjects: true }) as string[];
   const pillars = t("about.pillars", { returnObjects: true }) as { title: string; description: string }[];
   const faqItems = t("about.faqItems", { returnObjects: true }) as { q: string; a: string }[];
-  const subtitleWords = t("about.subtitle").split(" ");
+  const subtitleWords = useMemo(() => t("about.subtitle").split(" "), [t]);
   const [isMobile, setIsMobile] = useState(false);
   const introRef = useRef<HTMLDivElement>(null);
   const isIntroInView = useInView(introRef, { once: true, amount: 0.3 });
