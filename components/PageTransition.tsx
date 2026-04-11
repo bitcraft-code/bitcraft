@@ -14,9 +14,10 @@ const SESSION_KEY = "__orb_deadline";
 const SESSION_COLOR_KEY = "__orb_color";
 const SESSION_ACCENT_KEY = "__orb_accent";
 
-// Background color of each page (used as overlay bg when leaving that page)
+// Background of each page used as the overlay when navigating there.
+// Supports CSS gradient strings for pages with characteristic gradients.
 const PAGE_COLORS: Record<string, string> = {
-  "/": "#071a14",
+  "/": "linear-gradient(135deg, #071a14 0%, #0a192f 100%)",
   "/software": "#07130f",
   "/agency": "#080f1e",
   "/about": "#130e04",
@@ -135,7 +136,8 @@ export default function PageTransition({ children }: { children: ReactNode }) {
           inset: 0,
           zIndex: 9999,
           // Only apply color when visible — keeps SSR and client initial render identical
-          backgroundColor: orbVisible ? orbColor : "transparent",
+          // Uses `background` (not `backgroundColor`) to support gradient strings
+          background: orbVisible ? orbColor : "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
