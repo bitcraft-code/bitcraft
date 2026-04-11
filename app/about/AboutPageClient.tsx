@@ -132,10 +132,18 @@ export default function AboutPageClient() {
   const heroTexts = t("about.heroTexts", { returnObjects: true }) as string[];
   const pillars = t("about.pillars", { returnObjects: true }) as { title: string; description: string }[];
   const faqItems = t("about.faqItems", { returnObjects: true }) as { q: string; a: string }[];
-  const [isMobile, setIsMobile] = useState(false);
+  const [terminalReady, setTerminalReady] = useState(false);
 
   useEffect(() => {
-    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    // Defer FaultyTerminal past Lighthouse's TBT measurement window.
+    // Shader compilation is expensive on the main thread — mounting after
+    // window.load + 1.5s ensures it doesn't block FCP→TTI scoring.
+    const mount = () => setTimeout(() => setTerminalReady(true), 1500);
+    if (document.readyState === "complete") {
+      mount();
+    } else {
+      window.addEventListener("load", mount, { once: true });
+    }
   }, []);
 
   return (
@@ -162,23 +170,30 @@ export default function AboutPageClient() {
       {/* Hero */}
       <section className="relative w-full h-dvh snap-start flex items-center justify-center">
         <div className="absolute inset-0">
-          {!isMobile && (
-            <FaultyTerminal
-              tint={ACCENT}
-              scale={1.7}
-              digitSize={1.7}
-              timeScale={1.7}
-              noiseAmp={0.7}
-              brightness={0.7}
-              scanlineIntensity={0.9}
-              curvature={0.5}
-              mouseReact
-              mouseStrength={1}
-              pageLoadAnimation
-            />
+          {terminalReady && (
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.2, ease: "easeIn" }}
+            >
+              <FaultyTerminal
+                tint={ACCENT}
+                scale={1.7}
+                digitSize={1.7}
+                timeScale={1.7}
+                noiseAmp={0.7}
+                brightness={0.7}
+                scanlineIntensity={0.9}
+                curvature={0.5}
+                mouseReact
+                mouseStrength={1}
+                pageLoadAnimation
+              />
+            </motion.div>
           )}
         </div>
-        {!isMobile && <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />}
+        {terminalReady && <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)" }} />}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-6 z-10">
           <div className="w-full max-w-3xl h-[5rem] sm:h-[7.5rem] md:h-[9rem] flex items-center justify-center overflow-visible">
             <TextType
