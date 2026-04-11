@@ -10,12 +10,12 @@ import { useTranslation } from "react-i18next";
 const ThinkingOrb = dynamic(() => import("./ThinkingOrb"), { ssr: false });
 
 const ORB_HOLD_MS = 2200;
+const ORB_FADE_MS = 400;
 const SESSION_KEY = "__orb_deadline";
 const SESSION_COLOR_KEY = "__orb_color";
 const SESSION_ACCENT_KEY = "__orb_accent";
+const SESSION_ACCENT2_KEY = "__orb_accent2";
 
-// Background of each page used as the overlay when navigating there.
-// Supports CSS gradient strings for pages with characteristic gradients.
 const PAGE_COLORS: Record<string, string> = {
   "/": "linear-gradient(135deg, #071a14 0%, #0a192f 100%)",
   "/software": "#07130f",
@@ -24,7 +24,6 @@ const PAGE_COLORS: Record<string, string> = {
   "/contact": "#0a192f",
 };
 
-// Primary accent color (RGB triple) per page
 const PAGE_ACCENTS: Record<string, string> = {
   "/": "0, 170, 255",
   "/software": "0, 255, 159",
@@ -33,12 +32,11 @@ const PAGE_ACCENTS: Record<string, string> = {
   "/contact": "0, 170, 255",
 };
 
-// Optional second accent for gradient-colored orb dots (home = green → blue)
+// Optional second accent for gradient-colored orb dots
 const PAGE_ACCENTS2: Record<string, string> = {
   "/": "0, 255, 159",
 };
 
-// Maps pathname to translation key for per-page loading tasks
 const PATH_TO_KEY: Record<string, string> = {
   "/": "home",
   "/software": "software",
@@ -47,7 +45,6 @@ const PATH_TO_KEY: Record<string, string> = {
   "/contact": "contact",
 };
 
-// Module-level: persists across remounts in the same module instance
 let seenPath: string | null = null;
 
 function getRemainingMs(): number {
@@ -57,64 +54,68 @@ function getRemainingMs(): number {
   return Math.max(0, parseInt(v) - Date.now());
 }
 
-function getStoredColor(): string {
-  if (typeof window === "undefined") return "#071a14";
-  return sessionStorage.getItem(SESSION_COLOR_KEY) ?? "#071a14";
-}
-
-function getStoredAccent(): string {
-  if (typeof window === "undefined") return "0, 170, 255";
-  return sessionStorage.getItem(SESSION_ACCENT_KEY) ?? "0, 170, 255";
-}
-
 export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { t } = useTranslation();
+
+  // Page is hidden while the orb covers the screen so that page animations
+  // start fresh exactly when the orb begins to fade out.
+  const [pageVisible, setPageVisible] = useState(true);
   const [orbVisible, setOrbVisible] = useState(false);
   const [orbColor, setOrbColor] = useState("#071a14");
   const [orbAccent, setOrbAccent] = useState("0, 170, 255");
   const [orbAccent2, setOrbAccent2] = useState<string | undefined>(undefined);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Destination page tasks (locale-aware, reactive to i18n changes)
   const pageKey = PATH_TO_KEY[pathname] ?? "home";
   const tasks = t(`transition.${pageKey}`, { returnObjects: true }) as string[];
   const safeTasks = Array.isArray(tasks) ? tasks : undefined;
 
-  // On remount: restore timer if there's still time left on the deadline
+  // On remount: restore orb if a deadline is still active
   useEffect(() => {
     const remaining = getRemainingMs();
     if (remaining > 0) {
+      setPageVisible(false);
       setOrbVisible(true);
-      setOrbColor(getStoredColor());
-      setOrbAccent(getStoredAccent());
+      setOrbColor(sessionStorage.getItem(SESSION_COLOR_KEY) ?? "#071a14");
+      setOrbAccent(sessionStorage.getItem(SESSION_ACCENT_KEY) ?? "0, 170, 255");
+      setOrbAccent2(sessionStorage.getItem(SESSION_ACCENT2_KEY) ?? undefined);
       timerRef.current = setTimeout(() => {
         sessionStorage.removeItem(SESSION_KEY);
         setOrbVisible(false);
+        setPageVisible(true);
       }, remaining);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // On navigation: use destination page color, then show orb
+  // On navigation: hide page, show orb, reveal page when orb dismisses
   useEffect(() => {
     if (seenPath !== null && seenPath !== pathname) {
       const destBg = PAGE_COLORS[pathname] ?? "#071a14";
       const destAccent = PAGE_ACCENTS[pathname] ?? "0, 170, 255";
+      const destAccent2 = PAGE_ACCENTS2[pathname];
 
       sessionStorage.setItem(SESSION_COLOR_KEY, destBg);
       sessionStorage.setItem(SESSION_ACCENT_KEY, destAccent);
+      if (destAccent2) sessionStorage.setItem(SESSION_ACCENT2_KEY, destAccent2);
+      else sessionStorage.removeItem(SESSION_ACCENT2_KEY);
+
       setOrbColor(destBg);
       setOrbAccent(destAccent);
-      setOrbAccent2(PAGE_ACCENTS2[pathname]);
+      setOrbAccent2(destAccent2);
+      setPageVisible(false); // unmount current page while orb covers screen
+      setOrbVisible(true);
 
+      clearTimeout(timerRef.current);
       const deadline = Date.now() + ORB_HOLD_MS;
       sessionStorage.setItem(SESSION_KEY, String(deadline));
-      setOrbVisible(true);
-      clearTimeout(timerRef.current);
+
       timerRef.current = setTimeout(() => {
         sessionStorage.removeItem(SESSION_KEY);
+        // Mount the new page and dismiss the orb simultaneously — crossfade
         setOrbVisible(false);
+        setPageVisible(true);
       }, ORB_HOLD_MS);
     }
     seenPath = pathname;
@@ -124,17 +125,19 @@ export default function PageTransition({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35, ease: "easeInOut" }}
-          style={{ width: "100%" }}
-        >
-          {children}
-        </motion.div>
+      <AnimatePresence mode="wait">
+        {pageVisible && (
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: ORB_FADE_MS / 1000, ease: "easeInOut" }}
+            style={{ width: "100%" }}
+          >
+            {children}
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <div
@@ -142,19 +145,18 @@ export default function PageTransition({ children }: { children: ReactNode }) {
           position: "fixed",
           inset: 0,
           zIndex: 9999,
-          // Only apply color when visible — keeps SSR and client initial render identical
-          // Uses `background` (not `backgroundColor`) to support gradient strings
           background: orbVisible ? orbColor : "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           opacity: orbVisible ? 1 : 0,
-          // Snap to visible immediately, fade-out only when dismissing
-          transition: orbVisible ? "none" : "opacity 0.4s ease-in-out",
+          transition: orbVisible ? "none" : `opacity ${ORB_FADE_MS}ms ease-in-out`,
           pointerEvents: "none",
         }}
       >
-        {orbVisible && <ThinkingOrb accentRgb={orbAccent} accentRgb2={orbAccent2} tasks={safeTasks} />}
+        {orbVisible && (
+          <ThinkingOrb accentRgb={orbAccent} accentRgb2={orbAccent2} tasks={safeTasks} />
+        )}
       </div>
     </>
   );
