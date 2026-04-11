@@ -13,72 +13,6 @@ const TextType = dynamic(() => import("../../components/TextType"), { ssr: false
 const FaqSection = dynamic(() => import("../../components/FaqSection"), { ssr: false });
 const ContactSection = dynamic(() => import("../../components/ContactSection"), { ssr: false });
 
-// Deterministic positions — avoids hydration mismatch, zero randomness at runtime
-const AMBIENT_CHARS = ["0","1","▓","░","▒","■","□","◆","⌘","⊕","10","01"];
-const AMBIENT_NODES = Array.from({ length: 28 }, (_, i) => ({
-  id: i,
-  char: AMBIENT_CHARS[i % AMBIENT_CHARS.length],
-  x: ((i * 37 + 13) % 92) + 4,
-  y: ((i * 53 + 7) % 88) + 6,
-  delay: (i * 0.38) % 4,
-  duration: 2.4 + (i % 4) * 0.6,
-  opacity: 0.06 + (i % 5) * 0.05,
-  size: 9 + (i % 4) * 2,
-}));
-
-/** Pure CSS ambient for mobile — only transform + opacity, compositor-thread safe, zero TBT */
-function MobileHeroAmbient() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-      {/* Scanlines — translateY only, compositor-thread */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-        <motion.div
-          style={{
-            position: "absolute",
-            top: 0, left: 0, right: 0,
-            height: "200%",
-            backgroundImage:
-              "repeating-linear-gradient(0deg, rgba(232,160,32,0.055) 0, rgba(232,160,32,0.055) 1px, transparent 1px, transparent 5px)",
-          }}
-          animate={{ y: ["0%", "-50%"] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-      {/* Floating chars — opacity pulse only */}
-      {AMBIENT_NODES.map((n) => (
-        <motion.span
-          key={n.id}
-          style={{
-            position: "absolute",
-            left: `${n.x}%`,
-            top: `${n.y}%`,
-            fontSize: n.size,
-            color: ACCENT,
-            fontFamily: "monospace",
-            userSelect: "none",
-          }}
-          animate={{ opacity: [n.opacity, n.opacity * 3.5, n.opacity] }}
-          transition={{ duration: n.duration, delay: n.delay, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {n.char}
-        </motion.span>
-      ))}
-      {/* Centre glow pulse — scale + opacity, compositor-thread */}
-      <motion.div
-        style={{
-          position: "absolute",
-          top: "35%", left: "50%",
-          width: 320, height: 320,
-          x: "-50%", y: "-50%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(232,160,32,0.13) 0%, transparent 70%)",
-        }}
-        animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
 
 const ACCENT = "#e8a020";
 const ACCENT_DARK = "#c4871a";
@@ -229,9 +163,7 @@ export default function AboutPageClient() {
       {/* Hero */}
       <section className="relative w-full h-dvh snap-start flex items-center justify-center">
         <div className="absolute inset-0">
-          {isMobile ? (
-            <MobileHeroAmbient />
-          ) : (
+          {!isMobile && (
             <FaultyTerminal
               tint={ACCENT}
               scale={1.7}
