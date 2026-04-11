@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 const ThinkingOrb = dynamic(() => import("./ThinkingOrb"), { ssr: false });
 
-const ORB_HOLD_MS = 1400;
+const ORB_HOLD_MS = 2200;
 const SESSION_KEY = "__orb_deadline";
 const SESSION_COLOR_KEY = "__orb_color";
 const SESSION_ACCENT_KEY = "__orb_accent";
@@ -64,9 +64,9 @@ function getStoredAccent(): string {
 export default function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { t } = useTranslation();
-  const [orbVisible, setOrbVisible] = useState(() => getRemainingMs() > 0);
-  const [orbColor, setOrbColor] = useState(getStoredColor);
-  const [orbAccent, setOrbAccent] = useState(getStoredAccent);
+  const [orbVisible, setOrbVisible] = useState(false);
+  const [orbColor, setOrbColor] = useState("#071a14");
+  const [orbAccent, setOrbAccent] = useState("0, 170, 255");
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Destination page tasks (locale-aware, reactive to i18n changes)
@@ -89,16 +89,16 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // On navigation: capture source page color, then show orb
+  // On navigation: use destination page color, then show orb
   useEffect(() => {
     if (seenPath !== null && seenPath !== pathname) {
-      const sourceBg = PAGE_COLORS[seenPath] ?? "#071a14";
-      const sourceAccent = PAGE_ACCENTS[seenPath] ?? "0, 170, 255";
+      const destBg = PAGE_COLORS[pathname] ?? "#071a14";
+      const destAccent = PAGE_ACCENTS[pathname] ?? "0, 170, 255";
 
-      sessionStorage.setItem(SESSION_COLOR_KEY, sourceBg);
-      sessionStorage.setItem(SESSION_ACCENT_KEY, sourceAccent);
-      setOrbColor(sourceBg);
-      setOrbAccent(sourceAccent);
+      sessionStorage.setItem(SESSION_COLOR_KEY, destBg);
+      sessionStorage.setItem(SESSION_ACCENT_KEY, destAccent);
+      setOrbColor(destBg);
+      setOrbAccent(destAccent);
 
       const deadline = Date.now() + ORB_HOLD_MS;
       sessionStorage.setItem(SESSION_KEY, String(deadline));
@@ -134,12 +134,14 @@ export default function PageTransition({ children }: { children: ReactNode }) {
           position: "fixed",
           inset: 0,
           zIndex: 9999,
-          backgroundColor: orbColor,
+          // Only apply color when visible — keeps SSR and client initial render identical
+          backgroundColor: orbVisible ? orbColor : "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           opacity: orbVisible ? 1 : 0,
-          transition: "opacity 0.25s ease-in-out",
+          // Snap to visible immediately, fade-out only when dismissing
+          transition: orbVisible ? "none" : "opacity 0.4s ease-in-out",
           pointerEvents: "none",
         }}
       >
