@@ -48,7 +48,7 @@ export default function ContactSection({ variant = "default", dark = true }: Pro
   return (
     <section
       id="contact"
-      className="relative z-10 w-full flex flex-col items-center justify-center px-5 sm:px-6 py-28 gap-10 min-h-[100dvh]"
+      className="relative z-10 w-full flex flex-1 flex-col items-center justify-center px-5 sm:px-6 py-28 gap-10"
       style={sectionStyle}
     >
       {/* Top divider */}
