@@ -26,7 +26,7 @@ const PAGE_COLORS: Record<string, string> = {
 
 // Primary accent color (RGB triple) per page
 const PAGE_ACCENTS: Record<string, string> = {
-  "/": "0, 255, 159",
+  "/": "0, 170, 255",
   "/software": "0, 255, 159",
   "/agency": "0, 170, 255",
   "/about": "232, 160, 32",
@@ -35,7 +35,7 @@ const PAGE_ACCENTS: Record<string, string> = {
 
 // Optional second accent for gradient-colored orb dots (home = green → blue)
 const PAGE_ACCENTS2: Record<string, string> = {
-  "/": "0, 170, 255",
+  "/": "0, 255, 159",
 };
 
 // Maps pathname to translation key for per-page loading tasks
