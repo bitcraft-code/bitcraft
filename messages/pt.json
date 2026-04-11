@@ -184,6 +184,38 @@
       "home": "Nos fale sobre seu projeto e respondemos em 24 horas."
     }
   },
+  "transition": {
+    "home": [
+      "Preparando seu workspace...",
+      "Carregando motor criativo...",
+      "Calibrando ideias...",
+      "Iniciando algo grande..."
+    ],
+    "software": [
+      "Compilando módulos...",
+      "Verificando dependências...",
+      "Iniciando ambiente...",
+      "Entregando em progresso..."
+    ],
+    "agency": [
+      "Montando o time...",
+      "Carregando motor de crescimento...",
+      "Segmentando audiência...",
+      "Calibrando conversão..."
+    ],
+    "about": [
+      "Lendo nossa história...",
+      "Carregando o time...",
+      "Buscando nossa origem...",
+      "Conectando os pontos..."
+    ],
+    "contact": [
+      "Abrindo canal...",
+      "Configurando conexão...",
+      "Roteando sua mensagem...",
+      "Preparando formulário..."
+    ]
+  },
   "about": {
     "pageTitle": "BITCRAFT | Quem Somos",
     "badge": "Quem Somos",
