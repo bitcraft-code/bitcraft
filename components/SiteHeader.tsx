@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -50,15 +50,14 @@ export default function SiteHeader({
   const { t, i18n } = useTranslation();
   const locale = i18n.language as "en" | "pt";
   const [scrolled, setScrolled] = useState(false);
-  const [headerMouse, setHeaderMouse] = useState({ x: 0, y: 0, hover: false });
   const [navHovered, setNavHovered] = useState<string | null>(null);
-  const [ctrlSpotlight, setCtrlSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pillExpanded, setPillExpanded] = useState(false);
   const lastTouchAt = useRef(0);
-  const headerRafRef = useRef<number | null>(null);
-  const langRafRef = useRef<number | null>(null);
-  const themeRafRef = useRef<number | null>(null);
+  const pointerFrameMapRef = useRef(new Map<HTMLElement, number>());
+  const pointerPayloadMapRef = useRef(
+    new Map<HTMLElement, { active: boolean; x: number; y: number; prefix: "header" | "ctrl" }>(),
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -75,29 +74,72 @@ export default function SiteHeader({
     }
   }, [mobileOpen]);
 
+  useEffect(() => {
+    return () => {
+      for (const frame of pointerFrameMapRef.current.values()) {
+        cancelAnimationFrame(frame);
+      }
+      pointerFrameMapRef.current.clear();
+      pointerPayloadMapRef.current.clear();
+    };
+  }, []);
+
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
-  const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
+  const schedulePointerStyles = useCallback(
+    (
+      element: HTMLElement,
+      prefix: "header" | "ctrl",
+      payload: { active: boolean; x: number; y: number },
+    ) => {
+      pointerPayloadMapRef.current.set(element, { ...payload, prefix });
+      if (pointerFrameMapRef.current.has(element)) return;
+
+      const frame = requestAnimationFrame(() => {
+        const nextPayload = pointerPayloadMapRef.current.get(element);
+        pointerFrameMapRef.current.delete(element);
+        if (!nextPayload) return;
+
+        element.style.setProperty(`--${nextPayload.prefix}-spotlight-opacity`, nextPayload.active ? "1" : "0");
+        element.style.setProperty(`--${nextPayload.prefix}-spotlight-x`, `${nextPayload.x}px`);
+        element.style.setProperty(`--${nextPayload.prefix}-spotlight-y`, `${nextPayload.y}px`);
+      });
+
+      pointerFrameMapRef.current.set(element, frame);
+    },
+    [],
+  );
+  const resetPointerStyles = useCallback((element: HTMLElement, prefix: "header" | "ctrl") => {
+    const frame = pointerFrameMapRef.current.get(element);
+    if (typeof frame === "number") {
+      cancelAnimationFrame(frame);
+      pointerFrameMapRef.current.delete(element);
+    }
+    pointerPayloadMapRef.current.delete(element);
+    element.style.setProperty(`--${prefix}-spotlight-opacity`, "0");
+  }, []);
+  const onTouchBegin = (setter: (element: HTMLElement, x: number, y: number) => void) => (e: React.TouchEvent) => {
     lastTouchAt.current = Date.now();
     const touch = e.touches[0];
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setter(touch.clientX - rect.left, touch.clientY - rect.top);
+    const element = e.currentTarget as HTMLElement;
+    const rect = element.getBoundingClientRect();
+    setter(element, touch.clientX - rect.left, touch.clientY - rect.top);
   };
 
   const T = {
     header: dark
       ? {
-          bg: scrolled ? "rgba(8,8,18,0.82)" : "rgba(12,12,24,0.12)",
-          border: scrolled ? "1px solid rgba(255,255,255,0.13)" : "1px solid rgba(255,255,255,0.18)",
+          bg: scrolled ? "rgba(8,8,18,0.88)" : "rgba(12,12,24,0.08)",
+          border: scrolled ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(255,255,255,0.12)",
           shadow: scrolled
-            ? "0 8px 48px rgba(0,0,0,0.40)"
-            : "0 4px 28px rgba(0,0,0,0.16)",
+            ? "0 10px 56px rgba(0,0,0,0.42)"
+            : "0 4px 18px rgba(0,0,0,0.10)",
         }
       : {
-          bg: scrolled ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.50)",
-          border: scrolled ? "1px solid rgba(0,100,160,0.22)" : "1px solid rgba(0,100,160,0.14)",
+          bg: scrolled ? "rgba(255,255,255,0.90)" : "rgba(255,255,255,0.34)",
+          border: scrolled ? "1px solid rgba(0,100,160,0.24)" : "1px solid rgba(0,100,160,0.10)",
           shadow: scrolled
-            ? "0 8px 48px rgba(0,100,200,0.18)"
-            : "0 4px 28px rgba(0,120,200,0.12)",
+            ? "0 10px 52px rgba(0,100,200,0.18)"
+            : "0 4px 18px rgba(0,120,200,0.08)",
         },
     logoBg: dark ? "rgba(255,255,255,0.14)" : "rgba(0,170,255,0.10)",
     logoBorder: dark ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(0,170,255,0.22)",
@@ -147,15 +189,58 @@ export default function SiteHeader({
     { label: t("nav.contact"),  href: "#contact",  activeColor: pageAccent },
   ];
 
-  const spotlightSpans = (active: boolean, x: number, y: number, r: number) => (
+  const spotlightSpans = (prefix: "header" | "ctrl", r: number) => (
     <>
-      <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightFill}, transparent 70%)` }} />
-      <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle ${r}px at ${x}px ${y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
+      <span
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        style={{
+          borderRadius: "inherit",
+          opacity: `var(--${prefix}-spotlight-opacity, 0)`,
+          transition: "opacity 0.3s ease",
+          background: `radial-gradient(circle ${r}px at var(--${prefix}-spotlight-x, 50%) var(--${prefix}-spotlight-y, 50%), ${T.spotlightFill}, transparent 70%)`,
+        }}
+      />
+      <span
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: "inherit",
+          opacity: `var(--${prefix}-spotlight-opacity, 0)`,
+          transition: "opacity 0.3s ease",
+          background: `radial-gradient(circle ${r}px at var(--${prefix}-spotlight-x, 50%) var(--${prefix}-spotlight-y, 50%), ${T.spotlightBorder}, transparent 70%)`,
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          padding: "1.5px",
+        }}
+      />
     </>
   );
 
   const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
   const springNav = { type: "spring" as const, stiffness: 380, damping: 32 };
+  const headerSpotlightStyle = {
+    "--header-spotlight-opacity": 0,
+    "--header-spotlight-x": "50%",
+    "--header-spotlight-y": "50%",
+    borderRadius: pillExpanded ? 25 : 9999,
+    background: T.header.bg,
+    border: T.header.border,
+    boxShadow: T.header.shadow,
+    backdropFilter: scrolled ? "blur(24px)" : "blur(16px)",
+    WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(16px)",
+  } as CSSProperties & Record<
+    "--header-spotlight-opacity" | "--header-spotlight-x" | "--header-spotlight-y",
+    string | number
+  >;
+  const ctrlSpotlightStyle = {
+    "--ctrl-spotlight-opacity": 0,
+    "--ctrl-spotlight-x": "50%",
+    "--ctrl-spotlight-y": "50%",
+  } as CSSProperties & Record<
+    "--ctrl-spotlight-opacity" | "--ctrl-spotlight-x" | "--ctrl-spotlight-y",
+    string | number
+  >;
 
   return (
     <>
@@ -174,8 +259,8 @@ export default function SiteHeader({
       </AnimatePresence>
 
       <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.55, delay: entranceDelay, ease: easeOut }}
         className="fixed top-0 left-0 right-0 z-20 flex justify-center px-4 pt-5"
       >
@@ -188,33 +273,25 @@ export default function SiteHeader({
             boxShadow: T.header.shadow,
           }}
           transition={{ duration: 0.35 }}
-          style={{
-            borderRadius: pillExpanded ? 25 : 9999,
-            background: T.header.bg,
-            border: T.header.border,
-            boxShadow: T.header.shadow,
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-          }}
+          style={headerSpotlightStyle}
           onMouseMove={(e) => {
-            if (wasTouched() || headerRafRef.current !== null) return;
+            if (wasTouched()) return;
+            const element = e.currentTarget as HTMLElement;
             const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            headerRafRef.current = requestAnimationFrame(() => {
-              setHeaderMouse({ x, y, hover: true });
-              headerRafRef.current = null;
-            });
+            schedulePointerStyles(element, "header", { active: true, x, y });
           }}
-          onMouseLeave={() => {
+          onMouseLeave={(e) => {
             if (!wasTouched()) {
-              if (headerRafRef.current !== null) { cancelAnimationFrame(headerRafRef.current); headerRafRef.current = null; }
-              setHeaderMouse((p) => ({ ...p, hover: false }));
+              resetPointerStyles(e.currentTarget as HTMLElement, "header");
             }
           }}
-          onTouchStart={onTouchBegin((x, y) => setHeaderMouse({ hover: true, x, y }))}
-          onTouchEnd={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
-          onTouchCancel={() => setHeaderMouse((p) => ({ ...p, hover: false }))}
+          onTouchStart={onTouchBegin((element, x, y) => {
+            schedulePointerStyles(element, "header", { active: true, x, y });
+          })}
+          onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "header")}
+          onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "header")}
         >
           {/* ── Liquid Glass Layers ────────────────────────────────── */}
 
@@ -251,8 +328,7 @@ export default function SiteHeader({
           />
 
           {/* 4. Mouse spotlight (interactive) */}
-          <span className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 220px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightFill}, transparent 70%)` }} />
-          <span className="absolute inset-0 pointer-events-none" style={{ borderRadius: "inherit", opacity: headerMouse.hover ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 120px at ${headerMouse.x}px ${headerMouse.y}px, ${T.spotlightBorder}, transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "2px" }} />
+          {spotlightSpans("header", 220)}
 
           {/* ── Top bar ───────────────────────────────────────────── */}
           <motion.div
@@ -337,23 +413,31 @@ export default function SiteHeader({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.93 }}
                 aria-label="Toggle language"
-                style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", minWidth: "2.5rem" }}
+                style={{
+                  ...ctrlSpotlightStyle,
+                  background: T.toggleBg,
+                  border: T.toggleBorder,
+                  color: T.toggleColor,
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  minWidth: "2.5rem"
+                }}
                 onMouseMove={(e) => {
-                  if (wasTouched() || langRafRef.current !== null) return;
+                  if (wasTouched()) return;
+                  const element = e.currentTarget as HTMLElement;
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = e.clientX - rect.left;
                   const y = e.clientY - rect.top;
-                  langRafRef.current = requestAnimationFrame(() => {
-                    setCtrlSpotlight({ id: "locale", x, y });
-                    langRafRef.current = null;
-                  });
+                  schedulePointerStyles(element, "ctrl", { active: true, x, y });
                 }}
-                onMouseLeave={() => { if (!wasTouched()) { if (langRafRef.current !== null) { cancelAnimationFrame(langRafRef.current); langRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
-                onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "locale", x, y }))}
-                onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-                onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+                onMouseLeave={(e) => { if (!wasTouched()) resetPointerStyles(e.currentTarget as HTMLElement, "ctrl"); }}
+                onTouchStart={onTouchBegin((element, x, y) => {
+                  schedulePointerStyles(element, "ctrl", { active: true, x, y });
+                })}
+                onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "ctrl")}
+                onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "ctrl")}
               >
-                {spotlightSpans(ctrlSpotlight.id === "locale", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+                {spotlightSpans("ctrl", 50)}
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.span key={locale} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
                     {locale === "en" ? "EN" : "PT"}
@@ -370,23 +454,30 @@ export default function SiteHeader({
                   whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.93 }}
                   aria-label="Toggle theme"
-                  style={{ background: T.toggleBg, border: T.toggleBorder, color: T.toggleColor, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+                  style={{
+                    ...ctrlSpotlightStyle,
+                    background: T.toggleBg,
+                    border: T.toggleBorder,
+                    color: T.toggleColor,
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)"
+                  }}
                   onMouseMove={(e) => {
-                    if (wasTouched() || themeRafRef.current !== null) return;
+                    if (wasTouched()) return;
+                    const element = e.currentTarget as HTMLElement;
                     const rect = e.currentTarget.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    themeRafRef.current = requestAnimationFrame(() => {
-                      setCtrlSpotlight({ id: "theme", x, y });
-                      themeRafRef.current = null;
-                    });
+                    schedulePointerStyles(element, "ctrl", { active: true, x, y });
                   }}
-                  onMouseLeave={() => { if (!wasTouched()) { if (themeRafRef.current !== null) { cancelAnimationFrame(themeRafRef.current); themeRafRef.current = null; } setCtrlSpotlight((p) => ({ ...p, id: null })); } }}
-                  onTouchStart={onTouchBegin((x, y) => setCtrlSpotlight({ id: "theme", x, y }))}
-                  onTouchEnd={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
-                  onTouchCancel={() => setCtrlSpotlight((p) => ({ ...p, id: null }))}
+                  onMouseLeave={(e) => { if (!wasTouched()) resetPointerStyles(e.currentTarget as HTMLElement, "ctrl"); }}
+                  onTouchStart={onTouchBegin((element, x, y) => {
+                    schedulePointerStyles(element, "ctrl", { active: true, x, y });
+                  })}
+                  onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "ctrl")}
+                  onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement, "ctrl")}
                 >
-                  {spotlightSpans(ctrlSpotlight.id === "theme", ctrlSpotlight.x, ctrlSpotlight.y, 50)}
+                  {spotlightSpans("ctrl", 50)}
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span key={dark ? "moon" : "sun"} initial={{ opacity: 0, rotate: -30, scale: 0.7 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={{ opacity: 0, rotate: 30, scale: 0.7 }} transition={{ duration: 0.2 }}>
                       {dark ? <MoonIcon /> : <SunIcon />}
