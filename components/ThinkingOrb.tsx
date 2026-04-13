@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAnimationActivity } from "@/lib/use-animation-activity";
 
 const DEFAULT_TASKS = [
   "Analyzing context...",
@@ -106,8 +107,13 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
   const lastFrameRef = useRef<number>(0);
+  const elapsedRef = useRef<number>(0);
+  const textSwapTimeoutRef = useRef<number>(0);
   const [taskIdx, setTaskIdx] = useState(0);
   const [textVisible, setTextVisible] = useState(true);
+  const { shouldAnimate } = useAnimationActivity(canvasRef, {
+    threshold: 0.05,
+  });
 
   // Multiple independent pulse sweeps, each on a random axis with a random speed/phase
   const pulses = useMemo(
@@ -121,9 +127,6 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
   );
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -142,6 +145,16 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
     const CX = SIZE / 2;
     const CY = SIZE / 2;
     const dots = buildSphere(N_DOTS);
+    const projected = dots.map(() => ({
+      px: 0,
+      py: 0,
+      alpha: 0,
+      size: 0,
+      glow: 0,
+      depth: 0,
+    }));
+    const depthBucketCount = 20;
+    const depthBuckets = Array.from({ length: depthBucketCount }, () => [] as number[]);
 
     // Pre-parse for gradient interpolation — avoids string parsing per dot per frame
     const c1 = parseRgb(accentRgb);
@@ -157,88 +170,127 @@ export default function ThinkingOrb({ accentRgb = "0, 170, 255", accentRgb2, tas
     }
 
     const draw = (time: number) => {
+      if (!shouldAnimate) {
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+        return;
+      }
+
       rafRef.current = requestAnimationFrame(draw);
       if (time - lastFrameRef.current < FRAME_MS) return;
-      lastFrameRef.current = time;
 
-      const t = time * 0.001;
+      const delta =
+        lastFrameRef.current === 0
+          ? FRAME_MS
+          : Math.min(time - lastFrameRef.current, FRAME_MS * 2);
+      lastFrameRef.current = time;
+      elapsedRef.current += delta * 0.001;
+
+      const t = elapsedRef.current;
       ctx.clearRect(0, 0, SIZE, SIZE);
 
       const rotY = t * 0.42;
       const rotX = Math.sin(t * 0.18) * 0.25;
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      const cosX = Math.cos(rotX);
+      const sinX = Math.sin(rotX);
+      const pulsePositions = pulses.map((pulse) => ({
+        ...pulse,
+        pos: (((t * pulse.speed + pulse.phase) % 2) + 2) % 2 - 1,
+      }));
 
       drawRings(ctx, CX, CY, RADIUS, rotY, t, accentRgb, FOV);
 
-      const projected = dots
-        .map((d) => {
-          // Rotate Y
-          const x1 = d.x * Math.cos(rotY) + d.z * Math.sin(rotY);
-          const z1 = -d.x * Math.sin(rotY) + d.z * Math.cos(rotY);
-          // Rotate X
-          const y2 = d.y * Math.cos(rotX) - z1 * Math.sin(rotX);
-          const z2 = d.y * Math.sin(rotX) + z1 * Math.cos(rotX);
+      for (const bucket of depthBuckets) bucket.length = 0;
 
-          const p = FOV / (FOV + z2 * RADIUS * 0.55);
-          const px = CX + x1 * RADIUS * p;
-          const py = CY + y2 * RADIUS * p;
+      for (let i = 0; i < dots.length; i++) {
+        const d = dots[i];
+        // Rotate Y
+        const x1 = d.x * cosY + d.z * sinY;
+        const z1 = -d.x * sinY + d.z * cosY;
+        // Rotate X
+        const y2 = d.y * cosX - z1 * sinX;
+        const z2 = d.y * sinX + z1 * cosX;
 
-          // Depth: 0 = back, 1 = front
-          const depth = (z2 + 1) / 2;
+        const p = FOV / (FOV + z2 * RADIUS * 0.55);
+        const px = CX + x1 * RADIUS * p;
+        const py = CY + y2 * RADIUS * p;
 
-          // Accumulate glow from all independent pulse sweeps
-          let rawGlow = 0;
-          for (const pulse of pulses) {
-            const [nx, ny, nz] = pulse.axis;
-            const pos = (((t * pulse.speed + pulse.phase) % 2) + 2) % 2 - 1;
-            const axisDot = d.x * nx + d.y * ny + d.z * nz;
-            rawGlow += Math.max(0, 1 - Math.abs(axisDot - pos) * 5.5);
+        let rawGlow = 0;
+        for (let j = 0; j < pulsePositions.length; j++) {
+          const pulse = pulsePositions[j];
+          const [nx, ny, nz] = pulse.axis;
+          const axisDot = d.x * nx + d.y * ny + d.z * nz;
+          rawGlow += Math.max(0, 1 - Math.abs(axisDot - pulse.pos) * 5.5);
+        }
+
+        const depth = (z2 + 1) / 2;
+        const glow = Math.min(1, rawGlow);
+        const flicker = 0.88 + 0.12 * Math.sin(t * 3.1 + d.phase);
+        const depthAlpha = 0.15 + depth * 0.75;
+
+        const pt = projected[i];
+        pt.px = px;
+        pt.py = py;
+        pt.depth = depth;
+        pt.glow = glow;
+        pt.alpha = depthAlpha * flicker + glow * 0.9;
+        pt.size = p * (0.6 + depth * 1.8) * (1 + glow * 1.6);
+
+        const bucketIndex = Math.max(
+          0,
+          Math.min(depthBucketCount - 1, Math.floor(depth * depthBucketCount)),
+        );
+        depthBuckets[bucketIndex].push(i);
+      }
+
+      for (let bucketIndex = 0; bucketIndex < depthBuckets.length; bucketIndex++) {
+        const bucket = depthBuckets[bucketIndex];
+        for (let i = 0; i < bucket.length; i++) {
+          const pt = projected[bucket[i]];
+          if (pt.alpha < 0.02) continue;
+          const color = dotColor(pt.px);
+          if (pt.glow > 0.16 && pt.depth > 0.18) {
+            ctx.beginPath();
+            ctx.arc(pt.px, pt.py, pt.size * 2.6, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${color}, ${pt.glow * 0.09})`;
+            ctx.fill();
           }
-          const glow = Math.min(1, rawGlow);
-
-          const flicker = 0.88 + 0.12 * Math.sin(t * 3.1 + d.phase);
-
-          const depthAlpha = 0.15 + depth * 0.75;
-          const alpha = depthAlpha * flicker + glow * 0.9;
-          const depthSize = 0.6 + depth * 1.8;
-          const size = p * depthSize * (1 + glow * 1.6);
-
-          return { px, py, alpha, size, glow, z: z2, depth };
-        })
-        .sort((a, b) => a.z - b.z);
-
-      for (const pt of projected) {
-        if (pt.alpha < 0.02) continue;
-        const color = dotColor(pt.px);
-        if (pt.glow > 0.08) {
           ctx.beginPath();
-          ctx.arc(pt.px, pt.py, pt.size * 3.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${color}, ${pt.glow * 0.11})`;
+          ctx.arc(pt.px, pt.py, pt.size, 0, Math.PI * 2);
+          ctx.fillStyle =
+            pt.glow > 0.22
+              ? `rgba(${color}, ${pt.alpha})`
+              : `rgba(${color}, ${pt.alpha * 0.75})`;
           ctx.fill();
         }
-        ctx.beginPath();
-        ctx.arc(pt.px, pt.py, pt.size, 0, Math.PI * 2);
-        ctx.fillStyle =
-          pt.glow > 0.22
-            ? `rgba(${color}, ${pt.alpha})`
-            : `rgba(${color}, ${pt.alpha * 0.75})`;
-        ctx.fill();
       }
     };
 
-    rafRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [accentRgb, accentRgb2, pulses]);
+    if (shouldAnimate) {
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      lastFrameRef.current = 0;
+    };
+  }, [accentRgb, accentRgb2, pulses, shouldAnimate]);
 
   useEffect(() => {
     const id = setInterval(() => {
       setTextVisible(false);
-      const swap = window.setTimeout(() => {
+      textSwapTimeoutRef.current = window.setTimeout(() => {
         setTaskIdx((i) => (i + 1) % tasks.length);
         setTextVisible(true);
       }, 320);
-      return () => window.clearTimeout(swap);
     }, 2000);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      window.clearTimeout(textSwapTimeoutRef.current);
+    };
   }, [tasks]);
 
   return (

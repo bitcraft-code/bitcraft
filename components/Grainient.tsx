@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import "./Grainient.css";
+import { useAnimationActivity } from "@/lib/use-animation-activity";
 
 const hexToRgb = (hex: string): [number, number, number] => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -150,10 +151,25 @@ const Grainient = ({
   className = "",
 }: GrainientProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef(0);
+  const lastFrameRef = useRef(0);
+  const elapsedRef = useRef(0);
+  const shouldAnimateRef = useRef(false);
+  const pauseLoopRef = useRef<() => void>(() => {});
+  const resumeLoopRef = useRef<() => void>(() => {});
+  const { shouldAnimate } = useAnimationActivity(containerRef, { threshold: 0.05 });
+
+  useEffect(() => {
+    shouldAnimateRef.current = shouldAnimate;
+    if (shouldAnimate) {
+      resumeLoopRef.current();
+      return;
+    }
+    pauseLoopRef.current();
+  }, [shouldAnimate]);
 
   useEffect(() => {
     let cancelled = false;
-    let rafId = 0;
     let ro: ResizeObserver | null = null;
     let mountedCanvas: HTMLCanvasElement | null = null;
     let idleHandle: number | ReturnType<typeof setTimeout> | null = null;
@@ -235,17 +251,42 @@ const Grainient = ({
       // 30fps desktop, 24fps mobile — imperceptible for a slow-moving gradient
       const FPS_CAP = isMobile ? 24 : 30;
       const FRAME_INTERVAL = 1000 / FPS_CAP;
-      let lastFrameTime = 0;
-      const t0 = performance.now();
 
       const loop = (t: number) => {
-        rafId = requestAnimationFrame(loop);
-        if (t - lastFrameTime < FRAME_INTERVAL) return;
-        lastFrameTime = t;
-        (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
+        if (!shouldAnimateRef.current) {
+          rafRef.current = 0;
+          lastFrameRef.current = 0;
+          return;
+        }
+
+        rafRef.current = requestAnimationFrame(loop);
+        if (t - lastFrameRef.current < FRAME_INTERVAL) return;
+
+        const delta =
+          lastFrameRef.current === 0
+            ? FRAME_INTERVAL
+            : Math.min(t - lastFrameRef.current, FRAME_INTERVAL * 2);
+        lastFrameRef.current = t;
+        elapsedRef.current += delta * 0.001;
+
+        (program.uniforms.iTime as { value: number }).value = elapsedRef.current;
         renderer.render({ scene: mesh });
       };
-      rafId = requestAnimationFrame(loop);
+
+      pauseLoopRef.current = () => {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+      };
+
+      resumeLoopRef.current = () => {
+        if (!shouldAnimateRef.current || rafRef.current !== 0) return;
+        rafRef.current = requestAnimationFrame(loop);
+      };
+
+      if (shouldAnimateRef.current) {
+        resumeLoopRef.current();
+      }
     };
 
     // Defer WebGL init until the browser is idle to avoid contributing to TBT
@@ -264,8 +305,13 @@ const Grainient = ({
           clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
         }
       }
-      cancelAnimationFrame(rafId);
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      lastFrameRef.current = 0;
+      elapsedRef.current = 0;
       if (ro) ro.disconnect();
+      pauseLoopRef.current = () => {};
+      resumeLoopRef.current = () => {};
       if (mountedCanvas?.parentNode) {
         try { mountedCanvas.parentNode.removeChild(mountedCanvas); } catch { /* ignore */ }
       }

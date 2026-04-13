@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import type { Program, Renderer } from 'ogl';
+import { useAnimationActivity } from "@/lib/use-animation-activity";
 
 type Vec2 = [number, number];
 
@@ -273,8 +274,14 @@ export default function FaultyTerminal({
   const smoothMouseRef = useRef({ x: 0.5, y: 0.5 });
   const frozenTimeRef = useRef(0);
   const rafRef = useRef<number>(0);
+  const lastFrameRef = useRef(0);
+  const elapsedRef = useRef(0);
   const loadAnimationStartRef = useRef<number>(0);
   const timeOffsetRef = useRef<number>(Math.random() * 100);
+  const shouldAnimateRef = useRef(false);
+  const pauseLoopRef = useRef<() => void>(() => {});
+  const resumeLoopRef = useRef<() => void>(() => {});
+  const { shouldAnimate } = useAnimationActivity(containerRef, { threshold: 0.05 });
 
   // Cap DPR at 1 — terminal background doesn't benefit from retina resolution
   const resolvedDpr = useMemo(() => Math.min(dpr ?? 1, 1), [dpr]);
@@ -282,6 +289,15 @@ export default function FaultyTerminal({
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
 
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither]);
+
+  useEffect(() => {
+    shouldAnimateRef.current = shouldAnimate;
+    if (shouldAnimate) {
+      resumeLoopRef.current();
+      return;
+    }
+    pauseLoopRef.current();
+  }, [shouldAnimate]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const ctn = containerRef.current;
@@ -367,19 +383,30 @@ export default function FaultyTerminal({
       const isMobile = window.navigator.maxTouchPoints > 0;
       const FPS_CAP = isMobile ? 24 : 30;
       const FRAME_INTERVAL = 1000 / FPS_CAP;
-      let lastFrameTime = 0;
 
       const update = (t: number) => {
+        if (!shouldAnimateRef.current) {
+          rafRef.current = 0;
+          lastFrameRef.current = 0;
+          return;
+        }
+
         rafRef.current = requestAnimationFrame(update);
-        if (t - lastFrameTime < FRAME_INTERVAL) return;
-        lastFrameTime = t;
+        if (t - lastFrameRef.current < FRAME_INTERVAL) return;
+
+        const delta =
+          lastFrameRef.current === 0
+            ? FRAME_INTERVAL
+            : Math.min(t - lastFrameRef.current, FRAME_INTERVAL * 2);
+        lastFrameRef.current = t;
 
         if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
           loadAnimationStartRef.current = t;
         }
 
         if (!pause) {
-          const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
+          elapsedRef.current += delta * 0.001;
+          const elapsed = timeOffsetRef.current + elapsedRef.current * timeScale;
           program.uniforms.iTime.value = elapsed;
           frozenTimeRef.current = elapsed;
         } else {
@@ -407,13 +434,31 @@ export default function FaultyTerminal({
 
         renderer.render({ scene: mesh });
       };
-      rafRef.current = requestAnimationFrame(update);
+
+      pauseLoopRef.current = () => {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+      };
+
+      resumeLoopRef.current = () => {
+        if (!shouldAnimateRef.current || rafRef.current !== 0) return;
+        rafRef.current = requestAnimationFrame(update);
+      };
+
+      if (shouldAnimateRef.current) {
+        resumeLoopRef.current();
+      }
+
       ctn.appendChild(gl.canvas);
 
       if (mouseReact) ctn.addEventListener('mousemove', handleMouseMove);
 
       roCleanup = () => {
         cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+        elapsedRef.current = 0;
         resizeObserver.disconnect();
         if (mouseReact) ctn.removeEventListener('mousemove', handleMouseMove);
         if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
@@ -440,6 +485,8 @@ export default function FaultyTerminal({
       roCleanup?.();
       loadAnimationStartRef.current = 0;
       timeOffsetRef.current = Math.random() * 100;
+      pauseLoopRef.current = () => {};
+      resumeLoopRef.current = () => {};
     };
   }, [
     resolvedDpr,

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { motion } from "motion/react";
 import type { HTMLMotionProps } from "motion/react";
+import { useAnimationActivity } from "@/lib/use-animation-activity";
 
 interface DecryptedTextProps extends HTMLMotionProps<"span"> {
   text: string;
@@ -46,6 +47,10 @@ export default function DecryptedText({
   const containerRef = useRef<HTMLSpanElement>(null);
   const orderRef = useRef<number[]>([]);
   const pointerRef = useRef<number>(0);
+  const { shouldAnimate: isViewAnimationActive } = useAnimationActivity(containerRef, {
+    threshold: 0.1,
+    disabled: animateOn === "hover" || animateOn === "click",
+  });
 
   const availableChars = useMemo<string[]>(() => {
     return useOriginalCharsOnly
@@ -146,6 +151,9 @@ export default function DecryptedText({
 
   useEffect(() => {
     if (!isAnimating) return;
+    if ((animateOn === "view" || animateOn === "inViewHover") && !isViewAnimationActive) {
+      return;
+    }
 
     let interval: ReturnType<typeof setInterval>;
     let currentIteration = 0;
@@ -250,6 +258,8 @@ export default function DecryptedText({
     return () => clearInterval(interval);
   }, [
     isAnimating,
+    animateOn,
+    isViewAnimationActive,
     text,
     speed,
     maxIterations,
