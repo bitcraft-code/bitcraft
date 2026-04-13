@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Program } from "ogl";
+import { useAnimationActivity } from "@/lib/use-animation-activity";
 
 const vertexShader = `
 attribute vec2 uv;
@@ -65,12 +66,27 @@ export default function Iridescence({
 }: IridescenceProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0.5, y: 0.5 });
+  const rafRef = useRef(0);
+  const lastFrameRef = useRef(0);
+  const elapsedRef = useRef(0);
+  const shouldAnimateRef = useRef(false);
+  const pauseLoopRef = useRef<() => void>(() => {});
+  const resumeLoopRef = useRef<() => void>(() => {});
+  const { shouldAnimate } = useAnimationActivity(ctnDom, { threshold: 0.05 });
+
+  useEffect(() => {
+    shouldAnimateRef.current = shouldAnimate;
+    if (shouldAnimate) {
+      resumeLoopRef.current();
+      return;
+    }
+    pauseLoopRef.current();
+  }, [shouldAnimate]);
 
   useEffect(() => {
     if (!ctnDom.current) return;
 
     let cancelled = false;
-    let animateId = 0;
     let resourceCleanup: (() => void) | null = null;
     let idleHandle: number | ReturnType<typeof setTimeout> | null = null;
 
@@ -123,16 +139,43 @@ export default function Iridescence({
       const isMobile = window.navigator.maxTouchPoints > 0;
       const FPS_CAP = isMobile ? 24 : 30;
       const FRAME_INTERVAL = 1000 / FPS_CAP;
-      let lastFrameTime = 0;
 
       const update = (t: number) => {
-        animateId = requestAnimationFrame(update);
-        if (t - lastFrameTime < FRAME_INTERVAL) return;
-        lastFrameTime = t;
-        program.uniforms.uTime.value = t * 0.001;
+        if (!shouldAnimateRef.current) {
+          rafRef.current = 0;
+          lastFrameRef.current = 0;
+          return;
+        }
+
+        rafRef.current = requestAnimationFrame(update);
+        if (t - lastFrameRef.current < FRAME_INTERVAL) return;
+
+        const delta =
+          lastFrameRef.current === 0
+            ? FRAME_INTERVAL
+            : Math.min(t - lastFrameRef.current, FRAME_INTERVAL * 2);
+        lastFrameRef.current = t;
+        elapsedRef.current += delta * 0.001;
+
+        program.uniforms.uTime.value = elapsedRef.current;
         renderer.render({ scene: mesh });
       };
-      animateId = requestAnimationFrame(update);
+
+      pauseLoopRef.current = () => {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+      };
+
+      resumeLoopRef.current = () => {
+        if (!shouldAnimateRef.current || rafRef.current !== 0) return;
+        rafRef.current = requestAnimationFrame(update);
+      };
+
+      if (shouldAnimateRef.current) {
+        resumeLoopRef.current();
+      }
+
       ctn.appendChild(canvas);
 
       const handleMouseMove = (e: MouseEvent) => {
@@ -147,7 +190,10 @@ export default function Iridescence({
       if (mouseReact) ctn.addEventListener("mousemove", handleMouseMove);
 
       resourceCleanup = () => {
-        cancelAnimationFrame(animateId);
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+        lastFrameRef.current = 0;
+        elapsedRef.current = 0;
         window.removeEventListener("resize", resize);
         if (mouseReact) ctn.removeEventListener("mousemove", handleMouseMove);
         if (canvas.parentElement) canvas.parentElement.removeChild(canvas);
@@ -171,7 +217,12 @@ export default function Iridescence({
           clearTimeout(idleHandle as ReturnType<typeof setTimeout>);
         }
       }
-      cancelAnimationFrame(animateId);
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      lastFrameRef.current = 0;
+      elapsedRef.current = 0;
+      pauseLoopRef.current = () => {};
+      resumeLoopRef.current = () => {};
       resourceCleanup?.();
     };
   }, [color, speed, amplitude, mouseReact]);
