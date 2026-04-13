@@ -72,8 +72,8 @@ export default function ContactSection({ variant = "default", dark = true }: Pro
       {/* Inner wrapper: centers content when it fits, scrolls from top when it doesn't */}
       <div className="min-h-full flex flex-col items-center justify-center px-5 sm:px-6 py-16 sm:py-24 gap-10">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 16 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
           className="text-center max-w-lg"
@@ -93,8 +93,8 @@ export default function ContactSection({ variant = "default", dark = true }: Pro
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
           className="w-full max-w-lg"

@@ -21,6 +21,14 @@ const fadeUp = {
   }),
 };
 
+const slideUp = {
+  hidden: { y: 24 },
+  visible: (i: number) => ({
+    y: 0,
+    transition: { delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  }),
+};
+
 export default function FaqSection({ items, accentColor, accentGlow }: Props) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<number | null>(null);
@@ -60,7 +68,7 @@ export default function FaqSection({ items, accentColor, accentGlow }: Props) {
               custom={i + 2}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
-              variants={fadeUp}
+              variants={slideUp}
             >
               <div
                 className="rounded-xl backdrop-blur-md cursor-pointer select-none text-left"
