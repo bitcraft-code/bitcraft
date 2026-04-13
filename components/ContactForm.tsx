@@ -148,8 +148,8 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
         {status === "success" ? (
           <motion.div
             key="success"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 8 }}
+            animate={{ y: 0 }}
             className="flex flex-col items-center justify-center gap-4 py-10 text-center"
           >
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={theme.successColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +159,7 @@ export default function ContactForm({ variant = "default", dark = true }: Props)
             <p style={{ color: "#ffffff", fontSize: "1rem", fontWeight: 600 }}>{t("form.success")}</p>
           </motion.div>
         ) : (
-          <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <motion.form key="form" initial={{ y: 8 }} animate={{ y: 0 }} onSubmit={handleSubmit} className="flex flex-col gap-5">
             <input
               type="text"
               name="_honey"

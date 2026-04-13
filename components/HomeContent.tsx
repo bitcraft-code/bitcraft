@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -52,24 +52,74 @@ export default function HomeContent() {
   const { t: translate, i18n } = useTranslation();
   const locale = i18n.language;
   const [dark, setDark] = useState(true);
-  const [heroSpotlight, setHeroSpotlight] = useState<{ id: string | null; x: number; y: number }>({ id: null, x: 0, y: 0 });
-  const [pillSpotlight, setPillSpotlight] = useState({ hover: false, x: 0, y: 0 });
-  const [btnParallax, setBtnParallax] = useState<Record<string, { tx: number; ty: number }>>({});
   const lastTouchAt = useRef(0);
-  const heroRafRef = useRef<number | null>(null);
-  const pillRafRef = useRef<number | null>(null);
-  const btnRafRef = useRef<number | null>(null);
+  const pointerFrameMapRef = useRef(new Map<HTMLElement, number>());
+  const pointerPayloadMapRef = useRef(
+    new Map<HTMLElement, { active: boolean; x: number; y: number; tx?: number; ty?: number }>(),
+  );
   const theme = dark ? DARK : LIGHT;
   const rotatingTexts = translate("home.rotatingTexts", { returnObjects: true }) as string[];
 
+  useEffect(() => {
+    return () => {
+      for (const frame of pointerFrameMapRef.current.values()) {
+        cancelAnimationFrame(frame);
+      }
+      pointerFrameMapRef.current.clear();
+      pointerPayloadMapRef.current.clear();
+    };
+  }, []);
+
   const wasTouched = () => Date.now() - lastTouchAt.current < 600;
-  const onTouchBegin = (setter: (x: number, y: number) => void) => (e: React.TouchEvent) => {
+  const schedulePointerStyles = useCallback(
+    (
+      element: HTMLElement,
+      payload: { active: boolean; x: number; y: number; tx?: number; ty?: number },
+    ) => {
+      pointerPayloadMapRef.current.set(element, payload);
+      if (pointerFrameMapRef.current.has(element)) return;
+
+      const frame = requestAnimationFrame(() => {
+        const nextPayload = pointerPayloadMapRef.current.get(element);
+        pointerFrameMapRef.current.delete(element);
+        if (!nextPayload) return;
+
+        element.style.setProperty("--spotlight-opacity", nextPayload.active ? "1" : "0");
+        element.style.setProperty("--spotlight-x", `${nextPayload.x}px`);
+        element.style.setProperty("--spotlight-y", `${nextPayload.y}px`);
+
+        if (typeof nextPayload.tx === "number") {
+          element.style.setProperty("--btn-tx", `${nextPayload.tx}`);
+        }
+        if (typeof nextPayload.ty === "number") {
+          element.style.setProperty("--btn-ty", `${nextPayload.ty}`);
+        }
+      });
+
+      pointerFrameMapRef.current.set(element, frame);
+    },
+    [],
+  );
+  const resetPointerStyles = useCallback((element: HTMLElement, resetParallax = false) => {
+    const frame = pointerFrameMapRef.current.get(element);
+    if (typeof frame === "number") {
+      cancelAnimationFrame(frame);
+      pointerFrameMapRef.current.delete(element);
+    }
+    pointerPayloadMapRef.current.delete(element);
+    element.style.setProperty("--spotlight-opacity", "0");
+    if (resetParallax) {
+      element.style.setProperty("--btn-tx", "0");
+      element.style.setProperty("--btn-ty", "0");
+    }
+  }, []);
+  const onTouchBegin = (setter: (element: HTMLElement, x: number, y: number) => void) => (e: React.TouchEvent) => {
     lastTouchAt.current = Date.now();
     const touch = e.touches[0];
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setter(touch.clientX - rect.left, touch.clientY - rect.top);
+    const element = e.currentTarget as HTMLElement;
+    const rect = element.getBoundingClientRect();
+    setter(element, touch.clientX - rect.left, touch.clientY - rect.top);
   };
-  const sp = (hover: boolean, x: number, y: number) => ({ active: hover, pos: `${x}px ${y}px` });
 
   const primaryHoverShadow = dark
     ? "0 0 0 1.5px rgba(0,255,159,0.7), 0 0 28px rgba(0,255,159,0.35), 0 2px 20px rgba(255,255,255,0.10)"
@@ -174,23 +224,49 @@ export default function HomeContent() {
             texts={rotatingTexts}
             mainClassName={`px-3 sm:px-6 md:px-8 py-1 sm:py-2 md:py-3 items-center justify-center rounded-full leading-normal backdrop-blur-2xl backdrop-saturate-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-1px_0_rgba(255,255,255,0.1)] ${dark ? "bg-white/[0.13] text-white border border-white/[0.22]" : "bg-white/[0.35] text-[#0a192f] border border-white/[0.5]"}`}
             onMouseMove={(e) => {
-              if (wasTouched() || pillRafRef.current !== null) return;
-              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              if (wasTouched()) return;
+              const element = e.currentTarget as HTMLElement;
+              const rect = element.getBoundingClientRect();
               const x = e.clientX - rect.left;
               const y = e.clientY - rect.top;
-              pillRafRef.current = requestAnimationFrame(() => {
-                setPillSpotlight({ hover: true, x, y });
-                pillRafRef.current = null;
-              });
+              schedulePointerStyles(element, { active: true, x, y });
             }}
-            onMouseLeave={() => { if (!wasTouched()) setPillSpotlight((p) => ({ ...p, hover: false })); }}
-            onTouchStart={onTouchBegin((x, y) => setPillSpotlight({ hover: true, x, y }))}
-            onTouchEnd={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
-            onTouchCancel={() => setPillSpotlight((p) => ({ ...p, hover: false }))}
-            overlay={(() => { const s = sp(pillSpotlight.hover, pillSpotlight.x, pillSpotlight.y); return (<>
-                <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, rgba(255,255,255,0.12), transparent 70%)` }} />
-                <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 160px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
-              </>); })()}
+            onMouseLeave={(e) => {
+              if (wasTouched()) return;
+              resetPointerStyles(e.currentTarget as HTMLElement);
+            }}
+            onTouchStart={onTouchBegin((element, x, y) => {
+              schedulePointerStyles(element, { active: true, x, y });
+            })}
+            onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement)}
+            onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement)}
+            overlay={(
+              <>
+                <span
+                  className="absolute inset-0 rounded-full pointer-events-none overflow-hidden"
+                  style={{
+                    opacity: "var(--spotlight-opacity, 0)",
+                    transition: "opacity 0.3s ease",
+                    background:
+                      "radial-gradient(circle 160px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,0.12), transparent 70%)",
+                  }}
+                />
+                <span
+                  className="absolute inset-0 rounded-full pointer-events-none"
+                  style={{
+                    opacity: "var(--spotlight-opacity, 0)",
+                    transition: "opacity 0.3s ease",
+                    background:
+                      "radial-gradient(circle 160px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,1), transparent 70%)",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    maskComposite: "exclude",
+                    padding: "1.5px",
+                  }}
+                />
+              </>
+            )}
             staggerFrom="last"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
@@ -270,33 +346,78 @@ export default function HomeContent() {
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center overflow-hidden"
             animate={{ background: theme.btnPrimary.bg, color: theme.btnPrimary.color, boxShadow: theme.btnPrimary.shadow }}
             transition={{ duration: 0.4 }}
-            style={{ background: theme.btnPrimary.bg, color: theme.btnPrimary.color, boxShadow: theme.btnPrimary.shadow, transform: `translate(${(btnParallax["software"]?.tx ?? 0) * 2}px, ${(btnParallax["software"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, box-shadow 0.4s" }}
+            style={{
+              background: theme.btnPrimary.bg,
+              color: theme.btnPrimary.color,
+              boxShadow: theme.btnPrimary.shadow,
+              transform: "translate(calc(var(--btn-tx, 0) * 2px), calc(var(--btn-ty, 0) * 1.5px))",
+              transition: "transform 0.15s ease-out, background 0.4s, box-shadow 0.4s",
+            }}
             whileHover={{ scale: 1.04, boxShadow: primaryHoverShadow }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
-              if (wasTouched() || heroRafRef.current !== null) return;
-              const rect = e.currentTarget.getBoundingClientRect();
+              if (wasTouched()) return;
+              const element = e.currentTarget as HTMLElement;
+              const rect = element.getBoundingClientRect();
               const x = e.clientX - rect.left;
               const y = e.clientY - rect.top;
               const tx = (x - rect.width / 2) / (rect.width / 2);
               const ty = (y - rect.height / 2) / (rect.height / 2);
-              heroRafRef.current = requestAnimationFrame(() => {
-                setHeroSpotlight({ id: "software", x, y });
-                setBtnParallax(p => ({ ...p, software: { tx, ty } }));
-                heroRafRef.current = null;
-              });
+              schedulePointerStyles(element, { active: true, x, y, tx, ty });
             }}
-            onMouseLeave={() => { if (!wasTouched()) { if (heroRafRef.current !== null) { cancelAnimationFrame(heroRafRef.current); heroRafRef.current = null; } setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, software: { tx: 0, ty: 0 } })); } }}
-            onTouchStart={onTouchBegin((x, y) => setHeroSpotlight({ id: "software", x, y }))}
-            onTouchEnd={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
-            onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
+            onMouseLeave={(e) => {
+              if (wasTouched()) return;
+              resetPointerStyles(e.currentTarget as HTMLElement, true);
+            }}
+            onTouchStart={onTouchBegin((element, x, y) => {
+              schedulePointerStyles(element, { active: true, x, y, tx: 0, ty: 0 });
+            })}
+            onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement, true)}
+            onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement, true)}
           >
-            {(() => { const s = sp(heroSpotlight.id === "software", heroSpotlight.x, heroSpotlight.y); const p = btnParallax["software"]; return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.35s ease", background: primaryTint }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.20), transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
-            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{translate("home.btnSoftware")}</span>
-            </>); })()}
+            <>
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  opacity: "var(--spotlight-opacity, 0)",
+                  transition: "opacity 0.35s ease",
+                  background: primaryTint,
+                }}
+              />
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none overflow-hidden"
+                style={{
+                  opacity: "var(--spotlight-opacity, 0)",
+                  transition: "opacity 0.3s ease",
+                  background:
+                    "radial-gradient(circle 80px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,0.20), transparent 70%)",
+                }}
+              />
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  opacity: "var(--spotlight-opacity, 0)",
+                  transition: "opacity 0.3s ease",
+                  background:
+                    "radial-gradient(circle 80px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,1), transparent 70%)",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
+                  padding: "1.5px",
+                }}
+              />
+              <span
+                style={{
+                  display: "inline-block",
+                  transform:
+                    "translate(calc(var(--btn-tx, 0) * 4px), calc(var(--btn-ty, 0) * 2.5px))",
+                  transition: "transform 0.12s ease-out",
+                }}
+              >
+                {translate("home.btnSoftware")}
+              </span>
+            </>
           </motion.a>
 
           <motion.a
@@ -305,32 +426,72 @@ export default function HomeContent() {
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-medium text-center"
             animate={{ background: theme.btnSecondary.bg, border: theme.btnSecondary.border, color: theme.btnSecondary.color }}
             transition={{ duration: 0.4 }}
-            style={{ background: theme.btnSecondary.bg, border: theme.btnSecondary.border, color: theme.btnSecondary.color, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", transform: `translate(${(btnParallax["agency"]?.tx ?? 0) * 2}px, ${(btnParallax["agency"]?.ty ?? 0) * 1.5}px)`, transition: "transform 0.15s ease-out, background 0.4s, border 0.4s" }}
+            style={{
+              background: theme.btnSecondary.bg,
+              border: theme.btnSecondary.border,
+              color: theme.btnSecondary.color,
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              transform: "translate(calc(var(--btn-tx, 0) * 2px), calc(var(--btn-ty, 0) * 1.5px))",
+              transition: "transform 0.15s ease-out, background 0.4s, border 0.4s",
+            }}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             onMouseMove={(e) => {
-              if (wasTouched() || btnRafRef.current !== null) return;
-              const rect = e.currentTarget.getBoundingClientRect();
+              if (wasTouched()) return;
+              const element = e.currentTarget as HTMLElement;
+              const rect = element.getBoundingClientRect();
               const x = e.clientX - rect.left;
               const y = e.clientY - rect.top;
               const tx = (x - rect.width / 2) / (rect.width / 2);
               const ty = (y - rect.height / 2) / (rect.height / 2);
-              btnRafRef.current = requestAnimationFrame(() => {
-                setHeroSpotlight({ id: "agency", x, y });
-                setBtnParallax(p => ({ ...p, agency: { tx, ty } }));
-                btnRafRef.current = null;
-              });
+              schedulePointerStyles(element, { active: true, x, y, tx, ty });
             }}
-            onMouseLeave={() => { if (!wasTouched()) { if (btnRafRef.current !== null) { cancelAnimationFrame(btnRafRef.current); btnRafRef.current = null; } setHeroSpotlight((p) => ({ ...p, id: null })); setBtnParallax(p => ({ ...p, agency: { tx: 0, ty: 0 } })); } }}
-            onTouchStart={onTouchBegin((x, y) => setHeroSpotlight({ id: "agency", x, y }))}
-            onTouchEnd={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
-            onTouchCancel={() => setHeroSpotlight((p) => ({ ...p, id: null }))}
+            onMouseLeave={(e) => {
+              if (wasTouched()) return;
+              resetPointerStyles(e.currentTarget as HTMLElement, true);
+            }}
+            onTouchStart={onTouchBegin((element, x, y) => {
+              schedulePointerStyles(element, { active: true, x, y, tx: 0, ty: 0 });
+            })}
+            onTouchEnd={(e) => resetPointerStyles(e.currentTarget as HTMLElement, true)}
+            onTouchCancel={(e) => resetPointerStyles(e.currentTarget as HTMLElement, true)}
           >
-            {(() => { const s = sp(heroSpotlight.id === "agency", heroSpotlight.x, heroSpotlight.y); const p = btnParallax["agency"]; return (<>
-            <span className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,0.10), transparent 70%)` }} />
-            <span className="absolute inset-0 rounded-full pointer-events-none" style={{ opacity: s.active ? 1 : 0, transition: "opacity 0.3s ease", background: `radial-gradient(circle 80px at ${s.pos}, rgba(255,255,255,1), transparent 70%)`, WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", maskComposite: "exclude", padding: "1.5px" }} />
-            <span style={{ display: "inline-block", transform: `translate(${(p?.tx ?? 0) * 4}px, ${(p?.ty ?? 0) * 2.5}px)`, transition: "transform 0.12s ease-out" }}>{translate("home.btnAgency")}</span>
-            </>); })()}
+            <>
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none overflow-hidden"
+                style={{
+                  opacity: "var(--spotlight-opacity, 0)",
+                  transition: "opacity 0.3s ease",
+                  background:
+                    "radial-gradient(circle 80px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,0.10), transparent 70%)",
+                }}
+              />
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  opacity: "var(--spotlight-opacity, 0)",
+                  transition: "opacity 0.3s ease",
+                  background:
+                    "radial-gradient(circle 80px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255,255,255,1), transparent 70%)",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
+                  padding: "1.5px",
+                }}
+              />
+              <span
+                style={{
+                  display: "inline-block",
+                  transform:
+                    "translate(calc(var(--btn-tx, 0) * 4px), calc(var(--btn-ty, 0) * 2.5px))",
+                  transition: "transform 0.12s ease-out",
+                }}
+              >
+                {translate("home.btnAgency")}
+              </span>
+            </>
           </motion.a>
         </motion.div>
         </div>
