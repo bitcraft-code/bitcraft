@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Grainient from "../components/Grainient";
@@ -47,6 +48,7 @@ const LIGHT = {
 
 
 export default function HomeContent() {
+  const router = useRouter();
   const { t: translate, i18n } = useTranslation();
   const locale = i18n.language;
   const [dark, setDark] = useState(true);
@@ -264,6 +266,7 @@ export default function HomeContent() {
         >
           <motion.a
             href="/software"
+            onClick={(e) => { e.preventDefault(); router.push("/software"); }}
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-bold text-center overflow-hidden"
             animate={{ background: theme.btnPrimary.bg, color: theme.btnPrimary.color, boxShadow: theme.btnPrimary.shadow }}
             transition={{ duration: 0.4 }}
@@ -298,6 +301,7 @@ export default function HomeContent() {
 
           <motion.a
             href="/agency"
+            onClick={(e) => { e.preventDefault(); router.push("/agency"); }}
             className="relative w-full sm:w-auto sm:min-w-[200px] px-6 py-2.5 sm:px-8 sm:py-3 rounded-full text-sm sm:text-base font-medium text-center"
             animate={{ background: theme.btnSecondary.bg, border: theme.btnSecondary.border, color: theme.btnSecondary.color }}
             transition={{ duration: 0.4 }}
