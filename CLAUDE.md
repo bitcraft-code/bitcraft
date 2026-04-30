@@ -45,6 +45,14 @@ Three systems coexist. Each has a defined role — **do not mix them within a si
 - Theme tokens: DARK/LIGHT objects in HomeContent drive all color values — no hardcoded colors in JSX style props
 - Dark/light mode is runtime-toggled via state (not CSS media query / Tailwind dark:)
 
+## Feature Flags
+Optional / experimental sections are gated by `lib/features.ts` + `<FeatureGate name="...">`.
+- Add new flag: edit `lib/features.ts`, document in `.env.example` as `NEXT_PUBLIC_FEATURE_<NAME>`, default OFF.
+- Wrap section render with `<FeatureGate name="yourFlag">...</FeatureGate>`.
+- Whole-route gating: page returns `notFound()` when flag off, header link wrapped in `FeatureGate`.
+- Toggle on Vercel via project env vars, redeploy applies (~30s).
+- Active flags: `logoCloud`, `testimonials`, `caseStudies`, `team`, `processTimeline`, `engagementModels`, `budgetTiers`, `specialist`, `blog`.
+
 ## Metadata
 - Root metadata defined in `app/layout.tsx` only
 - Per-page overrides via `export const metadata` in each `page.tsx`
